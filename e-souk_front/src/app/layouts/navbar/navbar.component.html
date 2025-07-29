@@ -1,0 +1,52 @@
+<!-- Header -->
+<header class="header-sticky">
+  <div class="container">
+    <div class="header-content">
+      <!-- Logo -->
+      <a href="/" class="logo-link">
+        <span class="logo-text">E-Souk</span>
+      </a>
+
+      <!-- Navigation - Desktop -->
+      <nav class="nav-desktop">
+        <a href="/shops" class="nav-link">Accueil</a>
+        <a href="/shops" class="nav-link">Boutiques</a>
+        <a href="/products" class="nav-link">Produits</a>
+        <a href="/about" class="nav-link">À propos</a>
+      </nav>
+
+      <!-- Actions -->
+      <div class="header-actions">
+
+        <!-- Auth Buttons -->
+        <div class="auth-buttons">
+          <a href="/auth/login" class="btn btn-outline-blue btn-sm">Se connecter</a>
+          <a href="/auth/register" class="btn btn-blue btn-sm">S'inscrire</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" (click)="toggleMobileMenu()">
+          <svg class="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" *ngIf="!isMobileMenuOpen">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <svg class="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" *ngIf="isMobileMenuOpen">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" [class.mobile-menu-open]="isMobileMenuOpen">
+      <nav class="mobile-nav">
+        <a href="/shops" class="mobile-nav-link" (click)="toggleMobileMenu()">Boutiques</a>
+        <a href="/products" class="mobile-nav-link" (click)="toggleMobileMenu()">Produits</a>
+        <a href="/about" class="mobile-nav-link" (click)="toggleMobileMenu()">À propos</a>
+      </nav>
+      <div class="mobile-auth">
+        <a href="/auth/login" class="btn btn-outline-blue btn-full btn-sm" (click)="toggleMobileMenu()">Se connecter</a>
+        <a href="/auth/register" class="btn btn-blue btn-full btn-sm" (click)="toggleMobileMenu()">S'inscrire</a>
+      </div>
+    </div>
+  </div>
+</header>

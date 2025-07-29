@@ -1,0 +1,506 @@
+================================================================================
+                                SPRINT 1 - AUTHENTIFICATION JWT AVEC SWAGGER
+================================================================================
+
+📅 DATE : [Date du Sprint]
+🎯 OBJECTIF : Implémenter un système d'authentification complet avec JWT et documentation Swagger
+⏱️ DURÉE : [Durée du Sprint]
+👤 DÉVELOPPEUR : [Ton nom]
+
+================================================================================
+                                📋 RÉSUMÉ EXÉCUTIF
+================================================================================
+
+Ce sprint a permis d'implémenter un système d'authentification JWT complet pour la plateforme 
+e-commerce ESouk. L'objectif était de créer une API sécurisée permettant l'inscription, la 
+connexion et la gestion des utilisateurs avec une documentation interactive via Swagger.
+
+✅ RÉSULTATS ATTEINTS :
+- Système d'authentification JWT fonctionnel
+- Documentation API complète avec Swagger UI
+- Gestion des rôles utilisateur (CLIENT, VENDOR, ADMIN)
+- Validation des données et gestion d'erreurs robuste
+- Tests possibles via interface Swagger
+
+================================================================================
+                                🏗️ ARCHITECTURE IMPLÉMENTÉE
+================================================================================
+
+1. CONFIGURATION DE BASE
+   ├── Dependencies Maven (JWT, Swagger, Validation)
+   ├── Configuration PostgreSQL
+   └── Propriétés JWT (clé secrète, expiration)
+
+2. SÉCURITÉ JWT
+   ├── JwtConfig (Configuration des propriétés)
+   ├── JwtTokenProvider (Génération/validation des tokens)
+   ├── UserDetailsImpl (Adaptation pour Spring Security)
+   ├── UserDetailsServiceImpl (Service d'authentification)
+   ├── JwtAuthenticationFilter (Filtre d'authentification)
+   └── SecurityConfig (Configuration Spring Security)
+
+3. DTOs ET VALIDATION
+   ├── RegisterRequestDTO (Données d'inscription)
+   ├── LoginRequestDTO (Identifiants de connexion)
+   ├── AuthResponseDTO (Réponse avec token JWT)
+   ├── UserProfileDTO (Profil utilisateur)
+   ├── AuthException (Exceptions personnalisées)
+   └── GlobalExceptionHandler (Gestion globale des erreurs)
+
+4. SERVICES ET LOGIQUE MÉTIER
+   ├── UserRepository (Accès aux données)
+   ├── UserService (Gestion des utilisateurs)
+   └── AuthService (Logique d'authentification)
+
+5. API ET CONTROLLERS
+   ├── AuthController (Endpoints d'authentification)
+   └── SwaggerConfig (Documentation OpenAPI 3)
+
+================================================================================
+                                📁 FICHIERS CRÉÉS ET EXPLICATIONS
+================================================================================
+
+🔧 CONFIGURATION ET DÉPENDANCES
+────────────────────────────────────────────────────────────────────────────────
+
+1. pom.xml (MODIFICATIONS)
+   ┕── Ajout des dépendances JWT et Validation
+   ┕── UTILITÉ : Fournit les bibliothèques nécessaires pour JWT et validation des données
+   ┕── CONCEPTS CLÉS : 
+       • io.jsonwebtoken : Bibliothèque pour créer/valider les tokens JWT
+       • spring-boot-starter-validation : Validation automatique des DTOs
+
+2. application.properties (MODIFICATIONS)
+   ┕── Configuration JWT et sécurité
+   ┕── UTILITÉ : Définit les paramètres de sécurité et de base de données
+   ┕── CONCEPTS CLÉS :
+       • jwt.secret : Clé secrète pour signer les tokens (en production, utiliser une clé très sécurisée)
+       • jwt.expiration : Durée de vie des tokens (24h = 86400000ms)
+       • spring.security.user : Compte admin par défaut
+
+🛡️ SÉCURITÉ JWT
+────────────────────────────────────────────────────────────────────────────────
+
+3. JwtConfig.java
+   ┕── Configuration des propriétés JWT
+   ┕── UTILITÉ : Centralise la configuration JWT (clé secrète, expiration, etc.)
+   ┕── ANNOTATIONS IMPORTANTES :
+       • @ConfigurationProperties(prefix = "jwt") : Lie les propriétés application.properties
+       • @Component : Rend la classe disponible pour l'injection de dépendances
+   ┕── CONCEPTS CLÉS :
+       • Secret key : Clé pour signer/valider les tokens
+       • Expiration : Durée de vie des tokens
+       • Bearer token : Format standard pour l'authentification
+
+4. JwtTokenProvider.java
+   ┕── Génération et validation des tokens JWT
+   ┕── UTILITÉ : Cœur du système JWT - crée et valide les tokens
+   ┕── MÉTHODES PRINCIPALES :
+       • generateToken() : Crée un token JWT pour un utilisateur authentifié
+       • validateToken() : Vérifie si un token est valide et non expiré
+       • getUsernameFromToken() : Extrait le nom d'utilisateur du token
+   ┕── CONCEPTS CLÉS :
+       • JWT Structure : Header.Payload.Signature
+       • Claims : Informations contenues dans le token (username, expiration, etc.)
+       • HS512 : Algorithme de signature utilisé
+
+5. UserDetailsImpl.java
+   ┕── Implémentation de UserDetails pour Spring Security
+   ┕── UTILITÉ : Adapte notre entité User au système d'authentification Spring Security
+   ┕── MÉTHODES OBLIGATOIRES (UserDetails) :
+       • getAuthorities() : Retourne les rôles/autorisations
+       • isEnabled() : Vérifie si le compte est actif
+       • isAccountNonExpired() : Vérifie si le compte n'a pas expiré
+   ┕── CONCEPTS CLÉS :
+       • UserDetails : Interface Spring Security pour les utilisateurs
+       • GrantedAuthority : Représente les rôles/autorisations
+       • @JsonIgnore : Empêche la sérialisation du mot de passe
+
+6. UserDetailsServiceImpl.java
+   ┕── Service pour charger les utilisateurs depuis la base de données
+   ┕── UTILITÉ : Interface entre Spring Security et notre base de données
+   ┕── MÉTHODES PRINCIPALES :
+       • loadUserByUsername() : Charge un utilisateur par son nom d'utilisateur
+       • loadUserById() : Charge un utilisateur par son ID
+   ┕── CONCEPTS CLÉS :
+       • UserDetailsService : Interface Spring Security pour charger les utilisateurs
+       • @Transactional : Gère les transactions de base de données
+       • UsernameNotFoundException : Exception si utilisateur non trouvé
+
+7. JwtAuthenticationFilter.java
+   ┕── Filtre d'authentification JWT
+   ┕── UTILITÉ : Intercepte chaque requête pour vérifier les tokens JWT
+   ┕── FONCTIONNEMENT :
+       • Extrait le token de l'en-tête Authorization
+       • Valide le token avec JwtTokenProvider
+       • Charge l'utilisateur et crée l'authentification Spring Security
+   ┕── CONCEPTS CLÉS :
+       • OncePerRequestFilter : Filtre exécuté une fois par requête
+       • SecurityContextHolder : Stocke l'authentification actuelle
+       • UsernamePasswordAuthenticationToken : Token d'authentification Spring
+
+8. SecurityConfig.java
+   ┕── Configuration complète de Spring Security
+   ┕── UTILITÉ : Configure la sécurité de l'application (endpoints protégés, CORS, etc.)
+   ┕── CONFIGURATIONS PRINCIPALES :
+       • Désactivation CSRF (pas nécessaire avec JWT)
+       • Configuration CORS pour le frontend
+       • Sessions stateless (pas de session côté serveur)
+       • Autorisations par endpoint
+   ┕── CONCEPTS CLÉS :
+       • SecurityFilterChain : Chaîne de filtres de sécurité
+       • CORS : Cross-Origin Resource Sharing
+       • Stateless : Pas de session côté serveur (JWT)
+
+📝 DTOs ET VALIDATION
+────────────────────────────────────────────────────────────────────────────────
+
+9. RegisterRequestDTO.java
+   ┕── DTO pour les requêtes d'inscription
+   ┕── UTILITÉ : Transfert sécurisé des données d'inscription (pas de mot de passe exposé)
+   ┕── VALIDATIONS :
+       • @NotBlank : Champs obligatoires
+       • @Size : Taille des chaînes
+       • @Email : Validation email
+       • @Pattern : Regex pour format spécifique
+   ┕── CONCEPTS CLÉS :
+       • DTO (Data Transfer Object) : Objet pour transférer des données
+       • Bean Validation : Validation automatique des données
+       • Lombok : Réduit le boilerplate code
+
+10. LoginRequestDTO.java
+    ┕── DTO pour les requêtes de connexion
+    ┕── UTILITÉ : Transfert sécurisé des identifiants de connexion
+    ┕── PARTICULARITÉ : usernameOrEmail permet de se connecter avec l'un ou l'autre
+
+11. AuthResponseDTO.java
+    ┕── DTO pour les réponses d'authentification
+    ┕── UTILITÉ : Retourne le token JWT et les informations utilisateur
+    ┕── INFORMATIONS INCLUSES :
+        • Token JWT
+        • Informations utilisateur (sans mot de passe)
+        • Dates d'émission et d'expiration
+
+12. UserProfileDTO.java
+    ┕── DTO pour le profil utilisateur
+    ┕── UTILITÉ : Expose les informations publiques de l'utilisateur (sans mot de passe)
+    ┕── SÉCURITÉ : Ne contient jamais le mot de passe
+
+13. AuthException.java
+    ┕── Exceptions personnalisées pour l'authentification
+    ┕── UTILITÉ : Messages d'erreur clairs et en français
+    ┕── TYPES D'EXCEPTIONS :
+        • usernameAlreadyExists : Nom d'utilisateur déjà utilisé
+        • emailAlreadyExists : Email déjà utilisé
+        • invalidCredentials : Identifiants incorrects
+        • accountInactive : Compte désactivé
+
+14. GlobalExceptionHandler.java
+    ┕── Gestionnaire global d'exceptions
+    ┕── UTILITÉ : Intercepte toutes les exceptions et retourne des réponses HTTP appropriées
+    ┕── GESTIONS :
+        • Validation errors (400 Bad Request)
+        • Authentication errors (401 Unauthorized)
+        • Not found errors (404 Not Found)
+        • Generic errors (500 Internal Server Error)
+    ┕── CONCEPTS CLÉS :
+        • @RestControllerAdvice : Gestionnaire global d'exceptions
+        • ResponseEntity : Réponse HTTP avec status et body
+
+🏗️ SERVICES ET LOGIQUE MÉTIER
+────────────────────────────────────────────────────────────────────────────────
+
+15. UserRepository.java
+    ┕── Repository pour l'entité User
+    ┕── UTILITÉ : Accès aux données utilisateur avec Spring Data JPA
+    ┕── MÉTHODES PRINCIPALES :
+        • findByUsername() : Recherche par nom d'utilisateur
+        • findByEmail() : Recherche par email
+        • existsByUsername() : Vérifie si un nom d'utilisateur existe
+        • findByUsernameOrEmail() : Recherche par nom ou email
+    ┕── CONCEPTS CLÉS :
+        • JpaRepository : Interface Spring Data JPA
+        • @Query : Requêtes JPQL personnalisées
+        • Optional : Gestion des valeurs potentiellement nulles
+
+16. UserService.java
+    ┕── Service pour la gestion des utilisateurs
+    ┕── UTILITÉ : Logique métier pour les opérations sur les utilisateurs
+    ┕── FONCTIONNALITÉS :
+        • Création d'utilisateur avec hashage du mot de passe
+        • Recherche d'utilisateurs
+        • Mise à jour et désactivation de comptes
+        • Conversion User vers UserProfileDTO
+    ┕── CONCEPTS CLÉS :
+        • @Service : Marque la classe comme service
+        • @Transactional : Gère les transactions
+        • PasswordEncoder : Hashage sécurisé des mots de passe
+
+17. AuthService.java
+    ┕── Service d'authentification
+    ┕── UTILITÉ : Orchestre l'inscription, connexion et gestion des tokens
+    ┕── MÉTHODES PRINCIPALES :
+        • register() : Inscription d'un nouvel utilisateur
+        • login() : Connexion et génération de token
+        • getCurrentUserProfile() : Récupération du profil authentifié
+    ┕── CONCEPTS CLÉS :
+        • AuthenticationManager : Gestionnaire d'authentification Spring
+        • SecurityContextHolder : Contexte de sécurité actuel
+
+🎯 API ET CONTROLLERS
+────────────────────────────────────────────────────────────────────────────────
+
+18. AuthController.java
+    ┕── Controller pour l'authentification
+    ┕── UTILITÉ : Expose les endpoints d'authentification avec documentation Swagger
+    ┕── ENDPOINTS :
+        • POST /api/auth/register : Inscription
+        • POST /api/auth/login : Connexion
+        • GET /api/auth/profile : Profil utilisateur
+        • POST /api/auth/validate : Validation de token
+    ┕── ANNOTATIONS SWAGGER :
+        • @Tag : Groupe d'endpoints
+        • @Operation : Description de l'opération
+        • @ApiResponses : Exemples de réponses
+    ┕── CONCEPTS CLÉS :
+        • @RestController : Controller REST
+        • @RequestMapping : Mapping de base pour les endpoints
+        • @PreAuthorize : Sécurisation des endpoints
+
+19. SwaggerConfig.java
+    ┕── Configuration Swagger/OpenAPI 3
+    ┕── UTILITÉ : Documentation interactive de l'API
+    ┕── CONFIGURATIONS :
+        • Informations générales de l'API
+        • Serveurs disponibles (dev/prod)
+        • Authentification Bearer Token
+        • Exemples d'utilisation
+    ┕── CONCEPTS CLÉS :
+        • OpenAPI 3 : Standard de documentation d'API
+        • SecurityScheme : Configuration de l'authentification
+        • Swagger UI : Interface interactive
+
+================================================================================
+                                🔐 CONCEPTS DE SÉCURITÉ IMPLÉMENTÉS
+================================================================================
+
+1. JWT (JSON Web Token)
+   ┕── QU'EST-CE QUE C'EST : Token sécurisé contenant des informations utilisateur
+   ┕── STRUCTURE : Header.Payload.Signature
+   ┕── AVANTAGES :
+       • Stateless (pas de session côté serveur)
+       • Portable (peut être utilisé sur différents domaines)
+       • Contient des informations (claims)
+   ┕── SÉCURITÉ :
+       • Signature avec clé secrète
+       • Expiration automatique
+       • Validation côté serveur
+
+2. Spring Security
+   ┕── QU'EST-CE QUE C'EST : Framework de sécurité pour Spring
+   ┕── COMPOSANTS PRINCIPAUX :
+       • UserDetails : Interface pour les utilisateurs
+       • UserDetailsService : Service pour charger les utilisateurs
+       • AuthenticationManager : Gestionnaire d'authentification
+       • SecurityFilterChain : Chaîne de filtres de sécurité
+   ┕── CONFIGURATION :
+       • Désactivation CSRF (JWT stateless)
+       • Sessions stateless
+       • Autorisations par endpoint
+
+3. BCrypt
+   ┕── QU'EST-CE QUE C'EST : Algorithme de hashage de mots de passe
+   ┕── AVANTAGES :
+       • Salt automatique (protection contre les rainbow tables)
+       • Coût configurable (adaptation à la puissance des machines)
+       • Irréversible (impossible de retrouver le mot de passe original)
+
+4. Bean Validation
+   ┕── QU'EST-CE QUE C'EST : Validation automatique des données
+   ┕── ANNOTATIONS PRINCIPALES :
+       • @NotNull : Valeur non nulle
+       • @NotBlank : Chaîne non vide
+       • @Size : Taille de chaîne
+       • @Email : Format email
+       • @Pattern : Regex personnalisée
+
+================================================================================
+                                🧪 COMMENT TESTER L'APPLICATION
+================================================================================
+
+1. DÉMARRAGE
+   ┕── Commande : mvn spring-boot:run
+   ┕── URL : http://localhost:8080
+   ┕── Swagger UI : http://localhost:8080/swagger-ui.html
+
+2. TEST D'INSCRIPTION
+   ┕── Endpoint : POST /api/auth/register
+   ┕── Body JSON :
+   {
+     "username": "john_doe",
+     "email": "john@example.com",
+     "password": "password123",
+     "phone": "+33123456789",
+     "address": "123 Rue de la Paix",
+     "codePostal": "75001",
+     "role": "CLIENT"
+   }
+
+3. TEST DE CONNEXION
+   ┕── Endpoint : POST /api/auth/login
+   ┕── Body JSON :
+   {
+     "usernameOrEmail": "john_doe",
+     "password": "password123"
+   }
+
+4. TEST DE PROFIL (AVEC TOKEN)
+   ┕── Endpoint : GET /api/auth/profile
+   ┕── Header : Authorization: Bearer <token_jwt_reçu>
+
+5. TEST VIA SWAGGER UI
+   ┕── Ouvrir http://localhost:8080/swagger-ui.html
+   ┕── Cliquer sur "Authorize" et entrer le token
+   ┕── Tester les endpoints directement dans l'interface
+
+================================================================================
+                                📚 CONCEPTS POUR L'ENTRETIEN
+================================================================================
+
+QUESTIONS TECHNIQUES FRÉQUENTES :
+
+1. "Expliquez le fonctionnement de JWT"
+   ┕── RÉPONSE : JWT est un token sécurisé composé de 3 parties (Header.Payload.Signature).
+   Il contient des informations utilisateur et est signé avec une clé secrète.
+   Avantages : stateless, portable, contient des claims.
+
+2. "Pourquoi utiliser JWT plutôt que les sessions ?"
+   ┕── RÉPONSE : JWT est stateless (pas de stockage côté serveur), plus scalable,
+   permet l'utilisation sur différents domaines, et contient des informations.
+
+3. "Comment sécurisez-vous les mots de passe ?"
+   ┕── RÉPONSE : Utilisation de BCrypt avec salt automatique et coût configurable.
+   Les mots de passe ne sont jamais stockés en clair.
+
+4. "Expliquez Spring Security"
+   ┕── RÉPONSE : Framework de sécurité qui gère l'authentification et l'autorisation.
+   Composants principaux : UserDetails, UserDetailsService, AuthenticationManager.
+
+5. "Comment gérez-vous les erreurs ?"
+   ┕── RÉPONSE : GlobalExceptionHandler avec @RestControllerAdvice, exceptions
+   personnalisées, messages en français, codes HTTP appropriés.
+
+6. "Qu'est-ce que Bean Validation ?"
+   ┕── RÉPONSE : Validation automatique des données avec annotations (@NotNull,
+   @Email, @Size, etc.). Exécutée automatiquement sur les DTOs.
+
+7. "Expliquez Swagger/OpenAPI"
+   ┕── RÉPONSE : Documentation interactive de l'API. Permet de tester les endpoints
+   directement, génère automatiquement la documentation, supporte l'authentification.
+
+8. "Comment testez-vous votre API ?"
+   ┕── RÉPONSE : Via Swagger UI, Postman, ou tests unitaires. Swagger permet de
+   tester directement dans le navigateur avec authentification.
+
+9. "Qu'est-ce que CORS ?"
+   ┕── RÉPONSE : Cross-Origin Resource Sharing. Permet aux navigateurs d'autoriser
+   les requêtes cross-origin. Configuré dans SecurityConfig.
+
+10. "Expliquez les DTOs"
+    ┕── RÉPONSE : Data Transfer Objects. Objets pour transférer des données entre
+    couches. Sécurisent les données (pas de mot de passe exposé), validation automatique.
+
+================================================================================
+                                🎯 PROCHAINES ÉTAPES (SPRINT 2)
+================================================================================
+
+OBJECTIFS POUR LE SPRINT 2 :
+1. Gestion des boutiques (CRUD complet)
+2. Gestion des catégories et produits
+3. Système de variantes et attributs
+4. Upload d'images
+5. Tests unitaires et d'intégration
+
+COMPÉTENCES À DÉVELOPPER :
+1. Tests avec JUnit et Mockito
+2. Upload de fichiers avec Spring
+3. Relations JPA complexes
+4. Pagination et filtrage
+5. Cache avec Redis (optionnel)
+
+================================================================================
+                                📖 RESSOURCES POUR APPRENDRE
+================================================================================
+
+DOCUMENTATION OFFICIELLE :
+- Spring Security : https://spring.io/projects/spring-security
+- JWT : https://jwt.io/
+- Swagger : https://swagger.io/
+- Bean Validation : https://beanvalidation.org/
+
+VIDÉOS ET TUTORIAUX :
+- Spring Security avec JWT (YouTube)
+- Swagger UI Tutorial (YouTube)
+- Spring Boot Best Practices (YouTube)
+
+LIVRES RECOMMANDÉS :
+- "Spring in Action" par Craig Walls
+- "Spring Security in Action" par Laurentiu Spilca
+- "Clean Code" par Robert C. Martin
+
+================================================================================
+                                ✅ CHECKLIST DE VALIDATION
+================================================================================
+
+FONCTIONNALITÉS IMPLÉMENTÉES :
+□ Inscription utilisateur avec validation
+□ Connexion avec JWT
+□ Récupération du profil utilisateur
+□ Validation de tokens JWT
+□ Gestion des rôles (CLIENT, VENDOR, ADMIN)
+□ Documentation Swagger complète
+□ Gestion d'erreurs robuste
+□ Tests via Swagger UI
+
+CONCEPTS MAÎTRISÉS :
+□ JWT et son fonctionnement
+□ Spring Security configuration
+□ Bean Validation
+□ DTOs et leur utilité
+□ Repository pattern
+□ Service layer
+□ Exception handling
+□ Swagger/OpenAPI
+
+PRÉPARATION ENTRETIEN :
+□ Comprendre chaque composant
+□ Savoir expliquer l'architecture
+□ Connaître les concepts de sécurité
+□ Pouvoir démontrer le fonctionnement
+□ Avoir des exemples concrets
+
+================================================================================
+                                🎉 CONCLUSION
+================================================================================
+
+Ce Sprint 1 a permis d'établir une base solide pour l'authentification et la sécurité
+de la plateforme ESouk. L'implémentation JWT avec Swagger fournit une API sécurisée
+et bien documentée, prête pour les développements futurs.
+
+POINTS FORTS :
+- Architecture claire et modulaire
+- Sécurité robuste avec JWT
+- Documentation complète avec Swagger
+- Gestion d'erreurs professionnelle
+- Code maintenable et extensible
+
+Le système est maintenant prêt pour le Sprint 2 qui se concentrera sur la gestion
+des boutiques et des produits.
+
+================================================================================
+                                📝 NOTES PERSONNELLES
+================================================================================
+
+[Espace pour tes notes personnelles, questions, difficultés rencontrées, etc.]
+
+================================================================================ 

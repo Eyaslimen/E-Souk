@@ -1,0 +1,88 @@
+<div class="product-card" [class.out-of-stock]="isOutOfStock()" (click)="viewDetails()">
+  
+    <!-- Badge de promotion -->
+    <div *ngIf="product.isOnSale" class="sale-badge">
+      -{{ product.discountPercentage }}%
+    </div>
+  
+    <!-- Badge rupture de stock -->
+    <div *ngIf="isOutOfStock()" class="stock-badge">
+      Rupture de stock
+    </div>
+  
+    <!-- Image du produit -->
+    <div class="product-image-container">
+      <img 
+        [src]="product.image" 
+        [alt]="product.name"
+        class="product-image"
+      >
+      
+      <!-- Bouton favoris -->
+      <button 
+        class="favorite-btn" 
+        [class.active]="product.isFavorite"
+        (click)="toggleFavorite($event)"
+        [attr.aria-label]="product.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+      >
+      <i *ngIf="product.isFavorite" class="fa-solid fa-heart" style="color: red;"></i>
+      <i *ngIf="!product.isFavorite" class="fa-solid fa-heart"></i>
+        <!-- <i class="heart-icon" [class.filled]="product.isFavorite">
+          {{ product.isFavorite ? '❤️' : '🤍' }}
+        </i> -->
+      </button>
+    </div>
+  
+    <!-- Informations du produit -->
+    <div class="product-info">
+      
+      <!-- Nom du produit -->
+      <h3 class="product-name">{{ product.name }}</h3>
+      
+      <!-- Prix -->
+      <div class="price-container">
+        <span class="current-price">
+          {{ formatPrice(getDiscountedPrice()) }}
+        </span>
+        <span *ngIf="product.isOnSale" class="original-price">
+          {{ formatPrice(product.price) }}
+        </span>
+      </div>
+  
+      <!-- Note et avis (si disponibles) -->
+      <div *ngIf="product.rating" class="rating-container">
+        <div class="stars">
+          <span class="star-rating"><i  class="fa-solid fa-star" style="color: rgb(255, 230, 0);"></i> {{ product.rating }}</span>
+          <span class="reviews-count">({{ product.totalReviews || 0 }})</span>
+        </div>
+      </div>
+  
+      <!-- Boutique -->
+      <div class="shop-info" (click)="viewShop($event)">
+        <img 
+          *ngIf="product.shopLogo" 
+          [src]="product.shopLogo" 
+          [alt]="product.shopName + ' logo'"
+          class="shop-logo"
+        >
+        <span class="shop-name">By {{ product.shopName }}</span>
+      </div>
+  
+      <!-- Actions -->
+      <div class="product-actions">
+        <button 
+          class="add-to-cart-btn" 
+          [disabled]="isOutOfStock() || product.isInCart"
+          (click)="addProductToCart($event)"
+        >
+          <span *ngIf="!product.isInCart && !isOutOfStock()">Ajouter au panier</span>
+          <span *ngIf="product.isInCart">Dans le panier</span>
+          <span *ngIf="isOutOfStock()">Indisponible</span>
+        </button>
+        
+        <button class="details-btn" (click)="viewDetails(); $event.stopPropagation()">
+          Détails
+        </button>
+      </div>
+    </div>
+  </div>

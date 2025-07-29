@@ -1,0 +1,347 @@
+
+  
+  .footer-dark {
+    background-color: var(--slate-900);
+    color: var(--white);
+    width: 100%;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .footer-main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    align-items: start;
+  }
+  
+  @media (min-width: 1024px) {
+    .footer-main {
+      grid-template-columns: 2fr 1fr;
+      gap: 4rem;
+    }
+  }
+  
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .logo-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--white);
+    width: fit-content;
+  }
+  
+  .logo-container {
+    width: 3rem;
+    height: 3rem;
+    background: linear-gradient(135deg, var(--blue-500), var(--purple-600));
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .logo-icon {
+    height: 1.75rem;
+    width: 1.75rem;
+    color: var(--white);
+  }
+  
+  .logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+  
+  .mission-text {
+    color: var(--gray-300);
+    font-size: 1.125rem;
+    line-height: 1.6;
+    max-width: 28rem;
+    margin: 0;
+  }
+  
+  .app-buttons-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  @media (min-width: 1024px) {
+    .app-buttons-section {
+      align-items: flex-end;
+    }
+  }
+  
+  .app-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  .app-button {
+    display: block;
+    background-color: var(--slate-800);
+    border: 1px solid var(--slate-700);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    text-decoration: none;
+    color: var(--white);
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .app-button:hover {
+    background-color: var(--slate-700);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .app-button-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .app-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .google-play {
+    background: linear-gradient(135deg, var(--green-400), var(--blue-500));
+  }
+  
+  .app-store {
+    background: linear-gradient(135deg, var(--blue-400), var(--purple-500));
+  }
+  
+  .icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--white);
+  }
+  
+  .app-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  
+  .app-subtitle {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  
+  .app-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1;
+  }
+  
+  .footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 0;
+  }
+  
+  .nav-link {
+    color: var(--gray-300);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+    position: relative;
+  }
+  
+  .nav-link:hover {
+    color: var(--white);
+  }
+  
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--blue-500);
+    transition: width 0.2s ease;
+  }
+  
+  .nav-link:hover::after {
+    width: 100%;
+  }
+  
+  .footer-divider {
+    border: none;
+    border-top: 1px solid var(--slate-700);
+    margin: 2rem 0 1.5rem 0;
+    width: 100%;
+  }
+  
+  .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  @media (min-width: 768px) {
+    .footer-bottom {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+  
+  .copyright {
+    color: var(--gray-400);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+  
+  .social-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .social-link {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: var(--slate-800);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid var(--slate-700);
+  }
+  
+  .social-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--white);
+  }
+  
+  .social-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .facebook:hover {
+    background-color: var(--blue-600);
+    border-color: var(--blue-600);
+  }
+  
+  .twitter:hover {
+    background-color: var(--slate-600);
+    border-color: var(--slate-600);
+  }
+  
+  .instagram:hover {
+    background-color: var(--pink-600);
+    border-color: var(--pink-600);
+  }
+  
+  .linkedin:hover {
+    background-color: var(--blue-700);
+    border-color: var(--blue-700);
+  }
+  
+  /* Responsive */
+  @media (max-width: 1023px) {
+    .app-buttons-section {
+      align-items: flex-start;
+    }
+    
+    .app-buttons {
+      max-width: 100%;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .container {
+      padding: 2rem 1rem;
+    }
+    
+    .footer-main {
+      gap: 2rem;
+    }
+    
+    .footer-nav {
+      gap: 1.5rem;
+      justify-content: center;
+    }
+    
+    .nav-link {
+      font-size: 0.875rem;
+    }
+    
+    .mission-text {
+      font-size: 1rem;
+    }
+    
+    .logo-text {
+      font-size: 1.25rem;
+    }
+    
+    .social-links {
+      justify-content: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .footer-nav {
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .app-buttons {
+      width: 100%;
+      max-width: 250px;
+    }
+  }
+  
+  svg {
+    display: block;
+  }
+  
+  .social-link:focus,
+  .nav-link:focus,
+  .app-button:focus,
+  .logo-link:focus {
+    outline: 2px solid var(--blue-500);
+    outline-offset: 2px;
+  }

@@ -1,0 +1,210 @@
+<div class="min-h-screen bg-background">
+  <app-navbar></app-navbar>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 40%; animation-delay: 0.5s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 1.5s;"></div>
+    <div class="particle" style="left: 60%; animation-delay: 2.5s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 0.8s;"></div>
+    <div class="particle" style="left: 80%; animation-delay: 1.8s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 2.8s;"></div>
+
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="hero-title">Créez votre boutique en ligne en quelques minutes      </h1>
+      <p class="hero-subtitle">
+        Une plateforme qui connecte les clients aux vendeurs locaux, sans que ces derniers aient besoin de créer
+        leur propre site web
+      </p>
+      <div class="hero-buttons">
+         <a href="/shops" class="btn btn-secondary btn-lg"><i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 5px;"></i> Créer ma boutique</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="container mx-auto px-4">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <i class="fa-solid fa-shop stat-icon text-blue-600" style="font-size: 30px;"></i>
+          <h3 class="stat-number">500+</h3>
+          <p class="stat-label">Boutiques Partenaires</p>
+        </div>
+        <div class="stat-item">
+          <i class="fa-solid fa-users stat-icon text-green-600" style="font-size: 30px;"></i>
+          <h3 class="stat-number">10K+</h3>
+          <p class="stat-label">Clients Satisfaits</p>
+        </div>
+        <div class="stat-item">
+          <i class="fa-solid fa-bag-shopping stat-icon text-purple-600" style="font-size: 30px;"></i>
+          <h3 class="stat-number">50K+</h3>
+          <p class="stat-label">Produits Disponibles</p>
+        </div>
+        <div class="stat-item">
+          <i class="fa-solid fa-cart-shopping stat-icon text-orange-600" style="font-size: 30px;"></i>
+          <h3 class="stat-number">20K+</h3>
+          <p class="stat-label">Commandes passées</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Boutiques en tendance -->
+  <section class="section-padding">
+    <div class="container mx-auto px-4">
+      <div class="section-header">
+        <h2 class="section-title">Boutiques en Tendance</h2>
+        <a href="/shops" class="btn btn-outline-blue">Voir toutes les boutiques</a>
+      </div>
+      <div class="shops-grid">
+        <app-shop-card 
+        *ngFor="let shop of shops;" 
+        [shop]="shop">
+      </app-shop-card>
+      </div>
+    </div> 
+  </section>
+
+  <!-- produits populaires -->
+  <section class="section-padding bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="section-header">
+        <h2 class="section-title">Produits Populaires</h2>
+        <a href="/products" class="btn btn-outline-blue">Voir tous les produits</a>
+      </div>
+      <div class="products-grid">
+        <app-product-card 
+        *ngFor="let product of products;" 
+        [product]="product" ></app-product-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Create Your Shop Section -->
+  <section class="section-padding">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="section-title">Comment créer votre boutique en ligne ?</h2>
+        <p class="section-subtitle">
+          Suivez ces étapes simples pour lancer votre boutique sur E-Souk et commencer à vendre vos produits
+        </p>
+      </div>
+      <div class="steps-container">
+        <div class="steps-grid">
+
+          <!-- Step 1 -->
+          <div class="step-card step-blue">
+            <div class="step-number">1</div>
+            <h3 class="step-title">Inscription Gratuite</h3>
+            <p class="step-description">
+              Créez votre compte vendeur en quelques minutes. Aucun frais d'inscription, aucun engagement.
+            </p>
+            <div class="step-time">
+              <div class="time-indicator"></div>
+              <span>2 minutes</span>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-card step-green">
+            <div class="step-number">2</div>
+            <h3 class="step-title">Configurez Votre Boutique</h3>
+            <p class="step-description">
+              Personnalisez votre boutique avec vos informations, logo, et description. Notre assistant IA vous aide.
+            </p>
+            <div class="step-time">
+              <div class="time-indicator"></div>
+              <span>10 minutes</span>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-card step-purple">
+            <div class="step-number">3</div>
+            <h3 class="step-title">Ajoutez Vos Produits</h3>
+            <p class="step-description">
+              Uploadez vos produits avec photos et descriptions. Commencez à vendre immédiatement !
+            </p>
+            <div class="step-time">
+              <div class="time-indicator"></div>
+              <span>5 min/produit</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="text-center mt-12">
+          <a href="/auth/register?type=seller" class="btn btn-gradient btn-lg">
+            Créer ma boutique gratuitement
+          </a>
+          <p class="cta-benefits">✓ Gratuit à vie • ✓ Aucun engagement • ✓ Support inclus</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="section-padding">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="section-title">Ce que disent nos utilisateurs</h2>
+        <p class="section-subtitle">Découvrez les témoignages de nos clients et vendeurs satisfaits</p>
+      </div>
+
+      <div class="testimonials-grid">
+        @for (testimonial of testimonials(); track testimonial) {
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <svg class="star-icon" *ngFor="let star of [1,2,3,4,5]" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+            </svg>
+          </div>
+          <p class="testimonial-text">{{ testimonial.text }}</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" [class]="testimonial.avatarClass">
+              <span>{{ testimonial.initials }}</span>
+            </div>
+            <div class="author-info">
+              <p class="author-name">{{ testimonial.name }}</p>
+              <p class="author-role">{{ testimonial.role }}</p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="section-title">Questions Fréquentes</h2>
+        <p class="section-subtitle">Trouvez rapidement les réponses à vos questions</p>
+      </div>
+
+      <div class="faq-container">
+        <div class="faq-grid">
+          @for (faq of faqs(); track faq) {
+          <div class="faq-item">
+            <h3 class="faq-question">{{ faq.question }}</h3>
+            <p class="faq-answer">{{ faq.answer }}</p>
+          </div>
+          }
+        </div>
+      </div>
+      <div class="mt-8">
+        <a href="/faq" class=" voir-plus">Voir plus de questions <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Footer -->
+  <app-footer></app-footer>
+  
+</div> 

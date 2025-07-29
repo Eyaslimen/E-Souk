@@ -1,0 +1,63 @@
+<div class="shop-card" (click)="visitShop()">
+    <!-- Header avec logo et informations principales -->
+    <div class="shop-header">
+      <div class="shop-info">
+        <div class="logo-container">
+          <img 
+           
+            [src]="shop.logo" 
+            [alt]="shop.brandName + ' logo'"
+            class="shop-logo"
+          >
+          <ng-template #logoFallback>
+            <div class="logo-fallback">
+              {{ getInitials(shop.brandName) }}
+            </div>
+          </ng-template>
+        </div>
+        
+        <div class="brand-info">
+          <div class="brand-name-container">
+            <h3 class="brand-name">{{ shop.brandName }}</h3>
+            <!-- <span *ngIf="shop.isVerified" class="verified-badge">✓</span> -->
+          </div>
+          <p class="owner-name">par {{ shop.owner }}</p>
+        </div>
+      </div>
+      <div class="brand-add">
+        <i  *ngIf="shop.isVerified" class="fa-solid fa-heart-circle-plus" style="color: #fa0000;"></i>
+        <i  *ngIf="!shop.isVerified" class="fa-solid fa-heart-circle-plus"></i>
+      </div>
+    </div>
+  
+    <!-- Contenu principal -->
+    <div class="shop-content">
+      <div class="category-badge">{{ shop.category }}</div>
+      
+      <p class="shop-description">{{ shop.description }}</p>
+      <div class="location">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>{{ shop.location }}</span>
+      </div>
+      <div class="shop-stats">
+        <div class="followers">
+          <i class="fa-solid fa-user"></i>
+          <span>{{ formatFollowers(shop.followers) }} abonnés</span>
+        </div>
+        <div class="rating-reviews">
+          <div class="rating">
+            <i class="fa-solid fa-star" style="color: rgb(255, 221, 0);"></i>
+            <span>{{ shop.rating }}</span>
+            <span class="reviews-count">({{ shop.totalReviews }})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Footer avec bouton -->
+    <div class="shop-footer">
+      <button class="visit-button" (click)="visitShop(); $event.stopPropagation()">
+        <i class="fa-solid fa-eye"></i> Visiter la boutique
+      </button>
+    </div>
+  </div>
