@@ -2,6 +2,7 @@ package com.example.e_souk.Service;
 
 import com.example.e_souk.Dto.UserProfileDTO;
 import com.example.e_souk.Exception.AuthException;
+import com.example.e_souk.Mappers.UserMapper;
 import com.example.e_souk.Model.User;
 import com.example.e_souk.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,7 +74,20 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> AuthException.userNotFound(userId.toString()));
     }
-    
+       /**
+     * Trouve un utilisateur par son ID
+     * @param userId ID de l'utilisateur
+     * @return Utilisateur supprimer
+     * @throws AuthException si l'utilisateur n'existe pas
+     */
+    public boolean deleteById(UUID userId) {
+        log.debug("Suppression de l'utilisateur par ID: {}", userId);
+        if (!userRepository.existsById(userId)) {
+            return false;
+        }
+        userRepository.deleteById(userId);
+        return true;
+    }
     /**
      * Trouve un utilisateur par son nom d'utilisateur
      * @param username Nom d'utilisateur
@@ -113,16 +128,26 @@ public class UserService {
     }
     
     /**
-     * Met à jour un utilisateur
-     * @param user Utilisateur à mettre à jour
+     * Met à jour un utilisateur existant à partir du UserProfileDTO
+     * @param userDTO Données du profil utilisateur à mettre à jour
      * @return Utilisateur mis à jour
      */
-    public User updateUser(User user) {
-        log.info("Mise à jour de l'utilisateur: {}", user.getUsername());
-        
+    public User updateUser(UserProfileDTO userDTO) {
+        // Récupérer l'utilisateur existant
+        User user = findById(userDTO.getId());
+
+        // Mettre à jour les champs modifiables
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setPicture(userDTO.getPicture());
+        user.setPhone(userDTO.getPhone());
+        user.setAddress(userDTO.getAddress());
+        user.setCodePostal(userDTO.getCodePostal());
+        user.setRole(userDTO.getRole());
+        user.setIsActive(userDTO.getIsActive());
         user.setUpdatedAt(LocalDateTime.now());
+
         User updatedUser = userRepository.save(user);
-        
         log.info("Utilisateur mis à jour avec succès: {}", updatedUser.getUsername());
         return updatedUser;
     }
@@ -169,10 +194,13 @@ public class UserService {
      * @param newPassword Nouveau mot de passe
      * @return Utilisateur avec le nouveau mot de passe
      */
-    public User changePassword(UUID userId, String newPassword) {
+    public User changePassword(UUID userId,String oldPassword, String newPassword) {
         log.info("Changement de mot de passe pour l'utilisateur: {}", userId);
         
         User user = findById(userId);
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new AuthException("Ancien mot de passe incorrect");
+        }
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setUpdatedAt(LocalDateTime.now());
         
@@ -207,25 +235,17 @@ public class UserService {
     public List<User> findAllActive() {
         return userRepository.findAllActive();
     }
-    
     /**
-     * Convertit un User en UserProfileDTO
-     * @param user Utilisateur à convertir
-     * @return UserProfileDTO
+     * Trouve tous les utilisateurs 
+     * @return Liste des utilisateurs
      */
-    public UserProfileDTO toUserProfileDTO(User user) {
-        return UserProfileDTO.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .picture(user.getPicture())
-                .phone(user.getPhone())
-                .address(user.getAddress())
-                .codePostal(user.getCodePostal())
-                .role(user.getRole())
-                .isActive(user.getIsActive())
-                .joinedAt(user.getJoinedAt())
-                .updatedAt(user.getUpdatedAt())
-                .build();
+    public List<UserProfileDTO> findAll() {
+        List<User> users = userRepository.findAll();
+        List<UserProfileDTO> userDTOs = new ArrayList<>();
+        for (User user : users) {
+            userDTOs.add(UserMapper.toUserProfileDTO(user));
+        }
+        return userDTOs;
     }
+    
 } 

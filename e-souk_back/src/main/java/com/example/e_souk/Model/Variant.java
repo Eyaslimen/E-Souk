@@ -44,7 +44,7 @@ public class Variant {
      * Stock Keeping Unit - identifiant unique pour la gestion des stocks
      * Doit être unique dans toute la plateforme
      */
-    @Column(name = "sku", nullable = false, unique = true, length = 50)
+    @Column(name = "sku", nullable = false, length = 50)
     @NotBlank(message = "Le SKU est obligatoire")
     @Size(min = 3, max = 50, message = "Le SKU doit contenir entre 3 et 50 caractères")
     private String sku;

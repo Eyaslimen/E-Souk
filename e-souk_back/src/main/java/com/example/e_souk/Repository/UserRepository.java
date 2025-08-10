@@ -24,7 +24,11 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * @return Optional contenant l'utilisateur s'il existe
      */
     Optional<User> findByUsername(String username);
-    
+    /**
+     * Trouve tous les utilisateurs
+     * @return Liste de tous les utilisateurs
+     */
+    List<User> findAll();
     /**
      * Trouve un utilisateur par son email
      * @param email Email à rechercher
@@ -76,6 +80,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      */
     @Query("SELECT u FROM User u WHERE u.role = :role AND u.isActive = true")
     List<User> findActiveByRole(@Param("role") Role role);
+    
+    /**
+     * Supprimer un utilisateur par son ID
+     * @param id ID de l'utilisateur à supprimer
+     */
+    void deleteById(UUID id);
     
     /**
      * Compte le nombre d'utilisateurs par rôle

@@ -114,8 +114,8 @@ public class ProductFavorite {
      * Récupère les images du produit
      * @return Tableau d'URLs des images du produit
      */
-    public String[] getProductPictures() {
-        return product != null ? product.getPictures() : new String[0];
+    public String getProductPicture() {
+        return product != null ? product.getPicture() : "";
     }
     
     /**
@@ -123,8 +123,8 @@ public class ProductFavorite {
      * @return URL de la première image ou chaîne vide
      */
     public String getFirstProductPicture() {
-        String[] pictures = getProductPictures();
-        return pictures.length > 0 ? pictures[0] : "";
+        String pictures = getProductPicture();
+        return pictures.length() > 0 ? pictures.split(",")[0] : "";
     }
     
     /**

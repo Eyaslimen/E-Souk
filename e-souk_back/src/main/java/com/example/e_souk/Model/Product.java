@@ -60,8 +60,8 @@ public class Product {
      * Stockées comme un tableau de URLs séparées par des virgules
      * PostgreSQL peut gérer les tableaux directement
      */
-    @Column(name = "pictures", columnDefinition = "TEXT[]")
-    private String[] pictures;
+    @Column(name = "picture")
+    private String picture;
     
     /**
      * Indique si le produit est actif et visible

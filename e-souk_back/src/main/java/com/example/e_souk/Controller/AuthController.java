@@ -1,3 +1,7 @@
+/**
+ * This Java class is an authentication controller that handles user registration, login, profile
+ * retrieval, and JWT token validation with Swagger documentation.
+ */
 package com.example.e_souk.Controller;
 
 import com.example.e_souk.Dto.AuthResponseDTO;
@@ -16,12 +20,17 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
+import javax.swing.Spring;
+// @ApiResponses : ça est du swagger doc , peut etre utilisée pour documenter les réponses de l'API
 /**
  * Controller pour l'authentification
  * Gère l'inscription, la connexion et la récupération du profil utilisateur
@@ -34,68 +43,18 @@ import java.util.Map;
 public class AuthController {
     
     private final AuthService authService;
-    
     /**
      * Inscription d'un nouvel utilisateur
      * @param registerRequest DTO contenant les données d'inscription
      * @return Réponse avec token JWT et informations utilisateur
      */
-    @PostMapping("/register")
-    @Operation(
+        @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)    
+        @Operation(
         summary = "Inscription d'un nouvel utilisateur",
         description = "Crée un nouveau compte utilisateur et retourne un token JWT pour l'authentification"
     )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "201",
-            description = "Inscription réussie",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = AuthResponseDTO.class),
-                examples = @ExampleObject(
-                    name = "Inscription réussie",
-                    value = """
-                    {
-                        "token": "eyJhbGciOiJIUzUxMiJ9...",
-                        "type": "Bearer",
-                        "id": "123e4567-e89b-12d3-a456-426614174000",
-                        "username": "john_doe",
-                        "email": "john@example.com",
-                        "role": "CLIENT",
-                        "picture": null,
-                        "issuedAt": "2024-01-15T10:30:00",
-                        "expiresAt": "2024-01-16T10:30:00",
-                        "message": "Inscription réussie"
-                    }
-                    """
-                )
-            )
-        ),
-        @ApiResponse(
-            responseCode = "400",
-            description = "Données invalides ou utilisateur déjà existant",
-            content = @Content(
-                mediaType = "application/json",
-                examples = @ExampleObject(
-                    name = "Erreur de validation",
-                    value = """
-                    {
-                        "timestamp": "2024-01-15T10:30:00",
-                        "status": 400,
-                        "error": "Erreur de validation",
-                        "message": "Les données fournies sont invalides",
-                        "details": {
-                            "username": "Le nom d'utilisateur est obligatoire",
-                            "email": "L'email doit être valide"
-                        }
-                    }
-                    """
-                )
-            )
-        )
-    })
     public ResponseEntity<AuthResponseDTO> register(
-            @Valid @RequestBody RegisterRequestDTO registerRequest) {
+            @ModelAttribute RegisterRequestDTO registerRequest) {
         
         log.info("Requête d'inscription reçue pour: {}", registerRequest.getUsername());
         
@@ -103,6 +62,7 @@ public class AuthController {
         
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
     
     /**
      * Connexion d'un utilisateur
@@ -114,58 +74,10 @@ public class AuthController {
         summary = "Connexion d'un utilisateur",
         description = "Authentifie un utilisateur avec ses identifiants et retourne un token JWT"
     )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Connexion réussie",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = AuthResponseDTO.class),
-                examples = @ExampleObject(
-                    name = "Connexion réussie",
-                    value = """
-                    {
-                        "token": "eyJhbGciOiJIUzUxMiJ9...",
-                        "type": "Bearer",
-                        "id": "123e4567-e89b-12d3-a456-426614174000",
-                        "username": "john_doe",
-                        "email": "john@example.com",
-                        "role": "CLIENT",
-                        "picture": null,
-                        "issuedAt": "2024-01-15T10:30:00",
-                        "expiresAt": "2024-01-16T10:30:00",
-                        "message": "Connexion réussie"
-                    }
-                    """
-                )
-            )
-        ),
-        @ApiResponse(
-            responseCode = "401",
-            description = "Identifiants invalides",
-            content = @Content(
-                mediaType = "application/json",
-                examples = @ExampleObject(
-                    name = "Identifiants invalides",
-                    value = """
-                    {
-                        "timestamp": "2024-01-15T10:30:00",
-                        "status": 401,
-                        "error": "Identifiants invalides",
-                        "message": "Nom d'utilisateur/email ou mot de passe incorrect"
-                    }
-                    """
-                )
-            )
-        )
-    })
     public ResponseEntity<AuthResponseDTO> login(
             @Valid @RequestBody LoginRequestDTO loginRequest) {
-        
         log.info("Requête de connexion reçue pour: {}", loginRequest.getUsernameOrEmail());
-        
         AuthResponseDTO response = authService.login(loginRequest);
-        
         return ResponseEntity.ok(response);
     }
     
@@ -174,63 +86,18 @@ public class AuthController {
      * @return Profil utilisateur
      */
     @GetMapping("/profile")
+        // Lorsque tu utilises @PreAuthorize, Spring Security intercepte l’appel à la méthode avant son exécution, et :
+        // Accède à l’utilisateur courant via le SecurityContextHolder
+        // Vérifie la condition (isAuthenticated(), hasRole(...), etc.)
+        // S’il n’a pas les droits => Exception AccessDeniedException.
     @PreAuthorize("isAuthenticated()")
     @Operation(
         summary = "Récupération du profil utilisateur",
         description = "Récupère les informations du profil de l'utilisateur authentifié"
     )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Profil récupéré avec succès",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = UserProfileDTO.class),
-                examples = @ExampleObject(
-                    name = "Profil utilisateur",
-                    value = """
-                    {
-                        "id": "123e4567-e89b-12d3-a456-426614174000",
-                        "username": "john_doe",
-                        "email": "john@example.com",
-                        "picture": null,
-                        "phone": "+33123456789",
-                        "address": "123 Rue de la Paix",
-                        "codePostal": "75001",
-                        "role": "CLIENT",
-                        "isActive": true,
-                        "joinedAt": "2024-01-01T10:00:00",
-                        "updatedAt": "2024-01-15T10:30:00"
-                    }
-                    """
-                )
-            )
-        ),
-        @ApiResponse(
-            responseCode = "401",
-            description = "Non authentifié",
-            content = @Content(
-                mediaType = "application/json",
-                examples = @ExampleObject(
-                    name = "Non authentifié",
-                    value = """
-                    {
-                        "timestamp": "2024-01-15T10:30:00",
-                        "status": 401,
-                        "error": "Non authentifié",
-                        "message": "Token d'authentification requis"
-                    }
-                    """
-                )
-            )
-        )
-    })
     public ResponseEntity<UserProfileDTO> getProfile() {
-        
         log.debug("Requête de récupération de profil");
-        
         UserProfileDTO profile = authService.getCurrentUserProfile();
-        
         return ResponseEntity.ok(profile);
     }
     
@@ -244,40 +111,6 @@ public class AuthController {
         summary = "Validation d'un token JWT",
         description = "Vérifie si un token JWT est valide et non expiré"
     )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Token valide",
-            content = @Content(
-                mediaType = "application/json",
-                examples = @ExampleObject(
-                    name = "Token valide",
-                    value = """
-                    {
-                        "valid": true,
-                        "message": "Token valide"
-                    }
-                    """
-                )
-            )
-        ),
-        @ApiResponse(
-            responseCode = "400",
-            description = "Token invalide",
-            content = @Content(
-                mediaType = "application/json",
-                examples = @ExampleObject(
-                    name = "Token invalide",
-                    value = """
-                    {
-                        "valid": false,
-                        "message": "Token invalide ou expiré"
-                    }
-                    """
-                )
-            )
-        )
-    })
     public ResponseEntity<Object> validateToken(@RequestParam String token) {
         
         log.debug("Requête de validation de token");
@@ -291,3 +124,23 @@ public class AuthController {
         }
     }
 } 
+
+
+    // /**
+    //  * Register a new user with an optional profile picture.
+    //  * @param registerRequest DTO contenant les données d'inscription (via formulaire multipart).
+    //  * @param picture Fichier image optionnel pour la photo de profil.
+    //  * @return Réponse avec token JWT et informations utilisateur
+    //  */
+    // @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // @Operation(
+    //     summary = "Inscription d'un nouvel utilisateur",
+    //     description = "Crée un nouveau compte utilisateur avec une photo de profil optionnelle et retourne un token JWT"
+    // )
+    // public ResponseEntity<AuthResponseDTO> register(
+    //         @ModelAttribute RegisterRequestDTO registerRequest,
+    //         @RequestPart(value = "picture", required = false) MultipartFile picture) {
+    //     log.info("Requête d'inscription reçue pour: {}", registerRequest.getUsername());
+    //     AuthResponseDTO response = authService.register(registerRequest, picture);
+    //     return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    // }

@@ -1,0 +1,26 @@
+package com.example.e_souk.Dto;
+
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateShopRequestDTO {
+    @Size(min = 2, max = 100, message = "Le nom de la marque doit contenir entre 2 et 100 caractères")
+    private String brandName;
+
+    @Size(max = 1000, message = "La description ne peut pas dépasser 1000 caractères")
+    private String description;
+
+    @DecimalMin(value = "0.0", message = "Les frais de livraison ne peuvent pas être négatifs")
+    @DecimalMax(value = "100.0", message = "Les frais de livraison ne peuvent pas dépasser 100€")
+    private Float deliveryFee;
+
+    @Size(max = 255, message = "L'adresse ne peut pas dépasser 255 caractères")
+    private String address;
+
+    private Boolean isActive;
+}

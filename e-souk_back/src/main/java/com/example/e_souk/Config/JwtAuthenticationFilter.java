@@ -19,7 +19,7 @@ import java.io.IOException;
 
 /**
  * Filtre d'authentification JWT pour Spring Security
- * Intercepte chaque requête pour vérifier et valider les tokens JWT
+ * Intercepte chaque requête avant qu'elle n'atteigne le contrôleur pour vérifier et valider les tokens JWT
  */
 @Component
 @RequiredArgsConstructor
@@ -104,10 +104,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         
         // Ne pas appliquer le filtre sur les endpoints publics
-        return path.startsWith("/api/auth/") || 
-               path.startsWith("/swagger-ui/") || 
-               path.startsWith("/v3/api-docs/") ||
-               path.equals("/swagger-ui.html") ||
-               path.equals("/v3/api-docs");
+        return (path.startsWith("/api/auth/") && !"/api/auth/profile".equals(path))
+            || path.startsWith("/swagger-ui/")
+            || path.startsWith("/v3/api-docs/")
+            || path.equals("/swagger-ui.html")
+            || path.equals("/v3/api-docs");
     }
 } 

@@ -18,8 +18,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class AuthResponseDTO {
-    
-    /**
+
+    /**    
      * Token JWT pour l'authentification
      */
     private String token;

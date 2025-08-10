@@ -1,0 +1,148 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Inscription</h2>
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="username">Username *</label>
+          <input 
+            id="username" 
+            type="text" 
+            formControlName="username"
+            placeholder="Votre nom d'utilisateur"
+            [class.error]="isFieldInvalid('username')"
+          />
+          <div *ngIf="isFieldInvalid('username')" class="error-text">
+            Username requis (3-20 caractères)
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input 
+            id="email" 
+            type="email" 
+            formControlName="email"
+            placeholder="votre@email.com"
+            [class.error]="isFieldInvalid('email')"
+          />
+          <div *ngIf="isFieldInvalid('email')" class="error-text">
+            Email valide requis
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Mot de passe *</label>
+        <input 
+          id="password" 
+          type="password" 
+          formControlName="password"
+          placeholder="Minimum 6 caractères"
+          [class.error]="isFieldInvalid('password')"
+        />
+        <div *ngIf="isFieldInvalid('password')" class="error-text">
+          Mot de passe requis (minimum 6 caractères)
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Téléphone *</label>
+          <input 
+            id="phone" 
+            type="tel" 
+            formControlName="phone"
+            placeholder="06 12 34 56 78"
+            [class.error]="isFieldInvalid('phone')"
+          />
+          <div *ngIf="isFieldInvalid('phone')" class="error-text">
+            Numéro de téléphone requis
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="codePostal">Code Postal *</label>
+          <input 
+            id="codePostal" 
+            type="text" 
+            formControlName="codePostal"
+            placeholder="75001"
+            [class.error]="isFieldInvalid('codePostal')"
+          />
+          <div *ngIf="isFieldInvalid('codePostal')" class="error-text">
+            Code postal requis (5 chiffres)
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="address">Adresse *</label>
+        <input 
+          id="address" 
+          type="text" 
+          formControlName="address"
+          placeholder="123 rue de la Paix"
+          [class.error]="isFieldInvalid('address')"
+        />
+        <div *ngIf="isFieldInvalid('address')" class="error-text">
+          Adresse requise
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="role">Rôle *</label>
+        <select 
+          id="role" 
+          formControlName="role"
+          [class.error]="isFieldInvalid('role')"
+        >
+          <option value="">Sélectionnez un rôle</option>
+          <option value="ADMIN">ADMIN</option>
+          <option value="VENDOR">VENDOR</option>
+          <option value="CLIENT">CLIENT</option>
+        </select>
+        <div *ngIf="isFieldInvalid('role')" class="error-text">
+          Veuillez sélectionner un rôle
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="profilePicture">Photo de profil (optionnel)</label>
+        <div class="file-input-wrapper">
+          <input 
+            id="profilePicture" 
+            type="file" 
+            accept="image/*"
+            (change)="onFileSelected($event)"
+            class="file-input"
+          />
+          <label for="profilePicture" class="file-label">
+            <i class="upload-icon">📁</i>
+            {{ selectedFileName || 'Choisir une image' }}
+          </label>
+        </div>
+        <div *ngIf="selectedFileName" class="file-info">
+          ✅ Fichier sélectionné: {{ selectedFileName }}
+        </div>
+      </div>
+      
+      <button type="submit" [disabled]="registerForm.invalid || isLoading" class="btn-primary">
+        {{ isLoading ? 'Inscription...' : "S'inscrire" }}
+      </button>
+      
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+    </form>
+    
+    <div class="auth-links">
+      <p>Déjà un compte ? <a routerLink="/login">Se connecter</a></p>
+    </div>
+  </div>
+</div>

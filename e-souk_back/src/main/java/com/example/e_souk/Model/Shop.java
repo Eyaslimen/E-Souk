@@ -37,7 +37,6 @@ public class Shop {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    
     /**
      * Nom de la marque/boutique
      * Doit être unique et non vide

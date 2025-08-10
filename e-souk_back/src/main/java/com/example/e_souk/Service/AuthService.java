@@ -2,6 +2,8 @@ package com.example.e_souk.Service;
 
 import com.example.e_souk.Config.JwtTokenProvider;
 import com.example.e_souk.Dto.AuthResponseDTO;
+import com.example.e_souk.Mappers.AuthMapper;
+import com.example.e_souk.Mappers.UserMapper;
 import com.example.e_souk.Dto.LoginRequestDTO;
 import com.example.e_souk.Dto.RegisterRequestDTO;
 import com.example.e_souk.Dto.UserProfileDTO;
@@ -15,7 +17,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 /**
@@ -31,8 +35,8 @@ public class AuthService {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    
-    /**
+    private final FileStorageService fileStorageService; // Add dependency
+/**
      * Inscription d'un nouvel utilisateur
      * @param registerRequest DTO contenant les données d'inscription
      * @return Réponse d'authentification avec token JWT
@@ -50,15 +54,35 @@ public class AuthService {
             throw AuthException.emailAlreadyExists(registerRequest.getEmail());
         }
         
+        // Gérer l'upload de la photo de profil
+        String savedFileName = null;
+        MultipartFile profilePicture = registerRequest.getProfilePicture();
+        if (profilePicture != null && !profilePicture.isEmpty()) {
+            try {
+                savedFileName = fileStorageService.storeFile(profilePicture);
+                log.info("Photo de profil enregistrée pour l'utilisateur {}: {}", 
+                        registerRequest.getUsername(), savedFileName);
+            } catch (IOException e) {
+                log.error("Erreur lors de l'enregistrement de la photo de profil pour l'utilisateur {}", 
+                        registerRequest.getUsername(), e);
+                throw new RuntimeException("Erreur lors de l'enregistrement de la photo de profil.");
+            } catch (IllegalArgumentException e) {
+                log.warn("Type de fichier invalide pour l'utilisateur {}: {}", 
+                        registerRequest.getUsername(), e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
+            }
+        }
+
         // Création de l'utilisateur
         User user = User.builder()
                 .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
-                .password(registerRequest.getPassword()) // Sera hashé dans le service
+                .password(registerRequest.getPassword()) // Encoder le mot de passe
                 .phone(registerRequest.getPhone())
                 .address(registerRequest.getAddress())
                 .codePostal(registerRequest.getCodePostal())
                 .role(registerRequest.getRole())
+                .picture(savedFileName) // Enregistrer le chemin de l'image
                 .build();
         
         User savedUser = userService.createUser(user);
@@ -66,24 +90,12 @@ public class AuthService {
         // Génération du token JWT
         String token = jwtTokenProvider.generateTokenFromUsername(savedUser.getUsername());
         
-        // Création de la réponse
-        AuthResponseDTO response = AuthResponseDTO.builder()
-                .token(token)
-                .type("Bearer")
-                .id(savedUser.getId())
-                .username(savedUser.getUsername())
-                .email(savedUser.getEmail())
-                .role(savedUser.getRole())
-                .picture(savedUser.getPicture())
-                .issuedAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusHours(24)) // 24h
-                .message("Inscription réussie")
-                .build();
+        AuthResponseDTO response = AuthMapper.toAuthResponseDTO(savedUser, token, "Inscription réussie");
         
         log.info("Inscription réussie pour l'utilisateur: {}", savedUser.getUsername());
         return response;
     }
-    
+
     /**
      * Connexion d'un utilisateur
      * @param loginRequest DTO contenant les identifiants de connexion
@@ -115,19 +127,7 @@ public class AuthService {
                 throw AuthException.accountInactive();
             }
             
-            // Création de la réponse
-            AuthResponseDTO response = AuthResponseDTO.builder()
-                    .token(token)
-                    .type("Bearer")
-                    .id(user.getId())
-                    .username(user.getUsername())
-                    .email(user.getEmail())
-                    .role(user.getRole())
-                    .picture(user.getPicture())
-                    .issuedAt(LocalDateTime.now())
-                    .expiresAt(LocalDateTime.now().plusHours(24)) // 24h
-                    .message("Connexion réussie")
-                    .build();
+            AuthResponseDTO response = AuthMapper.toAuthResponseDTO(user, token, "Connexion réussie");
             
             log.info("Connexion réussie pour l'utilisateur: {}", user.getUsername());
             return response;
@@ -152,9 +152,24 @@ public class AuthService {
         String username = authentication.getName();
         User user = userService.findByUsername(username);
         
-        return userService.toUserProfileDTO(user);
+    return UserMapper.toUserProfileDTO(user);
     }
-    
+    /**
+     * Récupère l'utilisateur authentifié
+     * @return Utilisateur authentifié
+     */
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw AuthException.invalidToken();
+        }
+        
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+        
+    return user;
+    }
     /**
      * Valide un token JWT
      * @param token Token JWT à valider
@@ -172,7 +187,6 @@ public class AuthService {
     public String getUsernameFromToken(String token) {
         return jwtTokenProvider.getUsernameFromToken(token);
     }
-    
     /**
      * Vérifie si un token va expirer bientôt
      * @param token Token JWT

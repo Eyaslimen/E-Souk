@@ -1,5 +1,7 @@
 package com.example.e_souk.Dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.e_souk.Model.Role;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -71,4 +73,5 @@ public class RegisterRequestDTO {
      */
     @NotNull(message = "Le rôle est obligatoire")
     private Role role = Role.CLIENT;
+    private MultipartFile profilePicture; // Champ pour l'image
 } 
