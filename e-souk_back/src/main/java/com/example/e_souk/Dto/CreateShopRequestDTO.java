@@ -1,5 +1,7 @@
 package com.example.e_souk.Dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,4 +25,5 @@ public class CreateShopRequestDTO {
     @NotBlank(message = "L'adresse est obligatoire")
     @Size(max = 255, message = "L'adresse ne peut pas dépasser 255 caractères")
     private String address;
+    private MultipartFile logoPicture; // Champ pour l'image
 }

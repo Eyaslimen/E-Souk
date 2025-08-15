@@ -16,12 +16,14 @@ import com.example.e_souk.Model.Role;
 import com.example.e_souk.Repository.ShopRepository;
 import com.example.e_souk.Repository.UserRepository;
 
+import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +47,8 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final UserRepository userRepository;
+    private final FileStorageService fileStorageService; // Add dependency
+
     // ShopFollowerRepository sera injecté quand il sera créé
     // private final ShopFollowerRepository shopFollowerRepository;
 
@@ -56,7 +60,7 @@ public class ShopService {
      * @return ShopResponseDTO la boutique créée
      */
     @Transactional
-    public ShopResponseDTO createShop(CreateShopRequestDTO requestDTO, UUID ownerId) {
+    public ShopResponseDTO createShop(CreateShopRequestDTO requestDTO, UUID ownerId) throws java.io.IOException {
         log.info("Tentative de création de boutique '{}' pour l'utilisateur ID: {}", 
                 requestDTO.getBrandName(), ownerId);
         
@@ -78,6 +82,29 @@ public class ShopService {
             log.warn("Tentative de création d'une boutique avec un nom déjà existant: {}", requestDTO.getBrandName());
             throw new ShopException("SHOP_ERROR", "Une boutique avec ce nom existe déjà : " + requestDTO.getBrandName());
         }
+        String savedFileName = null;
+        MultipartFile logoPicture = requestDTO.getLogoPicture();
+        if (logoPicture != null && !logoPicture.isEmpty()) {
+             try {  savedFileName = fileStorageService.storeFile(logoPicture);
+                log.info("Logo de la boutique enregistrée: {}", savedFileName); }
+     catch (IOException e) {
+                log.error("Erreur lors de l'enregistrement du logo de la boutique", e);
+                throw new RuntimeException("Erreur lors de l'enregistrement du logo de la boutique.");
+            } catch (IllegalArgumentException e) {
+                log.warn("Type de fichier invalide pour le logo de la boutique: {}", e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
+            }
+        }
+
+        //         log.error("Erreur lors de l'enregistrement de la photo de profil pour l'utilisateur {}", 
+        //                 registerRequest.getUsername(), e);
+        //         throw new RuntimeException("Erreur lors de l'enregistrement de la photo de profil.");
+        //     } catch (IllegalArgumentException e) {
+        //         log.warn("Type de fichier invalide pour l'utilisateur {}: {}", 
+        //                 registerRequest.getUsername(), e.getMessage());
+        //         throw new IllegalArgumentException(e.getMessage());
+        //     }
+        // }
         // ÉTAPE 4 : Créer la boutique
         Shop shop = new Shop();
         shop.setBrandName(requestDTO.getBrandName().trim());
@@ -87,6 +114,7 @@ public class ShopService {
         shop.setIsActive(true); // Nouvelle boutique = active par défaut
         shop.setCreatedAt(LocalDateTime.now());
         shop.setUpdatedAt(LocalDateTime.now());
+        shop.setLogoPicture(savedFileName);
         shop.setOwner(owner);
         
         // logoPicture sera géré séparément via upload

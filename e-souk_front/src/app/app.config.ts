@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -6,16 +6,18 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
 import { authInterceptor } from './services/auth-interceptor.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-provideRouter(routes),
-provideHttpClient(
+    provideRouter(routes),
+    provideHttpClient(
       withInterceptors([authInterceptor]) // Utilisation de la nouvelle syntaxe
     ),
-    provideAnimations(), // required animations providers
+    provideAnimations(),
+    importProvidersFrom(FormsModule, ReactiveFormsModule), // required animations providers
     provideToastr({
       timeOut: 4000,
       positionClass: 'toast-top-right', // Position en haut à droite

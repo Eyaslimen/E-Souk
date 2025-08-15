@@ -1,0 +1,52 @@
+<div class="modal-overlay" *ngIf="isVisible" (click)="onOverlayClick($event)">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Récapitulatif de votre boutique</h3>
+          <p>Vérifiez les informations avant de créer votre boutique</p>
+        </div>
+
+        <div class="modal-body">
+          <div class="shop-summary">
+            <!-- Logo et nom -->
+            <div class="brand-section">
+              <div class="logo-container" *ngIf="shopData.logoPictureUrl">
+                <img [src]="shopData.logoPictureUrl" alt="Logo" class="logo-preview">
+              </div>
+              <div class="logo-placeholder" *ngIf="!shopData.logoPictureUrl">
+                <span class="placeholder-icon">🏪</span>
+              </div>
+              <div class="brand-info">
+                <h4 class="brand-name">{{ shopData.brandName }}</h4>
+                <p class="delivery-fee">Frais de livraison: {{ shopData.deliveryFee }}€</p>
+              </div>
+            </div>
+
+            <!-- Informations détaillées -->
+            <div class="details-section">
+              <div class="detail-group">
+                <label><i class="fa-solid fa-location-dot" style="margin-right: 0.25rem;"></i> Adresse</label>
+                <p>{{ shopData.address }}</p>-
+              </div>
+
+              <div class="detail-group" *ngIf="shopData.description">
+                <label><i class="fa-regular fa-note-sticky" style="margin-right: 0.25rem;"></i>Description</label>
+                <p class="description">{{ shopData.description }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="onModify()">
+            Modifier
+          </button>
+          <button class="btn btn-primary" (click)="onConfirm()" [disabled]="isLoading">
+            <span *ngIf="!isLoading"> Je suis sûr</span>
+            <span *ngIf="isLoading" class="loading-text">
+              <span class="spinner"></span>
+              Création en cours...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>

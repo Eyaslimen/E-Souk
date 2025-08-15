@@ -1,6 +1,8 @@
 
 package com.example.e_souk.Service;
 
+import com.example.e_souk.Dto.CategoryRequestDTO;
+import com.example.e_souk.Dto.CategoryResponseDTO;
 import com.example.e_souk.Dto.ProductCreationRequestDTO;
 import com.example.e_souk.Dto.ProductDetailsDTO;
 import com.example.e_souk.Dto.ProductResponseDTO;
@@ -83,14 +85,25 @@ private final FileStorageService fileStorageService;
 	private final ShopRepository shopRepository;
 	private final CategoryRepository categoryRepository;
 	private final VariantRepository variantRepository;
+	private final CategoryService categoryService;
 	private final AttributeRepository attributeRepository;
 	private final AttributeValueRepository attributeValueRepository;
 
 	public Product createProduct(ProductCreationRequestDTO dto, UUID shopId) {
 		Shop shop = shopRepository.findById(shopId)
 			.orElseThrow(() -> new RuntimeException("Shop not found"));
-		Category category = categoryRepository.findById(dto.getCategoryId())
-			.orElseThrow(() -> new RuntimeException("Category not found"));
+Category category = categoryRepository.findByNameIgnoreCase(dto.getCategoryName())
+    .orElseGet(() -> {
+        CategoryRequestDTO newCategoryDTO = new CategoryRequestDTO();
+        newCategoryDTO.setName(dto.getCategoryName());
+        newCategoryDTO.setDescription("créé par vendor");
+
+        CategoryResponseDTO categoryResponse = categoryService.createCategory(newCategoryDTO);
+        
+        // Récupération de l'entité correspondante
+        return categoryRepository.findByNameIgnoreCase(categoryResponse.getName())
+                .orElseThrow(() -> new RuntimeException("Category creation failed"));
+    });
         // Gérer l'upload de la photo de profil
         String savedFileName = null;
         MultipartFile profilePicture = dto.getImageUrl();
@@ -168,6 +181,10 @@ private final FileStorageService fileStorageService;
 			.map(ProductMapper::toProductDetails)
 			.collect(Collectors.toList());
 	}
+	public Product getProductById(UUID id) {
+    return productRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Product not found"));
+}
 //         Shop shop = shopRepository.findById(dto.getShopId())
 //             .orElseThrow(() -> new RuntimeException("Shop not found"));
 //         Category category = categoryRepository.findById(dto.getCategoryId())
@@ -207,4 +224,5 @@ private final FileStorageService fileStorageService;
 //         }
 //         return product;
 //     }
+
 }

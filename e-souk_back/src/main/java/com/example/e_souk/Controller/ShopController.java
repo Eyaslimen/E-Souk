@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -51,11 +52,11 @@ public class ShopController {
      * @param requestDTO données de la boutique
      * @return ResponseEntity avec la boutique créée
      */
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     // SecurityContextHolder : il va vérifier dans le contexte de sécurité , s'il est authentifié l'utilisateur ou bien non 
     @PreAuthorize("isAuthenticated()") 
     public ResponseEntity<ShopResponseDTO> createShop(
-            @Valid @RequestBody CreateShopRequestDTO requestDTO) {
+            @ModelAttribute CreateShopRequestDTO requestDTO) {
             User profile = authService.getCurrentUser();
         log.info("API - Création de boutique '{}' par l'utilisateur : {}", 
                 requestDTO.getBrandName(), profile.getUsername());
@@ -63,15 +64,20 @@ public class ShopController {
         try {
             UUID ownerId = profile.getId();
             ShopResponseDTO createdShop = shopService.createShop(requestDTO, ownerId);
-            
             log.info("API - Boutique créée avec succès - ID: {}, Owner: {}", 
                     createdShop.getId(), profile.getUsername());
-
             return ResponseEntity.status(HttpStatus.CREATED).body(createdShop);
-            
         } catch (ShopException e) {
             log.warn("API - Erreur lors de la création de boutique : {}", e.getMessage());
             throw e;
+        } catch (java.io.IOException e) {
+            log.error("API - Erreur IO lors de la création de boutique : {}", e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(
+                "IO_ERROR",
+                "Erreur lors du traitement du fichier ou de la requête.",
+                System.currentTimeMillis()
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 

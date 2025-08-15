@@ -1,0 +1,401 @@
+<div class="profile-container">
+  <!-- Header -->
+  <div class="header">
+    <h1 class="main-title">Mon Profil</h1>
+    <p class="subtitle">
+      Gérez vos informations personnelles, suivez vos commandes et découvrez vos boutiques préférées
+    </p>
+  </div>
+
+  <!-- User Profile Card -->
+  <div class="profile-header">
+  <div class="profile-card">
+    <div class="profile-info">
+      <div class="avatar-container">
+        <div class="avatar">
+          <span class="avatar-text">M</span>
+        </div>
+        <button class="camera-btn">
+          <i class="fas fa-camera"></i>
+        </button>
+      </div>
+      <div class="user-details">
+        <h2 class="user-name">{{ userInfo.name }}</h2>
+        <p class="user-email">{{ userInfo.email }}</p>
+        <div class="badges">
+          <span class="badge badge-owner">
+            <i class="fas fa-store"></i>
+            Propriétaire de boutique
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="shop-card">
+    <h2 class="myshop_title">Eya's Shop</h2>
+    <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat_values">
+            <div class="stat-value">{{ shopStats.sales }}</div>
+            <div class="stat-label">Ventes</div></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat_values">
+            <div class="stat-value">{{ shopStats.clients }}</div>
+            <div class="stat-label">Clients</div></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">
+              <i class="fas fa-box"></i>
+            </div>
+            <div class="stat_values">
+            <div class="stat-value">{{ shopStats.products }}</div>
+            <div class="stat-label">Produits</div></div>
+          </div>
+        </div>
+        <button class="btn gerer">Gérer</button>
+      </div>
+  </div>
+
+  <!-- Shop Summary Card -->
+  <!-- <div class="card shop-card">
+    <div class="shop-content">
+      <div class="shop-info">
+        <div class="shop-header">
+          <i class="fas fa-store-alt shop-icon"></i>
+          <h3 class="shop-label">Ma Boutique</h3>
+        </div>
+        <h4 class="shop-name">Boutique Marie</h4>
+        
+      <button class="btn btn-primary" (click)="manageShop()">
+        <i class="fas fa-cog"></i>
+        Gérer ma boutique
+      </button>
+    </div>
+  </div> -->
+
+  <!-- Navigation Tabs -->
+  <div class="tabs-container">
+    <div class="tabs-list">
+      <button 
+        class="tab-trigger" 
+        [class.active]="activeTab === 'personnel'"
+        (click)="setActiveTab('personnel')">
+        <i class="fas fa-user"></i>
+        <span>Personnel</span>
+      </button>
+      <button 
+        class="tab-trigger" 
+        [class.active]="activeTab === 'boutiques'"
+        (click)="setActiveTab('boutiques')">
+        <i class="fas fa-store"></i>
+        <span>Boutiques</span>
+      </button>
+      <button 
+        class="tab-trigger" 
+        [class.active]="activeTab === 'commandes'"
+        (click)="setActiveTab('commandes')">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Commandes</span>
+      </button>
+      <button 
+        class="tab-trigger" 
+        [class.active]="activeTab === 'panier'"
+        (click)="setActiveTab('panier')">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Panier</span>
+      </button>
+      <button 
+        class="tab-trigger" 
+        [class.active]="activeTab === 'favoris'"
+        (click)="setActiveTab('favoris')">
+        <i class="fas fa-heart"></i>
+        <span>Favoris</span>
+      </button>
+    </div>
+
+    <!-- Personal Information Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'personnel'">
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-user-edit"></i>
+              Informations personnelles
+            </h3>
+            <button class="modifier btn btn-outline" (click)="toggleEdit()">
+              <i class="fas" [class.fa-edit]="!isEditing" [class.fa-times]="isEditing"></i>
+              {{ isEditing ? 'Annuler' : 'Modifier' }}
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="form-group">
+              <label for="name">
+                <i class="fas fa-user"></i>
+                Nom complet
+              </label>
+              <input 
+                id="name" 
+                type="text" 
+                [(ngModel)]="userInfo.name" 
+                [disabled]="!isEditing"
+                class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="email">
+                <i class="fas fa-envelope"></i>
+                Email
+              </label>
+              <input 
+                id="email" 
+                type="email" 
+                [(ngModel)]="userInfo.email" 
+                [disabled]="!isEditing"
+                class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="phone">
+                <i class="fas fa-phone"></i>
+                Téléphone
+              </label>
+              <input 
+                id="phone" 
+                type="text" 
+                [(ngModel)]="userInfo.phone" 
+                [disabled]="!isEditing"
+                class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="address">
+                <i class="fas fa-map-marker-alt"></i>
+                Adresse
+              </label>
+              <input 
+                id="address" 
+                type="text" 
+                [(ngModel)]="userInfo.address" 
+                [disabled]="!isEditing"
+                class="form-input">
+            </div>
+            <button 
+              *ngIf="isEditing" 
+              class="btn btn-primary full-width" 
+              (click)="saveProfile()">
+              <i class="fas fa-save"></i>
+              Sauvegarder les modifications
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-shield-alt"></i>
+              Sécurité
+            </h3>
+          </div>
+          <div class="card-content">
+            <div class="form-group">
+              <label for="currentPassword">
+                <i class="fas fa-lock"></i>
+                Mot de passe actuel
+              </label>
+              <input 
+                id="currentPassword" 
+                type="password" 
+                [(ngModel)]="passwordData.currentPassword"
+                class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="newPassword">
+                <i class="fas fa-key"></i>
+                Nouveau mot de passe
+              </label>
+              <input 
+                id="newPassword" 
+                type="password" 
+                [(ngModel)]="passwordData.newPassword"
+                class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">
+                <i class="fas fa-check-circle"></i>
+                Confirmer le mot de passe
+              </label>
+              <input 
+                id="confirmPassword" 
+                type="password" 
+                [(ngModel)]="passwordData.confirmPassword"
+                class="form-input">
+            </div>
+            <button class="btn btn-secondary full-width" (click)="changePassword()">
+              <i class="fas fa-sync-alt"></i>
+              Changer le mot de passe
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Followed Shops Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'boutiques'">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-store"></i>
+            Boutiques suivies ({{ followedShops.length }})
+          </h3>
+        </div>
+        <div class="card-content">
+          <div class="shops-list">
+            <div class="shop-follow-card" *ngFor="let shop of followedShops; let i = index">
+              <div class="shop-card-content">
+                <div class="shop-avatar-small">
+                  <i class="fas fa-store-alt"></i>
+                </div>
+                <div class="shop-card-info">
+                  <h4 class="shop-card-name">{{ shop.name }}</h4>
+                  <p class="shop-card-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ shop.category }}
+                  </p>
+                </div>
+                <button class="btn-unfollow" (click)="unfollowShop(i)">
+                  Unfollow
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'commandes'">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-clipboard-list"></i>
+            Mes commandes ({{ orders.length }})
+          </h3>
+        </div>
+        <div class="card-content">
+          <div class="orders-list">
+            <div class="order-item" *ngFor="let order of orders">
+              <div class="order-info">
+                <h4 class="order-id">
+                  <i class="fas fa-receipt"></i>
+                  {{ order.id }}
+                </h4>
+                <p class="order-details">
+                  <i class="fas fa-store"></i>
+                  {{ order.shop }} • 
+                  <i class="fas fa-calendar"></i>
+                  {{ order.date }}
+                </p>
+              </div>
+              <div class="order-actions">
+                <span class="status-badge" [class]="order.statusClass">
+                  <i class="fas" [class.fa-check-circle]="order.status === 'Livré'" [class.fa-clock]="order.status === 'En cours'"></i>
+                  {{ order.status }}
+                </span>
+                <span class="order-amount">{{ order.amount }}</span>
+                <button class="btn btn-outline small" (click)="viewOrderDetails(order)">
+                  <i class="fas fa-eye"></i>
+                  Détails
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'panier'">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-shopping-cart"></i>
+            Mon panier ({{ cartItems.length }} articles)
+          </h3>
+        </div>
+        <div class="card-content">
+          <div class="cart-items">
+            <div class="cart-item" *ngFor="let item of cartItems; let i = index">
+              <img [src]="item.image" [alt]="item.name" class="item-image">
+              <div class="item-details">
+                <h4 class="item-name">{{ item.name }}</h4>
+                <p class="item-shop">
+                  <i class="fas fa-store"></i>
+                  {{ item.shop }}
+                </p>
+              </div>
+              <div class="item-actions">
+                <p class="item-price">{{ item.price }}</p>
+                <button class="remove-btn" (click)="removeFromCart(i)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="cart-separator"></div>
+          <div class="cart-footer">
+            <span class="cart-total">
+              <i class="fas fa-calculator"></i>
+              Total: {{ getCartTotal() }}
+            </span>
+            <button class="btn btn-accent" (click)="finalizeOrder()">
+              <i class="fas fa-credit-card"></i>
+              Finaliser la commande
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Favorites Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'favoris'">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-heart"></i>
+            Mes favoris ({{ favoriteItems.length }} produits)
+          </h3>
+        </div>
+        <div class="card-content">
+          <div class="favorites-grid">
+            <div class="favorite-item" *ngFor="let item of favoriteItems">
+              <div class="favorite-image-container">
+                <img [src]="item.image" [alt]="item.name" class="favorite-image">
+                <div class="favorite-overlay">
+                  <i class="fas fa-heart"></i>
+                </div>
+              </div>
+              <div class="favorite-content">
+                <h4 class="favorite-name">{{ item.name }}</h4>
+                <p class="favorite-shop">
+                  <i class="fas fa-store"></i>
+                  {{ item.shop }}
+                </p>
+                <div class="favorite-footer">
+                  <span class="favorite-price">{{ item.price }}</span>
+                  <button class="btn btn-primary small" (click)="addToCart(item)">
+                    <i class="fas fa-cart-plus"></i>
+                    Ajouter
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,126 @@
+ <div class="shop-creation-container">
+      <div class="step-header">
+        <h2>Créer votre boutique <i class="fa-solid fa-wand-magic-sparkles"></i></h2>
+        <p>Étape 1/2 - Configurez les informations de base de votre boutique</p>
+      </div>
+      <form [formGroup]="shopForm" (ngSubmit)="onSubmit()" class="shop-form">
+        <!-- Nom de la marque -->
+        <div class="form-group">
+          <label for="brandName">Nom de la marque *</label>
+          <input 
+            type="text" 
+            id="brandName" 
+            formControlName="brandName"
+            class="form-input"
+            [class.error]="shopForm.get('brandName')?.invalid && shopForm.get('brandName')?.touched"
+            placeholder="Ex: Ma Super Boutique"
+          >
+          <div class="error-message" *ngIf="shopForm.get('brandName')?.invalid && shopForm.get('brandName')?.touched">
+            <span *ngIf="shopForm.get('brandName')?.errors?.['required']">Le nom de la marque est requis</span>
+            <span *ngIf="shopForm.get('brandName')?.errors?.['minlength']">Au moins 2 caractères requis</span>
+            <span *ngIf="shopForm.get('brandName')?.errors?.['maxlength']">Maximum 100 caractères</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea 
+            id="description" 
+            formControlName="description"
+            class="form-textarea"
+            [class.error]="shopForm.get('description')?.invalid && shopForm.get('description')?.touched"
+            placeholder="Décrivez votre boutique et vos produits..."
+            rows="4"
+          ></textarea>
+          <div class="char-counter">
+            {{ shopForm.get('description')?.value?.length || 0 }}/1000
+          </div>
+          <div class="error-message" *ngIf="shopForm.get('description')?.invalid && shopForm.get('description')?.touched">
+            <span *ngIf="shopForm.get('description')?.errors?.['maxlength']">Maximum 1000 caractères</span>
+          </div>
+        </div>
+
+        <!-- Adresse -->
+        <div class="form-group">
+          <label for="address">Adresse *</label>
+          <input 
+            type="text" 
+            id="address" 
+            formControlName="address"
+            class="form-input"
+            [class.error]="shopForm.get('address')?.invalid && shopForm.get('address')?.touched"
+            placeholder="Adresse complète de votre boutique"
+          >
+          <div class="error-message" *ngIf="shopForm.get('address')?.invalid && shopForm.get('address')?.touched">
+            <span *ngIf="shopForm.get('address')?.errors?.['required']">L'adresse est requise</span>
+            <span *ngIf="shopForm.get('address')?.errors?.['maxlength']">Maximum 255 caractères</span>
+          </div>
+        </div>
+
+        <!-- Frais de livraison -->
+        <div class="form-group">
+          <label for="deliveryFee">Frais de livraison (€)</label>
+          <input 
+            type="number" 
+            id="deliveryFee" 
+            formControlName="deliveryFee"
+            class="form-input"
+            [class.error]="shopForm.get('deliveryFee')?.invalid && shopForm.get('deliveryFee')?.touched"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            max="100"
+          >
+          <div class="error-message" *ngIf="shopForm.get('deliveryFee')?.invalid && shopForm.get('deliveryFee')?.touched">
+            <span *ngIf="shopForm.get('deliveryFee')?.errors?.['min']">Les frais doivent être positifs</span>
+            <span *ngIf="shopForm.get('deliveryFee')?.errors?.['max']">Maximum 100€</span>
+          </div>
+        </div>
+
+        <!-- Logo -->
+        <div class="form-group">
+          <label for="logo">Logo de la boutique</label>
+          <div class="file-upload-area" 
+               [class.has-file]="selectedFile"
+               (click)="fileInput.click()"
+               (dragover)="onDragOver($event)"
+               (dragleave)="onDragLeave($event)"
+               (drop)="onDrop($event)">
+            <input 
+              #fileInput
+              type="file" 
+              id="logo"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+              style="display: none;"
+            >
+            
+            <div class="upload-content" *ngIf="!selectedFile">
+              <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+              <p>Importer</p>
+            </div>
+
+            <div class="file-preview" *ngIf="selectedFile">
+              <!-- <img [src]="previewUrl" alt="Aperçu du logo" class="preview-image"> -->
+              <div class="file-info">
+                <p class="file-name">{{ selectedFile.name }}</p>
+                <!-- <p class="file-size">{{ formatFileSize(selectedFile.size) }}</p> -->
+                <button type="button" class="remove-btn" (click)="removeFile($event)"><i class="fa-solid fa-x"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Boutons d'action -->
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="shopForm.invalid"
+          >
+            Valider et continuer
+          </button>
+        </div>
+      </form>
+    </div>

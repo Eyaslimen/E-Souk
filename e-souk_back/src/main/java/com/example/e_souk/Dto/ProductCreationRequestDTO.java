@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class ProductCreationRequestDTO {
     private String name;
     private String description;
-    private UUID categoryId;
+    private String categoryName;
     private MultipartFile imageUrl;
     
     // Champs pour recevoir les données JSON comme strings

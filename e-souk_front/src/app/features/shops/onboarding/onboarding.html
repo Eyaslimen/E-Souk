@@ -1,0 +1,97 @@
+<!-- src/app/components/onboarding/onboarding.html (Version corrigée) -->
+<div class="onboarding-wrapper">
+  
+  <!-- Progress bar -->
+  <div class="progress-container">
+    <div class="progress-bar">
+
+      <div class="progress-step"
+            [class.active]="currentState.currentStep >= 1"
+           [class.completed]="currentState.currentStep > 1">
+        <div class="step-circle">
+          <span *ngIf="currentState.currentStep <= 1">1</span>
+          <span *ngIf="currentState.currentStep > 1">✓</span>
+        </div>
+        <span class="step-label">Boutique</span>
+      </div>
+                  
+      <div class="progress-line"
+            [class.completed]="currentState.currentStep > 1">
+      </div>
+                  
+      <div class="progress-step"
+            [class.active]="currentState.currentStep >= 2"
+           [class.completed]="currentState.currentStep > 2">
+        <div class="step-circle">
+          <span *ngIf="currentState.currentStep < 2">2</span>
+          <span *ngIf="currentState.currentStep === 2">2</span>
+          <span *ngIf="currentState.currentStep > 2">✓</span>
+        </div>
+        <span class="step-label">Produits</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DEBUG: Section temporaire pour débugger -->
+  <!-- <div class="debug-info" style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px;">
+    <h4>🔍 Debug Info:</h4>
+    <p>Current Step: {{ currentState?.currentStep }}</p>
+    <p>Shop ID: {{ currentState?.shopId }}</p>
+    <p>Show Modal: {{ showConfirmationModal }}</p>
+    <p>Should Show Create Shop: {{ shouldShowCreateShop }}</p>
+    <p>Should Show Add Products: {{ shouldShowAddProducts }}</p>
+    <p>Should Show Completed: {{ shouldShowCompleted }}</p>
+    <button (click)="debugStep()">Debug Step</button>
+  </div> -->
+
+  <!-- Étape 1: Création de boutique -->
+  <div class="step-container" *ngIf="shouldShowCreateShop">
+    <!-- <h2>🏪 Création de votre boutique</h2> -->
+    <app-shop-creation 
+      (shopDataReady)="onShopDataReady($event)">
+    </app-shop-creation>
+  </div>
+
+  <!-- Étape 2: Ajout de produits -->
+  <div class="step-container" *ngIf="shouldShowAddProducts && currentState.shopId">
+    <app-product-creation
+      [shopId]="currentState.shopId!"
+      (productAdded)="onProductAdded($event)"
+      (onboardingComplete)="onOnboardingComplete()">
+    </app-product-creation>
+  </div>
+
+  <!-- Modal de confirmation boutique -->
+  <app-shop-confirmation-modal
+    *ngIf="showConfirmationModal"
+    [isVisible]="showConfirmationModal"
+    [shopData]="pendingShopData!"
+    [isLoading]="isCreatingShop"
+    (confirm)="confirmShopCreation()"
+    (modify)="modifyShopData()"
+    (close)="cancelShopCreation()">
+  </app-shop-confirmation-modal>
+
+  <!-- Message de succès final -->
+  <div class="success-message" *ngIf="shouldShowCompleted">
+    <div class="success-content">
+      <div class="success-icon">🎉</div>
+      <h2>Félicitations !</h2>
+      <p>Votre boutique a été créée avec succès</p>
+      <div class="success-stats" *ngIf="currentState.products.length > 0">
+        <div class="stat-item">
+          <strong>{{ currentState.products.length }}</strong>
+          <span>produit{{ currentState.products.length > 1 ? 's' : '' }} ajouté{{ currentState.products.length > 1 ? 's' : '' }}</span>
+        </div>
+        <div class="stat-item">
+          <strong>{{ getTotalVariants() }}</strong>
+          <span>variante{{ getTotalVariants() > 1 ? 's' : '' }} au total</span>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-large" (click)="goToShop()">
+        <i class="fa-solid fa-eye"></i> Voir ma boutique
+      </button>
+    </div>
+  </div>
+</div>

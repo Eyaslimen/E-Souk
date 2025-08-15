@@ -1,0 +1,329 @@
+    <div class="product-creation-container">
+      <div class="step-header">
+        <h2>Ajouter des produits</h2>
+        <p>Étape 2/2 - Créez vos produits avec leurs variantes</p>
+      </div>
+      <!-- Phase 1: Informations de base du produit -->
+      <div class="product-form-section" [class.completed]="currentPhase > 1">
+        <h3>Informations du produit</h3>
+        
+        <form [formGroup]="productForm" class="product-basic-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="productName">Nom du produit *</label>
+              <input 
+                type="text" 
+                id="productName" 
+                formControlName="name"
+                class="form-input"
+                [class.error]="productForm.get('name')?.invalid && productForm.get('name')?.touched"
+                placeholder="Ex: T-shirt Premium"
+              >
+              <div class="error-message" *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched">
+                Le nom du produit est requis
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="category">Catégorie *</label>
+              <select 
+                id="category" 
+                formControlName="category"
+                class="form-select"
+                [class.error]="productForm.get('category')?.invalid && productForm.get('category')?.touched"
+              >
+                <option value="">Sélectionner une catégorie</option>
+                <option value="Vêtements">Vêtements</option>
+                <option value="Chaussures">Chaussures</option>
+                <option value="Accessoires">Accessoires</option>
+                <option value="Technologie">Technologie</option>
+                <option value="Maison">Maison & Décoration</option>
+                <option value="Sport">Sport & Loisirs</option>
+                <option value="Beauté">Beauté & Santé</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="productDescription">Description</label>
+            <textarea 
+              id="productDescription" 
+              formControlName="description"
+              class="form-textarea"
+              placeholder="Décrivez votre produit..."
+              rows="3"
+            ></textarea>
+          </div>
+
+          <!-- ✅ AJOUT: Section pour les images -->
+          <div class="form-group">
+            <label for="productImages">Images du produit</label>
+            <div class="image-upload-section">
+              <input 
+                type="file" 
+                id="productImages"
+                multiple
+                accept="image/*"
+                (change)="onImagesSelected($event)"
+                class="file-input"
+              >
+              <div class="image-preview" *ngIf="selectedImages.length > 0">
+                <div class="image-item" *ngFor="let image of selectedImages; let i = index">
+                  <img [src]="image.preview" [alt]="image.file.name" class="preview-img">
+                  <button type="button" (click)="removeImage(i)" class="remove-image-btn">❌</button>
+                  <span class="image-name">{{ image.file.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="button" 
+              class="btn btn-primary" 
+              (click)="goToAttributesPhase()"
+              [disabled]="productForm.get('name')?.invalid || productForm.get('category')?.invalid"
+            >
+              Définir les attributs <i class="fa-solid fa-arrow-right" style="margin-left: 3px;"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Phase 2: Définition des attributs -->
+      <div class="product-form-section" [class.active]="currentPhase === 2" [class.completed]="currentPhase > 2">
+        <h3>Définir les attributs</h3>
+        <p class="section-description">
+          Créez les caractéristiques de votre produit (ex: taille, couleur, matière...)
+        </p>
+
+        <div class="attributes-container" *ngIf="currentPhase >= 2">
+          <div class="attribute-form" *ngFor="let attr of getAttributeFormGroups(); let i = index" [formGroup]="attr">
+            <div class="attribute-header">
+              <h4>Attribut {{ i + 1 }}</h4>
+              <button type="button" class="btn-remove" (click)="removeAttribute(i)" *ngIf="attributesFormArray.length > 1">
+                  <i class="fa-solid fa-trash" style="color: #464d59;"></i>
+              </button>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nom de l'attribut *</label>
+                <input 
+                  type="text" 
+                  formControlName="name"
+                  class="form-input"
+                  placeholder="Ex: Taille, Couleur, Matière..."
+                >
+              </div>
+            </div>
+
+            <div class="values-section">
+              <label>Valeurs possibles *</label>
+              <div class="values-container">
+                <div 
+                  class="value-item" 
+                  *ngFor="let value of getValuesFormGroups(i); let j = index"
+                  [formGroup]="value"
+                >
+                  <input 
+                    type="text" 
+                    formControlName="value"
+                    class="value-input"
+                    placeholder="Ex: S, M, L ou Rouge, Bleu..."
+                  >
+                  <button 
+                    type="button" 
+                    class="btn-remove-value" 
+                    (click)="removeValue(i, j)"
+                    *ngIf="getValuesFormArray(i).length > 1"
+                  >
+                    <i class="fa-solid fa-circle-xmark" style="color: red;"></i>
+                  </button>
+                </div>
+              </div>
+              <button type="button" class="btn-add-value" (click)="addValue(i)">
+                <i class="fa-solid fa-plus"></i>  Ajouter une valeur
+              </button>
+            </div>
+          </div>
+
+          <div class="attributes-actions">
+            <button type="button" class="btn btn-secondary" (click)="addAttribute()">
+              <i class="fa-solid fa-plus"></i> Ajouter un attribut
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-primary" 
+              (click)="goToVariantCreation()"
+              [disabled]="!areAttributesValid()"
+            >
+              Ajouter les variantes <i class="fa-solid fa-arrow-right"></i> 
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3: Ajout manuel des variantes -->
+      <div class="product-form-section" [class.active]="currentPhase === 3" *ngIf="currentPhase >= 3">
+        <h3>Ajouter les variantes</h3>
+        <p class="section-description">
+          Ajoutez manuellement chaque variante avec ses attributs, prix et stock
+        </p>
+
+        <!-- Formulaire d'ajout de variante -->
+        <div class="variant-form-container">
+          <form [formGroup]="variantForm" class="variant-form">
+            <div class="variant-form-grid">
+              <!-- Champ pour chaque attribut -->
+              <div class="form-group" *ngFor="let attr of currentAttributes">
+                <label>{{ attr.name }} *</label>
+                <select 
+                  [formControlName]="getControlName(attr.name)"
+                  class="form-select"
+                  [class.error]="isFieldInvalid(getControlName(attr.name))"
+                >
+                  <option value="">Sélectionner {{ attr.name.toLowerCase() }}</option>
+                  <option *ngFor="let value of attr.values" [value]="value">{{ value }}</option>
+                </select>
+              </div>
+
+              <!-- Prix -->
+              <div class="form-group">
+                <label>Prix (€) *</label>
+                <input 
+                  type="number" 
+                  formControlName="price"
+                  class="form-input"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0.01"
+                  [class.error]="variantForm.get('price')?.invalid && variantForm.get('price')?.touched"
+                >
+              </div>
+
+              <!-- Stock -->
+              <div class="form-group">
+                <label>Stock *</label>
+                <input 
+                  type="number" 
+                  formControlName="stock"
+                  class="form-input"
+                  placeholder="0"
+                  min="0"
+                  [class.error]="variantForm.get('stock')?.invalid && variantForm.get('stock')?.touched"
+                >
+              </div>
+            </div>
+
+            <div class="variant-form-actions">
+              <button 
+                type="button" 
+                class="btn btn-primary" 
+                (click)="addVariant()"
+                [disabled]="variantForm.invalid || isAddingVariant"
+              >
+                <span *ngIf="!isAddingVariant"><i class="fa-solid fa-check" style="color: #fefefe;"></i> Ajouter cette variante</span>
+                <span *ngIf="isAddingVariant" class="loading-text">
+                  <span class="spinner"></span>
+                  Ajout...
+                </span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Message d'erreur pour les doublons -->
+          <div class="error-message" *ngIf="duplicateVariantError">
+            <i class="fa-solid fa-circle-exclamation"></i> Cette combinaison d'attributs existe déjà !
+          </div>
+        </div>
+
+        <!-- Tableau récapitulatif des variantes ajoutées -->
+        <div class="variants-summary" *ngIf="addedVariants.length > 0">
+          <h4> Variantes ajoutées ({{ addedVariants.length }})</h4>
+          <div class="variants-table-container">
+            <table class="variants-table">
+              <thead>
+                <tr>
+                  <th *ngFor="let attr of currentAttributes">{{ attr.name }}</th>
+                  <th>Prix (€)</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let variant of addedVariants; let i = index">
+                  <td *ngFor="let attr of currentAttributes" class="attribute-cell">
+                    {{ variant.attributes[attr.name] }}
+                  </td>
+                  <td class="price-cell">{{ variant.price }}€</td>
+                  <td class="stock-cell">{{ variant.stock }}</td>
+                  <td class="actions-cell">
+                    <button 
+                      type="button" 
+                      class="btn-remove-variant" 
+                      (click)="removeVariant(i)"
+                      title="Supprimer cette variante"
+                    >
+                      <i class="fa-solid fa-trash" style="color: #464d59;"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="variants-actions" *ngIf="addedVariants.length > 0">
+          <button type="button" class="btn btn-secondary" (click)="backToAttributes()">
+            <i class="fa-solid fa-arrow-left"></i> Modifier les attributs
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-primary" 
+            (click)="addProduct()"
+            [disabled]="addedVariants.length === 0 || isAddingProduct"
+          >
+            <span *ngIf="!isAddingProduct"><i class="fa-solid fa-square-check" ></i> Finaliser le produit</span>
+            <span *ngIf="isAddingProduct" class="loading-text">
+              <span class="spinner"></span>
+              Finalisation...
+            </span>
+          </button>
+        </div>
+        
+        <!-- ✅ AJOUT: Messages d'erreur -->
+        <div class="error-message" *ngIf="productCreationError">
+          ❌ {{ productCreationError }}
+        </div>
+      </div>
+
+      <!-- Récapitulatif des produits ajoutés -->
+      <div class="products-summary" *ngIf="addedProducts.length > 0">
+        <h3>Produits ajoutés</h3>
+        <div class="products-list">
+          <div class="product-card" *ngFor="let product of addedProducts">
+            <div class="product-info">
+              <h4>{{ product.name }}</h4>
+              <p class="product-category">{{ product.category | titlecase }}</p>
+              <div class="product-stats">
+                <span class="stat">{{ product.variantCount }} variantes</span>
+                <span class="stat">{{ product.totalStock }} en stock</span>
+                <span class="stat">{{ product.minPrice }}€ - {{ product.maxPrice }}€</span>
+              </div>
+            </div>
+            <div class="product-status"><i class="fa-solid fa-square-check" style="color: #28a745"></i></div>
+          </div>
+        </div>
+      </div>
+      <!-- Actions finales -->
+      <div class="final-actions" *ngIf="addedProducts.length > 0">
+        <button type="button" class="btn btn-secondary" (click)="resetForNewProduct()">
+          <i class="fa-solid fa-plus" style="color: #ffffff;"></i> Ajouter un autre produit
+        </button>
+        <button type="button" class="btn btn-success btn-large" (click)="completeOnboarding()">
+          <i class="fa-solid fa-check" style="color: #ffffff;"></i> Finaliser la boutique
+        </button>
+      </div>
+    </div>
