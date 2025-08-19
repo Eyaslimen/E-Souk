@@ -1,15 +1,14 @@
 package com.example.e_souk.Mappers;
 
-import com.example.e_souk.Dto.ShopResponseDTO;
-import com.example.e_souk.Dto.ShopDetailsDTO;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.example.e_souk.Dto.ProductDetailsDTO;
-
-import com.example.e_souk.Dto.ShopOwnerDTO;
-import com.example.e_souk.Dto.ShopSummaryDTO;
+import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Shop.ShopDetailsDTO;
+import com.example.e_souk.Dto.Shop.ShopGeneralDetailsDTO;
+import com.example.e_souk.Dto.Shop.ShopOwnerDTO;
+import com.example.e_souk.Dto.Shop.ShopResponseDTO;
+import com.example.e_souk.Dto.Shop.ShopSummaryDTO;
 import com.example.e_souk.Model.Shop;
 import com.example.e_souk.Service.ProductService;
 
@@ -27,6 +26,7 @@ public class ShopMapper {
                 shop.getLogoPicture(),
                 shop.getDeliveryFee(),
                 shop.getAddress(),
+                shop.getCategoryName(),
                 shop.getIsActive(),
                 shop.getCreatedAt(),
                 shop.getUpdatedAt(),
@@ -76,4 +76,21 @@ public class ShopMapper {
                 followerCount
         );
     }
+
+    public static ShopGeneralDetailsDTO toShopDetailsDTO(Shop shop, long productCount, long followerCount) {
+        return new ShopGeneralDetailsDTO(
+                shop.getBrandName(),
+                shop.getDescription(),
+                shop.getLogoPicture(),
+                shop.getDeliveryFee(),
+                shop.getAddress(),
+                shop.getCreatedAt(),
+                shop.getOwner().getUsername(),
+                shop.getOwner().getPicture(),
+                productCount,
+                followerCount,
+                shop.getCategoryName()
+        );
+    }
+
 }

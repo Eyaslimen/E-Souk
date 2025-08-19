@@ -1,10 +1,10 @@
 
 package com.example.e_souk.Controller;
 
+import com.example.e_souk.Dto.Category.CategoryRequestDTO;
+import com.example.e_souk.Dto.Category.CategoryResponseDTO;
+import com.example.e_souk.Dto.Category.CategorySummaryDTO;
 import com.example.e_souk.Service.CategoryService;
-import com.example.e_souk.Dto.CategoryRequestDTO;
-import com.example.e_souk.Dto.CategoryResponseDTO;
-import com.example.e_souk.Dto.CategorySummaryDTO;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 
@@ -73,15 +72,4 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<CategorySummaryDTO>> searchCategories(@RequestParam(name = "q") String query) {
-        List<CategorySummaryDTO> categories = categoryService.searchCategories(query);
-        return ResponseEntity.ok(categories);
     }
-
-    @GetMapping("/summary")
-    public ResponseEntity<List<CategorySummaryDTO>> getAllCategoriesSummary() {
-        List<CategorySummaryDTO> categories = categoryService.getAllCategoriesSummary();
-        return ResponseEntity.ok(categories);
-    }
-}

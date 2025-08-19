@@ -4,32 +4,31 @@
  */
 package com.example.e_souk.Controller;
 
-import com.example.e_souk.Dto.AuthResponseDTO;
-import com.example.e_souk.Dto.LoginRequestDTO;
-import com.example.e_souk.Dto.RegisterRequestDTO;
-import com.example.e_souk.Dto.UserProfileDTO;
-import com.example.e_souk.Service.AuthService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import com.example.e_souk.Dto.Auth.AuthResponseDTO;
+import com.example.e_souk.Dto.Auth.LoginRequestDTO;
+import com.example.e_souk.Dto.Auth.RegisterRequestDTO;
+import com.example.e_souk.Dto.User.UserProfileDTO;
+import com.example.e_souk.Service.AuthService;
 
-import javax.swing.Spring;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 // @ApiResponses : ça est du swagger doc , peut etre utilisée pour documenter les réponses de l'API
 /**
  * Controller pour l'authentification
@@ -124,23 +123,3 @@ public class AuthController {
         }
     }
 } 
-
-
-    // /**
-    //  * Register a new user with an optional profile picture.
-    //  * @param registerRequest DTO contenant les données d'inscription (via formulaire multipart).
-    //  * @param picture Fichier image optionnel pour la photo de profil.
-    //  * @return Réponse avec token JWT et informations utilisateur
-    //  */
-    // @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    // @Operation(
-    //     summary = "Inscription d'un nouvel utilisateur",
-    //     description = "Crée un nouveau compte utilisateur avec une photo de profil optionnelle et retourne un token JWT"
-    // )
-    // public ResponseEntity<AuthResponseDTO> register(
-    //         @ModelAttribute RegisterRequestDTO registerRequest,
-    //         @RequestPart(value = "picture", required = false) MultipartFile picture) {
-    //     log.info("Requête d'inscription reçue pour: {}", registerRequest.getUsername());
-    //     AuthResponseDTO response = authService.register(registerRequest, picture);
-    //     return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    // }

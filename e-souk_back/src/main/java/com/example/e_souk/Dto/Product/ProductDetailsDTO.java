@@ -1,4 +1,4 @@
-package com.example.e_souk.Dto;
+package com.example.e_souk.Dto.Product;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

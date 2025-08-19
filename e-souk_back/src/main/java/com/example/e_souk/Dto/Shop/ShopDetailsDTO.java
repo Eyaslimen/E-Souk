@@ -1,4 +1,4 @@
-package com.example.e_souk.Dto;
+package com.example.e_souk.Dto.Shop;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
+import com.example.e_souk.Dto.Product.ProductDetailsDTO;
 
 @Data
 @NoArgsConstructor

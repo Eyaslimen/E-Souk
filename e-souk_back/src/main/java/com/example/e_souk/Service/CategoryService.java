@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.e_souk.Dto.*;
+import com.example.e_souk.Dto.Category.CategoryRequestDTO;
+import com.example.e_souk.Dto.Category.CategoryResponseDTO;
+import com.example.e_souk.Dto.Category.CategorySummaryDTO;
 import com.example.e_souk.Mappers.CategoryMapper;
 import com.example.e_souk.Model.Category;
 import com.example.e_souk.Repository.CategoryRepository;

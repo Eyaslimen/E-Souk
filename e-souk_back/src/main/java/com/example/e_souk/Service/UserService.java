@@ -1,6 +1,6 @@
 package com.example.e_souk.Service;
 
-import com.example.e_souk.Dto.UserProfileDTO;
+import com.example.e_souk.Dto.User.UserProfileDTO;
 import com.example.e_souk.Exception.AuthException;
 import com.example.e_souk.Mappers.UserMapper;
 import com.example.e_souk.Model.User;

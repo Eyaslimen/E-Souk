@@ -2,6 +2,8 @@
 package com.example.e_souk.Repository;
 
 import com.example.e_souk.Model.Shop;
+import com.example.e_souk.Model.User;
+
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -122,4 +124,5 @@ public interface ShopRepository extends JpaRepository<Shop, UUID> {
      */
     @Query("SELECT COUNT(s) > 0 FROM Shop s WHERE s.owner.id = :ownerId AND s.isActive = true")
     boolean existsActiveShopByOwnerId(@Param("ownerId") UUID ownerId);
+
 }

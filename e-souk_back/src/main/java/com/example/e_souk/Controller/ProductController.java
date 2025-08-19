@@ -2,10 +2,12 @@ package com.example.e_souk.Controller;
 
 import java.util.List;
 import java.util.UUID;
-import com.example.e_souk.Dto.ProductCreationRequestDTO;
-import com.example.e_souk.Dto.ProductDetailsDTO;
+
 import com.example.e_souk.Model.Product;
-import com.example.e_souk.Dto.ProductResponseDTO;
+import com.example.e_souk.Dto.Product.ProductCreationRequestDTO;
+import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductResponseDTO;
+import com.example.e_souk.Mappers.ProductMapper;
 import com.example.e_souk.Service.ProductService;
 import lombok.RequiredArgsConstructor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +36,6 @@ public class ProductController {
                         new TypeReference<List<ProductCreationRequestDTO.AttributeDTO>>() {});
                 dto.setAttributes(attributes);
             }
-            
             if (dto.getVariantsJson() != null && !dto.getVariantsJson().trim().isEmpty()) {
                 List<ProductCreationRequestDTO.VariantDTO> variants = 
                     objectMapper.readValue(dto.getVariantsJson(), 
@@ -43,7 +44,7 @@ public class ProductController {
             }
             
             Product product = productService.createProduct(dto, shopId);
-            ProductResponseDTO responseDTO = productService.toProductResponseDTO(product);
+            ProductResponseDTO responseDTO = ProductMapper.toProductResponseDTO(product);
             return ResponseEntity.ok(responseDTO);
             
         } catch (Exception e) {

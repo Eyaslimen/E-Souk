@@ -77,7 +77,9 @@ public class Shop {
     @Column(name = "address", length = 255)
     @Size(max = 255, message = "L'adresse ne peut pas dépasser 255 caractères")
     private String address;
-    
+    @Size(max = 50, message = "La category ne peut pas dépasser 50 caractères")
+    private String categoryName;
+
     /**
      * Indique si la boutique est active et visible
      * Permet de désactiver temporairement une boutique sans la supprimer

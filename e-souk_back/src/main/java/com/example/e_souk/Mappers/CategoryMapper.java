@@ -2,7 +2,7 @@ package com.example.e_souk.Mappers;
 
 import org.springframework.stereotype.Component;
 
-import com.example.e_souk.Dto.CategoryResponseDTO;
+import com.example.e_souk.Dto.Category.CategoryResponseDTO;
 import com.example.e_souk.Model.Category;
 import com.example.e_souk.Repository.CategoryRepository;
 @Component

@@ -1,7 +1,8 @@
 package com.example.e_souk.Mappers;
 
+import com.example.e_souk.Dto.Auth.AuthResponseDTO;
 import com.example.e_souk.Model.User;
-import com.example.e_souk.Dto.AuthResponseDTO;
+
 import java.time.LocalDateTime;
 
 public class AuthMapper {

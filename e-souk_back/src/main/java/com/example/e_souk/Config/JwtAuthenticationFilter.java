@@ -34,9 +34,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * Vérifie la présence d'un token JWT valide dans l'en-tête Authorization
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, 
-                                  HttpServletResponse response, 
-                                  FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, // requête HTTP entrante
+                                  HttpServletResponse response, // réponse HTTP sortante (si on veut envoyer une réponse avec header)
+                                  FilterChain filterChain) throws ServletException, IOException { // chaîne de filtres : on passe à l'autre filtre dans la chaine
         
         try {
             // Extraction du token depuis l'en-tête Authorization

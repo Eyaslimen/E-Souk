@@ -1,16 +1,7 @@
 package com.example.e_souk.Service;
 
-import com.example.e_souk.Config.JwtTokenProvider;
-import com.example.e_souk.Dto.AuthResponseDTO;
-import com.example.e_souk.Mappers.AuthMapper;
-import com.example.e_souk.Mappers.UserMapper;
-import com.example.e_souk.Dto.LoginRequestDTO;
-import com.example.e_souk.Dto.RegisterRequestDTO;
-import com.example.e_souk.Dto.UserProfileDTO;
-import com.example.e_souk.Exception.AuthException;
-import com.example.e_souk.Model.User;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,8 +10,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
+import com.example.e_souk.Config.JwtTokenProvider;
+import com.example.e_souk.Dto.Auth.AuthResponseDTO;
+import com.example.e_souk.Dto.Auth.LoginRequestDTO;
+import com.example.e_souk.Dto.Auth.RegisterRequestDTO;
+import com.example.e_souk.Dto.User.UserProfileDTO;
+import com.example.e_souk.Exception.AuthException;
+import com.example.e_souk.Mappers.AuthMapper;
+import com.example.e_souk.Mappers.UserMapper;
+import com.example.e_souk.Model.User;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service d'authentification
@@ -43,17 +44,14 @@ public class AuthService {
      */
     public AuthResponseDTO register(RegisterRequestDTO registerRequest) {
         log.info("Tentative d'inscription pour l'utilisateur: {}", registerRequest.getUsername());
-        
         // Vérification que le nom d'utilisateur n'existe pas déjà
         if (userService.usernameExists(registerRequest.getUsername())) {
             throw AuthException.usernameAlreadyExists(registerRequest.getUsername());
         }
-        
         // Vérification que l'email n'existe pas déjà
         if (userService.emailExists(registerRequest.getEmail())) {
             throw AuthException.emailAlreadyExists(registerRequest.getEmail());
         }
-        
         // Gérer l'upload de la photo de profil
         String savedFileName = null;
         MultipartFile profilePicture = registerRequest.getProfilePicture();
@@ -72,7 +70,6 @@ public class AuthService {
                 throw new IllegalArgumentException(e.getMessage());
             }
         }
-
         // Création de l'utilisateur
         User user = User.builder()
                 .username(registerRequest.getUsername())
@@ -86,7 +83,6 @@ public class AuthService {
                 .build();
         
         User savedUser = userService.createUser(user);
-        
         // Génération du token JWT
         String token = jwtTokenProvider.generateTokenFromUsername(savedUser.getUsername());
         
@@ -101,9 +97,9 @@ public class AuthService {
      * @param loginRequest DTO contenant les identifiants de connexion
      * @return Réponse d'authentification avec token JWT
      */
+
     public AuthResponseDTO login(LoginRequestDTO loginRequest) {
         log.info("Tentative de connexion pour: {}", loginRequest.getUsernameOrEmail());
-        
         try {
             // Authentification avec Spring Security
             Authentication authentication = authenticationManager.authenticate(
@@ -112,32 +108,24 @@ public class AuthService {
                             loginRequest.getPassword()
                     )
             );
-            
             // Stockage de l'authentification dans le contexte
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            
             // Génération du token JWT
             String token = jwtTokenProvider.generateToken(authentication);
-            
             // Récupération des informations utilisateur
             User user = userService.findByUsernameOrEmail(loginRequest.getUsernameOrEmail());
-            
             // Vérification que le compte est actif
             if (!user.getIsActive()) {
                 throw AuthException.accountInactive();
             }
-            
             AuthResponseDTO response = AuthMapper.toAuthResponseDTO(user, token, "Connexion réussie");
-            
             log.info("Connexion réussie pour l'utilisateur: {}", user.getUsername());
             return response;
-            
         } catch (Exception e) {
             log.warn("Échec de connexion pour: {}", loginRequest.getUsernameOrEmail());
             throw AuthException.invalidCredentials();
         }
     }
-    
     /**
      * Récupère le profil de l'utilisateur authentifié
      * @return Profil utilisateur
@@ -195,4 +183,4 @@ public class AuthService {
     public boolean isTokenExpiringSoon(String token) {
         return jwtTokenProvider.isTokenExpiringSoon(token);
     }
-} 
+}

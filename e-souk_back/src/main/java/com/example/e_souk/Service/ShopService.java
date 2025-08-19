@@ -1,35 +1,38 @@
 package com.example.e_souk.Service;
 
-import com.example.e_souk.Exception.ShopException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-import com.example.e_souk.Dto.CreateShopRequestDTO;
-import com.example.e_souk.Dto.ShopDetailsDTO;
-import com.example.e_souk.Dto.UpdateShopRequestDTO;
-import com.example.e_souk.Dto.ShopResponseDTO;
-import com.example.e_souk.Dto.ShopOwnerDTO;
-import com.example.e_souk.Dto.ShopSummaryDTO;
-import com.example.e_souk.Mappers.ShopMapper;
-import com.example.e_souk.Dto.ShopStatsDTO;
-import com.example.e_souk.Model.Shop;
-import com.example.e_souk.Model.User;
-import com.example.e_souk.Model.Role;
-import com.example.e_souk.Repository.ShopRepository;
-import com.example.e_souk.Repository.UserRepository;
-
-import io.jsonwebtoken.io.IOException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import com.example.e_souk.Dto.Category.CategoryRequestDTO;
+import com.example.e_souk.Dto.Category.CategoryResponseDTO;
+import com.example.e_souk.Dto.Shop.CreateShopRequestDTO;
+import com.example.e_souk.Dto.Shop.ShopDetailsDTO;
+import com.example.e_souk.Dto.Shop.ShopResponseDTO;
+import com.example.e_souk.Dto.Shop.ShopSummaryDTO;
+import com.example.e_souk.Dto.Shop.UpdateShopRequestDTO;
+import com.example.e_souk.Exception.ShopException;
+import com.example.e_souk.Mappers.ShopMapper;
+import com.example.e_souk.Model.Category;
+import com.example.e_souk.Model.Role;
+import com.example.e_souk.Model.Shop;
+import com.example.e_souk.Model.User;
+import com.example.e_souk.Repository.CategoryRepository;
+import com.example.e_souk.Repository.ReviewRepository;
+import com.example.e_souk.Repository.ShopRepository;
+import com.example.e_souk.Repository.UserRepository;
+import java.io.IOException; 
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service pour gérer la logique métier des boutiques
@@ -47,7 +50,10 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final UserRepository userRepository;
-    private final FileStorageService fileStorageService; // Add dependency
+    private final CategoryRepository categoryRepository;
+    private final FileStorageService fileStorageService; 
+    private final CategoryService categoryService; 
+    private final ReviewRepository reviewRepository; 
 
     // ShopFollowerRepository sera injecté quand il sera créé
     // private final ShopFollowerRepository shopFollowerRepository;
@@ -75,7 +81,6 @@ public class ShopService {
             log.warn("L'utilisateur {} a déjà une boutique active", owner.getUsername());
             throw new ShopException("SHOP_ERROR", "Vous avez déjà une boutique active. Un utilisateur ne peut avoir qu'une seule boutique active.");
         }
-        
         // ÉTAPE 3 : Vérifier que le nom de marque n'existe pas déjà
         Optional<Shop> existingShop = shopRepository.findByBrandNameIgnoreCase(requestDTO.getBrandName());
         if (existingShop.isPresent()) {
@@ -95,16 +100,30 @@ public class ShopService {
                 throw new IllegalArgumentException(e.getMessage());
             }
         }
-
-        //         log.error("Erreur lors de l'enregistrement de la photo de profil pour l'utilisateur {}", 
-        //                 registerRequest.getUsername(), e);
-        //         throw new RuntimeException("Erreur lors de l'enregistrement de la photo de profil.");
-        //     } catch (IllegalArgumentException e) {
-        //         log.warn("Type de fichier invalide pour l'utilisateur {}: {}", 
-        //                 registerRequest.getUsername(), e.getMessage());
-        //         throw new IllegalArgumentException(e.getMessage());
-        //     }
-        // }
+   // ÉTAPE 3.5 : Gestion de la catégorie
+    Category category = categoryRepository.findByNameIgnoreCase(requestDTO.getCategoryName())
+            .orElseGet(() -> {
+                try {
+                    log.info("Catégorie '{}' non trouvée, création d'une nouvelle catégorie", requestDTO.getCategoryName());
+                    CategoryRequestDTO newCategoryDTO = new CategoryRequestDTO();
+                    newCategoryDTO.setName(requestDTO.getCategoryName());
+                    newCategoryDTO.setDescription("Créé automatiquement lors de la création de boutique");
+                    CategoryResponseDTO categoryResponse = categoryService.createCategory(newCategoryDTO);
+                    
+                    // Récupération de l'entité correspondante
+                    return categoryRepository.findByNameIgnoreCase(categoryResponse.getName())
+                            .orElseThrow(() -> new RuntimeException("Échec de création de la catégorie"));
+                            
+                } catch (Exception e) {
+                    // Si la création échoue (par exemple à cause d'un nom dupliqué), 
+                    // on essaie de récupérer la catégorie existante
+                    log.warn("Échec de création de catégorie '{}', tentative de récupération: {}", 
+                            requestDTO.getCategoryName(), e.getMessage());
+                    
+                    return categoryRepository.findByNameIgnoreCase(requestDTO.getCategoryName())
+                            .orElseThrow(() -> new RuntimeException("Impossible de créer ou récupérer la catégorie: " + requestDTO.getCategoryName()));
+                }
+            });
         // ÉTAPE 4 : Créer la boutique
         Shop shop = new Shop();
         shop.setBrandName(requestDTO.getBrandName().trim());
@@ -113,16 +132,13 @@ public class ShopService {
         shop.setAddress(requestDTO.getAddress().trim());
         shop.setIsActive(true); // Nouvelle boutique = active par défaut
         shop.setCreatedAt(LocalDateTime.now());
+        shop.setCategoryName(category.getName());
         shop.setUpdatedAt(LocalDateTime.now());
         shop.setLogoPicture(savedFileName);
         shop.setOwner(owner);
-        
-        // logoPicture sera géré séparément via upload
-        
         // ÉTAPE 5 : Sauvegarder la boutique
         Shop savedShop = shopRepository.save(shop);
         log.info("Boutique créée avec succès - ID: {}", savedShop.getId());
-        
         // ÉTAPE 6 : CHANGER LE RÔLE CLIENT → VENDOR (RÈGLE MÉTIER IMPORTANTE!)
         if (owner.getRole() == Role.CLIENT) {
             owner.setRole(Role.VENDOR);
@@ -130,19 +146,16 @@ public class ShopService {
             userRepository.save(owner);
             log.info("Rôle de l'utilisateur {} changé de CLIENT à VENDOR", owner.getUsername());
         }
-        
         // ÉTAPE 7 : Retourner le DTO complet
     long productCount = shopRepository.countProductsInShop(savedShop.getId());
     long orderCount = shopRepository.countOrdersInShop(savedShop.getId());
     long followerCount = 0;
     return ShopMapper.toResponseDTO(savedShop, productCount, orderCount, followerCount);
     }
-
+   
     /**
      * Met à jour une boutique existante
-     * 
      * SÉCURITÉ : Seul le propriétaire peut modifier sa boutique
-     * 
      * @param shopId ID de la boutique
      * @param requestDTO nouvelles données
      * @param ownerId ID du propriétaire (pour vérification)
@@ -201,25 +214,6 @@ public class ShopService {
     }
 
     /**
-     * Récupère une boutique par son ID
-     * 
-     * @param shopId ID de la boutique
-     * @return ShopDetailsDTO la boutique
-     */
-    @Transactional(readOnly = true)
-    public ShopDetailsDTO getShopById(UUID shopId) {
-        log.info("Récupération de la boutique ID: {}", shopId);
-        
-    Shop shop = shopRepository.findById(shopId)
-        .orElseThrow(() -> new ShopException("SHOP_ERROR", "Boutique non trouvée"));
-        
-    long productCount = shopRepository.countProductsInShop(shop.getId());
-    long orderCount = shopRepository.countOrdersInShop(shop.getId());
-    long followerCount = 0;
-    return ShopMapper.toShopDetails(shop, productCount, followerCount);
-    }
-
-    /**
      * Récupère la boutique d'un utilisateur
      * 
      * @param ownerId ID du propriétaire
@@ -254,115 +248,6 @@ public class ShopService {
     return shops.map(shop -> ShopMapper.toSummaryDTO(shop, shopRepository.countProductsInShop(shop.getId()), 0));
     }
 
-    /**
-     * Recherche des boutiques par nom
-     * 
-     * @param searchTerm terme de recherche
-     * @return List<ShopSummaryDTO> boutiques correspondantes
-     */
-    @Transactional(readOnly = true)
-    public List<ShopSummaryDTO> searchShops(String searchTerm) {
-        log.info("Recherche de boutiques avec le terme: {}", searchTerm);
-        
-        if (searchTerm == null || searchTerm.trim().isEmpty()) {
-            return List.of();
-        }
-        
-        List<Shop> shops = shopRepository.findByBrandNameContainingIgnoreCase(searchTerm.trim());
-        
-    return shops.stream()
-        .map(shop -> ShopMapper.toSummaryDTO(shop, shopRepository.countProductsInShop(shop.getId()), 0))
-        .collect(Collectors.toList());
-    }
+   
 }
 
-
-// ##### lORSQUE ON AVANCE DANS LE PROJET #####
-//  /**
-//      * Récupère les boutiques les plus populaires
-//      * 
-//      * @param pageable pagination
-//      * @return Page<ShopSummaryDTO> boutiques populaires
-//      */
-//     @Transactional(readOnly = true)
-//     public Page<ShopSummaryDTO> getMostPopularShops(Pageable pageable) {
-//         log.info("Récupération des boutiques les plus populaires");
-        
-//         Page<Shop> shops = shopRepository.findMostFollowedShops(pageable);
-        
-//     return shops.map(shop -> ShopMapper.toSummaryDTO(shop, shopRepository.countProductsInShop(shop.getId()), 0));
-//     }
-
-//     /**
-//      * Récupère les statistiques détaillées d'une boutique
-//      * 
-//      * USAGE : Dashboard du vendeur
-//      * 
-//      * @param shopId ID de la boutique
-//      * @param ownerId ID du propriétaire (vérification de sécurité)
-//      * @return ShopStatsDTO statistiques de la boutique
-//      */
-//     @Transactional(readOnly = true)
-//     public ShopStatsDTO getShopStatistics(UUID shopId, UUID ownerId) {
-//         log.info("Récupération des statistiques de la boutique ID: {}", shopId);
-        
-//         // Vérification de propriété
-//         Shop shop = shopRepository.findById(shopId)
-//                 .orElseThrow(() -> new IllegalArgumentException("Boutique non trouvée"));
-        
-//         if (!shop.getOwner().getId().equals(ownerId)) {
-//             throw new IllegalArgumentException("Vous ne pouvez consulter que les statistiques de votre boutique");
-//         }
-        
-//         // Calcul des statistiques (ces méthodes seront ajoutées aux repositories plus tard)
-//         long totalProducts = shopRepository.countProductsInShop(shopId);
-//         long totalOrders = shopRepository.countOrdersInShop(shopId);
-//         long totalFollowers = 0;
-        
-//         // TODO: Ajouter les requêtes pour les autres statistiques
-//         // Pour l'instant, valeurs par défaut
-        
-//     return new ShopStatsDTO(
-//         shopId,
-//         shop.getBrandName(),
-//         totalProducts,
-//         totalProducts, // activeProducts - à calculer plus tard
-//         0L, // outOfStockProducts - à calculer plus tard
-//         totalOrders,
-//         0L, // pendingOrders - à calculer plus tard
-//         0L, // completedOrders - à calculer plus tard
-//         0.0, // totalRevenue - à calculer plus tard
-//         0.0, // monthlyRevenue - à calculer plus tard
-//         totalFollowers,
-//         0L, // totalReviews - à calculer plus tard
-//         0.0 // averageRating - à calculer plus tard
-//     );
-//     }
-
-//     /**
-//      * Désactive une boutique (soft delete)
-//      * 
-//      * POURQUOI pas de suppression définitive ?
-//      * - Préserver l'historique des commandes
-//      * - Possibilité de réactiver plus tard
-//      * 
-//      * @param shopId ID de la boutique
-//      * @param ownerId ID du propriétaire
-//      */
-//     @Transactional
-//     public void deactivateShop(UUID shopId, UUID ownerId) {
-//         log.info("Désactivation de la boutique ID: {}", shopId);
-        
-//         Shop shop = shopRepository.findById(shopId)
-//                 .orElseThrow(() -> new IllegalArgumentException("Boutique non trouvée"));
-        
-//         if (!shop.getOwner().getId().equals(ownerId)) {
-//             throw new IllegalArgumentException("Vous ne pouvez désactiver que votre propre boutique");
-//         }
-        
-//         shop.setIsActive(false);
-//         shop.setUpdatedAt(LocalDateTime.now());
-//         shopRepository.save(shop);
-        
-//         log.info("Boutique désactivée avec succès - ID: {}", shopId);
-//     }

@@ -1,27 +1,24 @@
-package com.example.e_souk.Dto;
+package com.example.e_souk.Dto.Shop;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShopResponseDTO {
-    private UUID id;
+public class ShopGeneralDetailsDTO {
     private String brandName;
     private String description;
     private String logoPicture;
     private Float deliveryFee;
     private String address;
-    private Boolean isActive;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private ShopOwnerDTO owner;
+    private String ownerName;
+    private String ownerPicture;
     private Long productCount;
-    private Long orderCount;
     private Long followerCount;
+    private String categoryName;
 }

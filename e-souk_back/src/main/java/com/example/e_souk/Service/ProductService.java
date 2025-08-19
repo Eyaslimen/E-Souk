@@ -1,11 +1,11 @@
 
 package com.example.e_souk.Service;
 
-import com.example.e_souk.Dto.CategoryRequestDTO;
-import com.example.e_souk.Dto.CategoryResponseDTO;
-import com.example.e_souk.Dto.ProductCreationRequestDTO;
-import com.example.e_souk.Dto.ProductDetailsDTO;
-import com.example.e_souk.Dto.ProductResponseDTO;
+import com.example.e_souk.Dto.Category.CategoryRequestDTO;
+import com.example.e_souk.Dto.Category.CategoryResponseDTO;
+import com.example.e_souk.Dto.Product.ProductCreationRequestDTO;
+import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductResponseDTO;
 import com.example.e_souk.Mappers.ProductMapper;
 import com.example.e_souk.Model.Product;
 import com.example.e_souk.Model.Shop;
@@ -40,45 +40,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 public class ProductService {
-	public ProductResponseDTO toProductResponseDTO(Product product) {
-		ProductResponseDTO dto = new ProductResponseDTO();
-		dto.setId(product.getId());
-		dto.setName(product.getName());
-		dto.setDescription(product.getDescription());
-		dto.setPicture(product.getPicture());
-
-		ProductResponseDTO.CategorySummaryDTO catDto = new ProductResponseDTO.CategorySummaryDTO();
-		catDto.setId(product.getCategory().getId());
-		catDto.setName(product.getCategory().getName());
-		dto.setCategory(catDto);
-
-		ProductResponseDTO.ShopSummaryDTO shopDto = new ProductResponseDTO.ShopSummaryDTO();
-		shopDto.setId(product.getShop().getId());
-		shopDto.setBrandName(product.getShop().getBrandName());
-		dto.setShop(shopDto);
-
-		if (product.getVariants() != null) {
-			List<ProductResponseDTO.VariantSummaryDTO> variantDTOs = product.getVariants().stream().map(variant -> {
-				ProductResponseDTO.VariantSummaryDTO vdto = new ProductResponseDTO.VariantSummaryDTO();
-				vdto.setId(variant.getId());
-				vdto.setSku(variant.getSku());
-				vdto.setPrice(variant.getPrice());
-				vdto.setStock(variant.getStock());
-				if (variant.getAttributeValues() != null) {
-					List<ProductResponseDTO.AttributeValueDTO> attrVals = variant.getAttributeValues().stream().map(av -> {
-						ProductResponseDTO.AttributeValueDTO avdto = new ProductResponseDTO.AttributeValueDTO();
-						avdto.setAttributeName(av.getAttribute().getName());
-						avdto.setValue(av.getValue());
-						return avdto;
-					}).toList();
-					vdto.setAttributeValues(attrVals);
-				}
-				return vdto;
-			}).toList();
-			dto.setVariants(variantDTOs);
-		}
-		return dto;
-	}
 
 private final FileStorageService fileStorageService;
 	private final ProductRepository productRepository;
@@ -92,18 +53,16 @@ private final FileStorageService fileStorageService;
 	public Product createProduct(ProductCreationRequestDTO dto, UUID shopId) {
 		Shop shop = shopRepository.findById(shopId)
 			.orElseThrow(() -> new RuntimeException("Shop not found"));
-Category category = categoryRepository.findByNameIgnoreCase(dto.getCategoryName())
-    .orElseGet(() -> {
-        CategoryRequestDTO newCategoryDTO = new CategoryRequestDTO();
-        newCategoryDTO.setName(dto.getCategoryName());
-        newCategoryDTO.setDescription("créé par vendor");
-
-        CategoryResponseDTO categoryResponse = categoryService.createCategory(newCategoryDTO);
-        
-        // Récupération de l'entité correspondante
-        return categoryRepository.findByNameIgnoreCase(categoryResponse.getName())
+		Category category = categoryRepository.findByNameIgnoreCase(dto.getCategoryName())
+    							.orElseGet(() -> {
+        	CategoryRequestDTO newCategoryDTO = new CategoryRequestDTO();
+        	newCategoryDTO.setName(dto.getCategoryName());
+        	newCategoryDTO.setDescription("créé par vendor");
+        	CategoryResponseDTO categoryResponse = categoryService.createCategory(newCategoryDTO);
+        	// Récupération de l'entité correspondante
+        	return categoryRepository.findByNameIgnoreCase(categoryResponse.getName())
                 .orElseThrow(() -> new RuntimeException("Category creation failed"));
-    });
+    											});
         // Gérer l'upload de la photo de profil
         String savedFileName = null;
         MultipartFile profilePicture = dto.getImageUrl();
@@ -181,48 +140,10 @@ Category category = categoryRepository.findByNameIgnoreCase(dto.getCategoryName(
 			.map(ProductMapper::toProductDetails)
 			.collect(Collectors.toList());
 	}
+
 	public Product getProductById(UUID id) {
     return productRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Product not found"));
 }
-//         Shop shop = shopRepository.findById(dto.getShopId())
-//             .orElseThrow(() -> new RuntimeException("Shop not found"));
-//         Category category = categoryRepository.findById(dto.getCategoryId())
-//             .orElseThrow(() -> new RuntimeException("Category not found"));
-
-//         Product product = Product.builder()
-//             .name(dto.getName())
-//             .description(dto.getDescription())
-//             .pictures(dto.getPictures())
-//             .shop(shop)
-//             .category(category)
-//             .isActive(true)
-//             .build();
-//         product = productRepository.save(product);
-
-//         for (ProductCreationDTO.VariantDTO variantDTO : dto.getVariants()) {
-//             String sku = "PROD-" + product.getId() + "-" + Instant.now().toEpochMilli();
-//             Variant variant = Variant.builder()
-//                 .sku(sku)
-//                 .price(variantDTO.getPrice())
-//                 .stock(variantDTO.getStock())
-//                 .isActive(true)
-//                 .product(product)
-//                 .build();
-//             variant = variantRepository.save(variant);
-
-//             for (ProductCreationDTO.AttributeValueDTO attrDTO : variantDTO.getAttributes()) {
-//                 Attribute attribute = attributeRepository.findById(attrDTO.getAttributeId())
-//                     .orElseThrow(() -> new RuntimeException("Attribute not found"));
-//                 AttributeValue attributeValue = AttributeValue.builder()
-//                     .value(attrDTO.getValue())
-//                     .variant(variant)
-//                     .attribute(attribute)
-//                     .build();
-//                 attributeValueRepository.save(attributeValue);
-//             }
-//         }
-//         return product;
-//     }
 
 }

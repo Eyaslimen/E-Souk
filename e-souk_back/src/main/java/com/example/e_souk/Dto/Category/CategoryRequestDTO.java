@@ -1,4 +1,4 @@
-package com.example.e_souk.Dto;
+package com.example.e_souk.Dto.Category;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

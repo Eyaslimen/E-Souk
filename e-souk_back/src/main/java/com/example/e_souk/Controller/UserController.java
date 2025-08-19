@@ -2,9 +2,8 @@
 
 package com.example.e_souk.Controller;
 
-import com.example.e_souk.Dto.ChangePasswordDTO;
-
-import com.example.e_souk.Dto.UserProfileDTO;
+import com.example.e_souk.Dto.User.ChangePasswordDTO;
+import com.example.e_souk.Dto.User.UserProfileDTO;
 import com.example.e_souk.Model.User;
 import com.example.e_souk.Service.AuthService;
 import com.example.e_souk.Service.UserService;

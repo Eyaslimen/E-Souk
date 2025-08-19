@@ -1,21 +1,7 @@
 package com.example.e_souk.Controller;
 
-import com.example.e_souk.Exception.ShopException;
+import java.util.UUID;
 
-import com.example.e_souk.Dto.CreateShopRequestDTO;
-import com.example.e_souk.Dto.ShopDetailsDTO;
-import com.example.e_souk.Dto.UpdateShopRequestDTO;
-import com.example.e_souk.Dto.UserProfileDTO;
-import com.example.e_souk.Model.User;
-import com.example.e_souk.Dto.ShopResponseDTO;
-import com.example.e_souk.Dto.ShopSummaryDTO;
-import com.example.e_souk.Dto.ShopStatsDTO;
-import com.example.e_souk.Service.AuthService;
-import com.example.e_souk.Service.ShopService;
-
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +10,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import java.util.UUID;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.e_souk.Dto.Shop.CreateShopRequestDTO;
+import com.example.e_souk.Dto.Shop.ShopResponseDTO;
+import com.example.e_souk.Dto.Shop.ShopSummaryDTO;
+import com.example.e_souk.Dto.Shop.UpdateShopRequestDTO;
+import com.example.e_souk.Exception.ShopException;
+import com.example.e_souk.Model.User;
+import com.example.e_souk.Service.AuthService;
+import com.example.e_souk.Service.ProductService;
+import com.example.e_souk.Service.ShopService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Controller REST pour gérer les boutiques
@@ -47,7 +55,7 @@ public class ShopController {
 
     private final ShopService shopService;
     private final AuthService authService;
-    
+    private final ProductService productService;
     /**
      * @param requestDTO données de la boutique
      * @return ResponseEntity avec la boutique créée
@@ -117,28 +125,37 @@ public class ShopController {
         return ResponseEntity.ok(shops);
     }
 
-    /**
-     * GET /api/shops/{id} - Récupérer une boutique par son ID
-     * 
-     * SÉCURITÉ : Accessible à tous
-     * USAGE : Page détail d'une boutique
-     * 
-     * @param id ID de la boutique
-     * @return détails complets de la boutique
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<ShopDetailsDTO> getShopById(@PathVariable UUID id) {
-        log.info("API - Récupération de la boutique ID: {}", id);
+    // /**
+    //  * GET /api/shops/{id} - Récupérer une boutique par son ID
+    //  * 
+    //  * SÉCURITÉ : Accessible à tous
+    //  * USAGE : Page détail d'une boutique
+    //  * 
+    //  * @param id ID de la boutique
+    //  * @return détails complets de la boutique
+    //  */
+    // @GetMapping("/{id}")
+    // public ResponseEntity<ShopDetailsDTO> getShopById(@PathVariable UUID id) {
+    //     log.info("API - Récupération de la boutique ID: {}", id);
         
-        try {
-            ShopDetailsDTO shop = shopService.getShopById(id);
-            return ResponseEntity.ok(shop);
+    //     try {
+    //         ShopDetailsDTO shop = shopService.getShopById(id);
+    //         return ResponseEntity.ok(shop);
             
-        } catch (ShopException e) {
-            log.warn("API - Boutique non trouvée : {}", e.getMessage());
-            throw e;
-        }
-    }
+    //     } catch (ShopException e) {
+    //         log.warn("API - Boutique non trouvée : {}", e.getMessage());
+    //         throw e;
+    //     }
+    // }
+
+   
+
+    // @PreAuthorize("isAuthenticated()")
+    // public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CategoryRequestDTO requestDTO) {
+    //     CategoryResponseDTO createdCategory = categoryService.createCategory(requestDTO);
+    //     return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
+    // }
+
 
     /**
      * GET /api/shops/my-shop - Récupérer MA boutique
@@ -149,6 +166,7 @@ public class ShopController {
      * @param principal utilisateur connecté
      * @return ma boutique avec toutes les infos
      */
+
     @GetMapping("/my-shop")
     @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<ShopResponseDTO> getMyShop() {
@@ -157,9 +175,7 @@ public class ShopController {
         try {
             UUID ownerId = profile.getId();
             ShopResponseDTO shop = shopService.getShopByOwnerId(ownerId);
-            
             return ResponseEntity.ok(shop);
-            
         } catch (ShopException e) {
             log.warn("API - Boutique non trouvée pour l'utilisateur : {}",  profile.getUsername());
             throw e;
@@ -176,6 +192,7 @@ public class ShopController {
      * @param principal utilisateur connecté
      * @return boutique mise à jour
      */
+    
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<ShopResponseDTO> updateShop(
@@ -253,117 +270,3 @@ public class ShopController {
         public long getTimestamp() { return timestamp; }
     }
 }
-
-
-
-
-
-
-// ######## LORSQUE ON AVANCE DANS LE PROJET ####
-
-
-
-    // /**
-    //  * DELETE /api/shops/{id} - Désactiver une boutique (soft delete)
-    //  * 
-    //  * SÉCURITÉ : Seul le propriétaire peut désactiver sa boutique
-    //  * 
-    //  * @param id ID de la boutique à désactiver
-    //  * @param principal utilisateur connecté
-    //  * @return réponse vide 204 No Content
-    //  */
-    // @DeleteMapping("/{id}")
-    // @PreAuthorize("hasRole('VENDOR')")
-    // public ResponseEntity<Void> deactivateShop(
-    //         @PathVariable UUID id,
-    //         Principal principal) {
-        
-    //     log.info("API - Désactivation de la boutique ID: {} par : {}", id, principal.getName());
-        
-    //     try {
-    //         UUID ownerId = getUserIdFromPrincipal(principal);
-    //         shopService.deactivateShop(id, ownerId);
-            
-    //         log.info("API - Boutique désactivée avec succès");
-    //         return ResponseEntity.noContent().build();
-            
-    //     } catch (IllegalArgumentException e) {
-    //         log.warn("API - Erreur lors de la désactivation : {}", e.getMessage());
-    //         throw e;
-    //     }
-    // }
-
-    // /**
-    //  * GET /api/shops/search - Rechercher des boutiques
-    //  * 
-    //  * SÉCURITÉ : Accessible à tous
-    //  * USAGE : Barre de recherche, auto-complétion
-    //  * 
-    //  * @param query terme de recherche
-    //  * @return liste des boutiques correspondantes
-    //  */
-    // @GetMapping("/search")
-    // public ResponseEntity<List<ShopSummaryDTO>> searchShops(
-    //         @RequestParam(name = "q") String query) {
-        
-    //     log.info("API - Recherche de boutiques avec : '{}'", query);
-        
-    //     List<ShopSummaryDTO> shops = shopService.searchShops(query);
-        
-    //     log.info("API - {} boutiques trouvées", shops.size());
-    //     return ResponseEntity.ok(shops);
-    // }
-
-    // /**
-    //  * GET /api/shops/popular - Récupérer les boutiques populaires
-    //  * 
-    //  * SÉCURITÉ : Accessible à tous
-    //  * USAGE : Section "Boutiques populaires" sur la page d'accueil
-    //  * 
-    //  * @param limit nombre max de boutiques à retourner
-    //  * @return boutiques les plus suivies
-    //  */
-    // @GetMapping("/popular")
-    // public ResponseEntity<Page<ShopSummaryDTO>> getPopularShops(
-    //         @RequestParam(defaultValue = "6") int limit) {
-        
-    //     log.info("API - Récupération des {} boutiques les plus populaires", limit);
-        
-    //     Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "followerCount"));
-    //     Page<ShopSummaryDTO> popularShops = shopService.getMostPopularShops(pageable);
-        
-    //     log.info("API - {} boutiques populaires récupérées", popularShops.getNumberOfElements());
-    //     return ResponseEntity.ok(popularShops);
-    // }
-
-    // /**
-    //  * GET /api/shops/{id}/stats - Récupérer les statistiques d'une boutique
-    //  * 
-    //  * SÉCURITÉ : Seul le propriétaire peut voir les stats de sa boutique
-    //  * USAGE : Dashboard vendeur avec métriques détaillées
-    //  * 
-    //  * @param id ID de la boutique
-    //  * @param principal utilisateur connecté
-    //  * @return statistiques détaillées de la boutique
-    //  */
-    // @GetMapping("/{id}/stats")
-    // @PreAuthorize("hasRole('VENDOR')")
-    // public ResponseEntity<ShopStatsDTO> getShopStatistics(
-    //         @PathVariable UUID id,
-    //         Principal principal) {
-        
-    //     log.info("API - Récupération des statistiques de la boutique ID: {}", id);
-        
-    //     try {
-    //         UUID ownerId = getUserIdFromPrincipal(principal);
-    //         ShopStatsDTO stats = shopService.getShopStatistics(id, ownerId);
-            
-    //         return ResponseEntity.ok(stats);
-            
-    //     } catch (IllegalArgumentException e) {
-    //         log.warn("API - Erreur lors de la récupération des stats : {}", e.getMessage());
-    //         throw e;
-    //     }
-    // }
-
-

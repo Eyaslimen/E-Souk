@@ -1,4 +1,4 @@
-package com.example.e_souk.Dto;
+package com.example.e_souk.Dto.Auth;
 
 import org.springframework.web.multipart.MultipartFile;
 

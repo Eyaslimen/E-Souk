@@ -1,4 +1,4 @@
-package com.example.e_souk.Dto;
+package com.example.e_souk.Dto.Shop;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

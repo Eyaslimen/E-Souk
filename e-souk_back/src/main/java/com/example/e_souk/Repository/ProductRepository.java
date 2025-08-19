@@ -1,6 +1,8 @@
 package com.example.e_souk.Repository;
 
 import com.example.e_souk.Model.Product;
+import com.example.e_souk.Model.Shop;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -165,7 +167,18 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      */
     @Query("SELECT p FROM Product p WHERE p.shop.id = :shopId ORDER BY p.createdAt DESC")
     List<Product> findRecentProductsByShop(@Param("shopId") UUID shopId, Pageable pageable);
-    
+     /**
+     * Trouve les produits les plus récents d'une boutique
+     * 
+     * USAGE : Section "Nouveautés" sur la page boutique
+     * 
+     * @param shopId ID de la boutique
+     * @param limit nombre de produits à retourner
+     * @return List<Product> produits récents
+     */
+     @Query("SELECT p FROM Product p WHERE p.shop.brandName = :shopName")
+     List<Product>  findProductsByshop(@Param("shopName") String shopName);
+
     /**
      * Génère un SKU unique basé sur le nom du produit
      * 

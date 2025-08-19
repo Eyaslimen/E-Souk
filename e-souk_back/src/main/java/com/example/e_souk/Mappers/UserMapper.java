@@ -1,7 +1,7 @@
 package com.example.e_souk.Mappers;
 
+import com.example.e_souk.Dto.User.UserProfileDTO;
 import com.example.e_souk.Model.User;
-import com.example.e_souk.Dto.UserProfileDTO;
 
 public class UserMapper {
     /**
