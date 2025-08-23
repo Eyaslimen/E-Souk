@@ -1,0 +1,45 @@
+<div class="shop-page">
+  <app-header [name]="name" ></app-header>
+  <nav class="shop-navigation">
+    <div class="nav-container">
+      <button 
+        class="nav-item" 
+        [class.active]="activeTab === 'about'"
+        (click)="setActiveTab('about')">
+        <i class="fa-solid fa-circle-info"></i>
+        À propos
+      </button>
+      
+      <button 
+        class="nav-item" 
+        [class.active]="activeTab === 'products'"
+        (click)="setActiveTab('products')">
+        <i class="fa-solid fa-bag-shopping"></i>
+        Produits
+      </button>
+      
+      <button 
+        class="nav-item" 
+        [class.active]="activeTab === 'reviews'"
+        (click)="setActiveTab('reviews')">
+<i class="fa-solid fa-star"></i>        Avis
+      </button>
+    </div>
+  </nav>
+
+  <main class="shop-content">
+    <app-about *ngIf="activeTab === 'about'"     [name]="name"></app-about>
+    <app-products *ngIf="activeTab === 'products'"     [name]="name"></app-products>
+    <app-reviews 
+      *ngIf="activeTab === 'reviews'" 
+      (addReviewClick)="openAddReview()"
+        [name]="name">
+    </app-reviews> 
+  </main>
+
+  <app-add-review 
+    *ngIf="showAddReview"
+    (close)="closeAddReview()"
+     [name]="name">
+  </app-add-review>
+</div>

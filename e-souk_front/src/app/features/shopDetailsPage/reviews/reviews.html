@@ -1,0 +1,72 @@
+<div class="reviews-page">
+  <div class="reviews-header">
+    <div class="header-content">
+      <h1>Avis</h1>
+      <button class="add-review-btn" (click)="onAddReview()">
+        <i class="icon-plus"></i>
+        Ajouter un avis
+      </button> 
+    </div>
+  </div>
+
+  <div class="reviews-layout">
+    <!-- Reviews Summary -->
+    <div class="reviews-summary">
+      <div class="rating-overview">
+        <div class="average-rating">
+          <h2>Note moyenne</h2>
+          <div class="rating-display">
+            <span class="rating-number">{{ averageRating }}</span>
+            <div class="rating-stars">
+              <i 
+                *ngFor="let star of getStarArray(averageRating)" 
+                class="icon-star"
+                [class.filled]="star === 1">
+              </i>
+            </div>
+            <span class="total-reviews">{{ getTotalReviews() }} avis</span>
+          </div>
+        </div>
+
+        <div class="rating-breakdown">
+          <h3>Répartition des notes</h3>
+          <div class="rating-bars">
+            <div class="rating-bar" *ngFor="let rating of [5, 4, 3, 2, 1]">
+              <span class="rating-label">{{ rating }}</span>
+              <i class="icon-star"></i>
+              <div class="bar-container">
+                <div 
+                  class="bar-fill" 
+                  [style.width.%]="getRatingPercentage(rating)">
+                </div>
+              </div>
+              <span class="rating-count">{{ ratingDistribution[rating] || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="reviews-list">
+      <h2>Tous les avis</h2>
+      
+      <div class="reviews-container" *ngIf="reviews$ | async as reviews">
+        <app-review-card 
+          [review]="review"
+          *ngFor="let review of reviews">
+        </app-review-card>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-reviews" *ngIf="(reviews$ | async)?.length === 0">
+        <i class="icon-message-circle"></i>
+        <h3>Aucun avis pour le moment</h3>
+        <p>Soyez le premier à laisser un avis sur cette boutique !</p>
+        <button class="btn-primary" (click)="onAddReview()">
+          Écrire un avis
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

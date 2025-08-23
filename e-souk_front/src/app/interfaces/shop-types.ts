@@ -1,12 +1,23 @@
 // src/app/types/shop.types.ts
+// export interface CreateShopRequestDTO {
+//   brandName: string;
+//   description?: string;
+//   deliveryFee: number;
+//   address: string;
+//   logoPicture?: File;
+// }
 export interface CreateShopRequestDTO {
   brandName: string;
+  bio:string,
   description?: string;
+  categoryName:string,
   deliveryFee: number;
   address: string;
+  phone:string,
+  facebookLink:string,
+  instagramLink:string;
   logoPicture?: File;
 }
-
 export interface ShopConfirmationData extends CreateShopRequestDTO {
   logoPictureUrl?: string; // Pour l'aperçu
 }

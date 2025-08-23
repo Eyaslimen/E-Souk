@@ -13,6 +13,7 @@ import java.util.UUID;
 public class ShopResponseDTO {
     private UUID id;
     private String brandName;
+    private String bio;
     private String description;
     private String logoPicture;
     private Float deliveryFee;
@@ -22,6 +23,10 @@ public class ShopResponseDTO {
     private Boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String instagramLink;
+    private String facebookLink;
+    private String phone;
+
     private ShopOwnerDTO owner;
     private Long productCount;
     private Long orderCount;

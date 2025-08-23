@@ -1,11 +1,9 @@
 import { Component, ChangeDetectionStrategy, signal, ViewEncapsulation } from '@angular/core';
-import { NavbarComponent } from '../layouts/navbar/navbar.component';
 import { Shop } from '../interfaces/Shop';
 import { ShopCard } from "../shared/shop-card/shop-card";
 import { NgFor } from '@angular/common';
-import { Product } from '../interfaces/Product';
 import { ProductCard } from "../shared/product-card/product-card";
-import { Footer } from "../layouts/footer/footer";
+import { ProductDetails } from '../interfaces/ProductDetails';
 
 interface Testimonial {
   text: string;
@@ -26,7 +24,7 @@ interface FAQ {
   styleUrls: ['./landing-page.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [NavbarComponent, ShopCard, NgFor, ProductCard, Footer],
+  imports: [ShopCard, NgFor, ProductCard],
 })
 export class LandingPageComponent {
   isMobileMenuOpen = signal(false);
@@ -101,80 +99,49 @@ export class LandingPageComponent {
   //     category: "Technologie",
   //   },
   // ]);
-  public products: Product[] = [
+    // id: string; // UUID as string
+    // name: string;
+    // description: string;
+    // price: number;
+    // picture: string;
+    // categoryName: string;
+    // shopName: string;
+  public products: ProductDetails[] = [
     {
-      id: 1,
+      id: '1',
       name: 'Café Arabica Premium',
       price: 24.99,
-      originalPrice: 29.99,
-      image: 'products/arabica.png',
-      images: ['assets/images/cafe-arabica.jpg', 'assets/images/cafe-arabica-2.jpg'],
+      picture: 'products/arabica.png',
       description: 'Café arabica de haute qualité, torréfié artisanalement dans notre atelier. Notes fruitées et chocolatées.',
-      category: 'Alimentation',
-      stock: 15,
-      shopId: '1',
+      categoryName: 'Alimentation',
       shopName: 'Artisan Café',
-      shopLogo: 'shopLogo.png',
-      rating: 4.8,
-      totalReviews: 45,
-      isOnSale: true,
-      discountPercentage: 17,
-      isFavorite: false,
-      isInCart: false
     },
     {
-      id: 2,
+      id: '2',
       name: 'Collier Luna Argenté',
       price: 89.99,
-      image: 'products/collierarg.png',
-      images: ['assets/images/collier-luna.jpg'],
+      picture: 'products/collierarg.png',
       description: 'Collier artisanal en argent 925 avec pendentif lune. Pièce unique créée à la main.',
-      category: 'Bijoux',
-      stock: 3,
-      shopId: '2',
+      categoryName: 'Bijoux',
       shopName: 'Créations Luna',
-      shopLogo: 'shopLogo.png',
-      rating: 4.9,
-      totalReviews: 23,
-      isOnSale: false,
-      isFavorite: true,
-      isInCart: false
     },
     {
-      id: 3,
+      id: '3',
       name: 'Savon Naturel Lavande',
       price: 8.50,
-      image: 'products/savon.png',
+      picture: 'products/savon.png',
       description: 'Savon artisanal à la lavande bio. Hydratant et apaisant pour tous types de peau.',
-      category: 'Cosmétiques',
-      stock: 25,
-      shopId: '3',
+      categoryName: 'Cosmétiques',
       shopName: 'Éco Maison',
-      shopLogo: 'shopLogo.png',
-      rating: 4.6,
-      totalReviews: 67,
-      isOnSale: false,
-      isFavorite: false,
-      isInCart: false
     },
     {
-      id: 4,
+      id: '4',
       name: 'Robe Vintage Années 80',
       price: 45.00,
-      originalPrice: 60.00,
-      image: 'products/robe80.png',
+      picture: 'products/robe80.png',
       description: 'Robe vintage authentique des années 80. Taille M, excellent état.',
-      category: 'Mode',
-      stock: 0,
-      shopId: '4',
+      categoryName: 'Mode',
       shopName: 'Mode Vintage',
-      shopLogo: 'shopLogo.png',
-      rating: 4.7,
-      totalReviews: 12,
-      isOnSale: true,
-      discountPercentage: 25,
-      isFavorite: false,
-      isInCart: false
     }]
   // featuredProducts = signal<Product[]>([
   //   {

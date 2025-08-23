@@ -13,6 +13,8 @@ public class CreateShopRequestDTO {
     @NotBlank(message = "Le nom de la marque est obligatoire")
     @Size(min = 2, max = 100, message = "Le nom de la marque doit contenir entre 2 et 100 caractères")
     private String brandName;
+    @Size(min = 2, max = 100, message = "Le nom bio doit contenir entre 20 et 200 caractères")
+    private String bio;
 
     @Size(max = 1000, message = "La description ne peut pas dépasser 1000 caractères")
     private String description;
@@ -26,5 +28,11 @@ public class CreateShopRequestDTO {
     @NotBlank(message = "L'adresse est obligatoire")
     @Size(max = 255, message = "L'adresse ne peut pas dépasser 255 caractères")
     private String address;
+    @NotBlank(message = "Le numero de telephone est obligatoire")
+    @Size(max = 20, message = "L'adresse ne peut pas dépasser 20 caractères")
+    private String phone;
+    private String facebookLink;
+    private String instagramLink;
+
     private MultipartFile logoPicture;
 }

@@ -88,11 +88,15 @@ public class ShopPageController {
      * @param name Name de la boutique
      * @return tous les produits d'une boutique
      */
-    @PostMapping("/{shopName}")
+    @PostMapping("/{shopName}/review")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable String shopName, @Valid @RequestBody CreateReviewDTO requestDTO) {
                 User profile = authService.getCurrentUser();
                 UUID id = profile.getId();
+            log.info("Creating review for shop: {}", shopName);
+            log.info("pour le user: {}", id);
+            log.info("avec le data: {}", requestDTO);
+
         ReviewResponseDTO createdReview = shopPageService.createReview(requestDTO,shopName,id);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdReview);
     }

@@ -48,13 +48,24 @@ export class OnboardingService {
   createShop(shopData: CreateShopRequestDTO): Observable<{ id: string }> {
     const formData = new FormData();
     formData.append('brandName', shopData.brandName);
-    formData.append('address', shopData.address);
-    formData.append('deliveryFee', shopData.deliveryFee.toString());
-    
-    if (shopData.description) {
-      formData.append('description', shopData.description);
+    if (shopData.bio) {
+      formData.append('description', shopData.bio);
     }
-    
+    if (shopData.categoryName) {
+    formData.append('categoryName',shopData.categoryName); 
+        }
+    formData.append('address', shopData.address);
+    formData.append('phone', shopData.phone);
+
+    if (shopData.instagramLink) {
+      formData.append('instagramLink', shopData.instagramLink);
+    }
+        if (shopData.facebookLink) {
+      formData.append('facebookLink', shopData.facebookLink);
+    }
+
+    formData.append('deliveryFee', shopData.deliveryFee.toString());
+
     if (shopData.logoPicture) {
       formData.append('logoPicture', shopData.logoPicture);
     }

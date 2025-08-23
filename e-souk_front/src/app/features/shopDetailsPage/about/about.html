@@ -1,0 +1,151 @@
+<div class="about-container">
+  <!-- About Us Section -->
+  <section class="about-section">
+    <div class="section-header">
+      <h2> <i class="fa-solid fa-heart-circle-exclamation" style="color: #2563eb;font-size:2rem;margin-right: 10px;"></i>À propos de nous</h2>
+    </div>
+   
+    <p class="about-text"> 
+      {{ (generalDetails$ | async)?.description }}
+    </p>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section" *ngIf="stats$ | async as stats">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.productsCount }}</div>
+        <div class="stat-label">Produits</div>
+      </div>
+      <div class="line"></div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.followersCount }}</div>
+        <div class="stat-label">Abonnés</div>
+      </div>
+      <div class="line"></div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.ordersCount }}</div>
+        <div class="stat-label">Commandes</div>
+      </div>
+    </div>
+  </section>
+
+<!-- New Products Section -->
+<section class="nouveautes-section">
+  <div class="section-header">
+    <button class="discover-btn">Découvrir</button>
+    <p class="section-title">Tous nos nouveautés</p>
+  </div>
+  <div class="products-grid" *ngIf="newProducts$ | async as products">
+    <div class="products-item-left">
+    <div class="product-item-left" *ngFor="let product of products.slice(0, 2)">
+      <div class="product-image-container-left">
+        <img [src]="product.image" [alt]="product.name" class="product-image">
+        <div class="product-overlay">
+          <div class="product-details">
+            <h3>{{ product.name }}</h3>
+            <p class="product-description">product description içi </p>
+            <div class="product-price">{{ product.price }}€</div>
+            <div class="product-rating">
+              <span class="stars">
+                <span *ngFor="let star of getStarArray(product.rating)" 
+                      class="star" [class.filled]="star === 1">★</span>
+              </span>
+              <span class="rating-value">({{ product.rating }})</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> </div>
+    <div class="products-item-right">
+      <div class="product-item-right" *ngFor="let product of products.slice(2, 4)">
+      <div class="product-image-container-right">
+        <img [src]="product.image" [alt]="product.name" class="product-image">
+        <div class="product-overlay">
+          <div class="product-details">
+            <h3>{{ product.name }}</h3>
+            <p class="product-description">product description içi </p>
+            <div class="product-price">{{ product.price }}€</div>
+            <div class="product-rating">
+              <span class="stars">
+                <span *ngFor="let star of getStarArray(product.rating)" 
+                      class="star" [class.filled]="star === 1">★</span>
+              </span>
+              <span class="rating-value">({{ product.rating }})</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> </div>
+</section>
+
+<!-- Popular Products Section -->
+<section class="populaires-section">
+  <div class="section-header-popular">
+    <h2 class="section-title-popular">Nos produits <span class="highlight">populaires</span></h2>
+  </div>
+  <div class="products-carousel">
+    <button class="nav-arrow nav-prev" (click)="previousSlide()">‹</button>
+    <div class="products-grid-popular" *ngIf="popularProducts$ | async as products">
+      <div class="product-item-popular" *ngFor="let product of getVisibleProducts(products); let i = index">
+        <div class="product-image-container-popular">
+          <img src="shopLogo.png" [alt]="product.name" class="product-image-popular">
+          <div class="product-overlay-popular">
+            <div class="product-details-popular">
+              <h3>{{ product.name }}</h3>
+              <p class="product-description">la description du produit içi ..</p>
+              <div class="product-price">{{ product.price }}€</div>
+            </div>
+          </div>
+        </div>
+        <div class="product-info-popular">
+          <h4>{{ product.name }}</h4>
+          <p class="product-subtitle">{{ product.category }}</p>
+        </div>
+      </div>
+    </div>
+    <button class="nav-arrow nav-next" (click)="nextSlide()">›</button>
+  </div>
+  <div class="voir-plus-container">
+    <button class="voir-plus-btn">Voir plus</button>
+  </div>
+</section>
+<!-- Positive Reviews Section  -->
+ <section class="reviews-section">
+  <div class="section-header"> 
+    <p class="reviews-title">Avis Positifs</p>
+  </div>    <div class="reviews-grid" *ngIf="positiveReviews$ | async as reviews">     
+    
+    <!-- <app-review-card       [review]="review"        *ngFor="let review of reviews">  
+          </app-review-card> -->
+        </div> 
+         </section>
+    <div class="thank-you-message">
+      <p> <i class="fa-solid fa-heart" style="color: #a225eb;font-size:1.2rem;margin-right: 10px;"></i> Merci à tous nos visiteurs pour votre confiance ! Votre satisfaction est notre priorité.</p>
+    </div>
+  <!-- Contact Section -->
+  <!-- <section class="contact-section" *ngIf="contact$ | async as contact">
+    <div class="section-header">
+      <h2>Contact</h2>
+    </div>
+    <div class="contact-info">
+      <div class="contact-item">
+        <div class="contact-icon">📧</div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-value">{{ contact.email }}</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📞</div>
+        <div>
+          <div class="contact-label">Téléphone</div>
+          <div class="contact-value">{{ contact.phone }}</div>
+        </div>
+      </div>
+    </div>
+    
+
+  </section> -->
+</div>

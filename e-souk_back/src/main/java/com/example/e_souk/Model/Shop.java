@@ -86,7 +86,17 @@ public class Shop {
      */
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
-    
+    @Column(name = "bio", length = 200)
+    @Size(max = 200, message = "Le bio ne peut pas dépasser 200 caractères")
+    private String bio;
+    @Column(name = "phone", length = 20)
+    @Size(max = 20, message = "Le numéro de téléphone ne peut pas dépasser 20 caractères")
+    private String phone;
+    @Column(name = "facebookLink")
+    private String facebookLink;
+    @Column(name = "instagramLink")
+    private String instagramLink;
+
     /**
      * Date de création de la boutique
      * Remplie automatiquement par Spring Data JPA

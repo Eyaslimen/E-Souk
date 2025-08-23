@@ -1,0 +1,46 @@
+<header class="header" *ngIf="generalDetails$ | async as generalDetails">
+  <div class="header-content">
+    <div class="shop-info">
+      <div class="avatar">
+<img [src]="'http://localhost:8080/uploads/' + generalDetails.logoPicture"
+     [alt]="generalDetails.ownerName">        <!-- <ng-template #avatarFallback>
+          <span>{{ getOwnerInitials(shop.ownerName) }}</span>
+        </ng-template> -->
+      </div>
+      
+      <div class="info">
+        <h1 class="shop-name">{{ generalDetails.brandName }}</h1>
+        <p class="owner-name">Par {{ generalDetails.ownerName }}</p>
+        <p class="description">{{ generalDetails.bio }}</p>
+        
+        <div class="location">
+          <i class="icon-location"></i>
+          <span>{{ generalDetails.address }}</span>
+          <span class="category">{{ generalDetails.categoryName }}</span>
+        </div>
+        
+        <!-- <div class="stats">
+          <div class="stat">
+            <div class="rating">
+              <span *ngFor="let star of getStarArray(shop.rating)" 
+                    class="star" [class.filled]="star === 1">★</span>
+            </div>
+            <span>{{ shop.rating }} / {{ shop.maxRating }}</span>
+          </div>
+        </div> -->
+      </div>
+    </div>
+    
+    <div class="actions">
+      <button class="btn-follow">
+        <i class="fa-solid fa-heart-circle-plus"></i>
+        <!-- <i class="fa-solid fa-heart-circle-minus"></i> -->
+        Suivre
+      </button>
+      <button class="btn-share">
+        <i class="fa-solid fa-share"></i>
+        Partager
+      </button>
+    </div>
+  </div>
+</header>

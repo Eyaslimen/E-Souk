@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { Header } from './features/shopDetailsPage/header/header';
 
 export const routes: Routes = [
   {
@@ -21,8 +22,17 @@ export const routes: Routes = [
     path: 'profile',
     loadComponent: () => import('./features/users/profile/profile').then(m => m.Profile),
   },
+  {
+    path: 'products',
+    loadComponent: () => import('./features/products/products/products').then(m => m.Products),
+  },
+    {
+    path: 'shops/:name',
+    loadComponent: () => import('./features/shopDetailsPage/shop-page/shop-page').then(m => m.ShopPage),
+  },
     {
     path: 'onboarding',
-    loadComponent: () => import('./features/shops/onboarding/onboarding').then(m => m.OnboardingComponent),
+    loadComponent: () => import('./features/shopCreation/onboarding/onboarding').then(m => m.OnboardingComponent),
   },
+
 ];

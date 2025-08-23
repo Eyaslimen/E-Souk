@@ -1,0 +1,89 @@
+<div class="products-page">
+  <div class="products-header">
+    <h1>Produits</h1>
+    <p *ngIf="products$ | async as products">{{ products.length }} produits trouvés</p>
+  </div>
+
+  <div class="products-layout">
+    <!-- Filters Sidebar -->
+    <aside class="filters-sidebar">
+      <div class="filters-header">
+        <h3>Filtres</h3>
+        <button class="reset-btn" (click)="resetFilters()">
+          <i class="icon-refresh"></i>
+          Réinitialiser
+        </button>
+      </div>
+
+      <!-- Search -->
+      <div class="filter-group">
+        <label>Rechercher</label>
+        <div class="search-input">
+          <i class="icon-search"></i>
+          <input 
+            type="text" 
+            placeholder="Nom du produit..."
+            (input)="onSearchChange($any($event.target).value)"
+            [value]="searchTerm$ | async">
+        </div>
+      </div>
+
+      <!-- Category Filter -->
+      <div class="filter-group">
+        <label>Catégorie</label>
+        <select (change)="onCategoryChange($any($event.target).value)" [value]="selectedCategory$ | async">
+          <option value="">Toutes catégories</option>
+          <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+        </select>
+      </div>
+
+      <!-- Price Filter -->
+      <div class="filter-group">
+        <label>Prix</label>
+        <select (change)="onPriceRangeChange($any($event.target).value)" [value]="selectedPriceRange$ | async">
+          <option value="">Tous prix</option>
+          <option value="0-30">0€ - 30€</option>
+          <option value="30-50">30€ - 50€</option>
+          <option value="50-80">50€ - 80€</option>
+          <option value="80">80€ et plus</option>
+        </select>
+      </div>
+
+      <!-- Sort Filter -->
+      <div class="filter-group">
+        <label>Trier par</label>
+        <select (change)="onSortChange($any($event.target).value)" [value]="selectedSort$ | async">
+          <option value="newest">Plus récents</option>
+          <option value="oldest">Plus anciens</option>
+          <option value="price-low">Prix croissant</option>
+          <option value="price-high">Prix décroissant</option>
+          <option value="rating">Mieux notés</option>
+        </select>
+      </div>
+    </aside>
+
+    <!-- Products Content -->
+    <main class="products-content">
+
+      <!-- Products Grid/List -->
+      <div 
+        class="products-container"
+        [class.grid-view]="viewMode === 'grid'"
+       >
+        
+        <app-product-card 
+          [product]="product"
+          *ngFor="let product of products$ | async">
+        </app-product-card>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="(products$ | async)?.length === 0">
+        <i class="icon-search"></i>
+        <h3>Aucun produit trouvé</h3>
+        <p>Essayez de modifier vos critères de recherche</p>
+        <button class="btn-primary" (click)="resetFilters()">Réinitialiser les filtres</button>
+      </div>
+    </main>
+  </div>
+</div>

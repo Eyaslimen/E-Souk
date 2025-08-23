@@ -1,0 +1,29 @@
+<div class="product-card" *ngIf="product">
+  <div class="product-image">
+    <img [src]="'http://localhost:8080/uploads/' +product.picture"[alt]="product.name" />
+    <!-- <div class="badges">
+      <span *ngIf="product.isNew" class="badge new">Nouveau</span>
+      <span *ngIf="product.isPopular" class="badge popular">Populaire</span>
+      <span *ngIf="product.soldCount" class="badge sold">{{ product.soldCount }} vendus</span>
+    </div> -->
+  </div>
+  
+  <div class="product-info">
+    <h3 class="product-name">{{ product.name }}</h3>
+    
+    <!-- <div class="rating">
+      <div class="stars">
+        <span *ngFor="let filled of generateStars(product.rating)" 
+              class="star" [class.filled]="filled">★</span>
+      </div>
+      <span class="rating-text">{{ product.rating }} ({{ product.reviewsCount }})</span>
+    </div> -->
+    
+    <div class="price">
+      <span class="current-price">{{ product.price }}€</span>
+      <!-- <span *ngIf="product.originalPrice" class="original-price">{{ product.originalPrice }}€</span> -->
+    </div>
+    
+    <span class="category">{{ product.categoryName }}</span>
+  </div>
+</div>

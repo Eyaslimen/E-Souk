@@ -1,0 +1,30 @@
+<div class="review-card">
+  <div class="review-header">
+    <div class="reviewer-info">
+      <div class="avatar">
+        {{ review.author.charAt(0) }}
+      </div>
+      <div class="reviewer-details">
+        <h4 class="reviewer-name">{{ review.author }}</h4>
+        <span class="verified-badge">Achat vérifié</span>
+      </div>
+    </div>
+    <div class="review-meta">
+      <div class="stars">
+        <span 
+          *ngFor="let filled of getStarArray(review.rating)" 
+          class="star"
+          [class.filled]="filled">
+          ★
+        </span>
+      </div>
+      <span class="review-date">{{review.createdAt}}</span>
+    </div>
+  </div>
+  
+  <div class="review-content">
+    <p>{{ review.content }}</p>
+  </div>
+  
+
+</div>

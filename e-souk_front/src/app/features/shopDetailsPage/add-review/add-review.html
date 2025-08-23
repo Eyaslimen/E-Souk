@@ -1,0 +1,85 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Donner votre avis</h2>
+      <p>Partagez votre expérience avec cette boutique</p>
+      <button class="close-btn" (click)="onClose()">
+        <i class="icon-x"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="reviewForm" (ngSubmit)="onSubmit()" class="review-form">
+      <!-- Name Input -->
+      <!-- <div class="form-group">
+        <label for="customerName">Votre nom</label>
+        <input 
+          type="text" 
+          id="customerName"
+          formControlName="customerName"
+          placeholder="Votre nom"
+          [class.error]="reviewForm.get('customerName')?.invalid && reviewForm.get('customerName')?.touched">
+        <div class="error-message" *ngIf="reviewForm.get('customerName')?.invalid && reviewForm.get('customerName')?.touched">
+          <span *ngIf="reviewForm.get('customerName')?.errors?.['required']">Le nom est requis</span>
+          <span *ngIf="reviewForm.get('customerName')?.errors?.['minlength']">Le nom doit contenir au moins 2 caractères</span>
+        </div>
+      </div> -->
+
+      <!-- Rating -->
+      <div class="form-group">
+        <label for="rating">Note</label>
+            <input 
+          type="number" 
+          id="rating"
+          formControlName="rating"
+          placeholder="rating">
+
+        <!-- <div class="rating-input">
+          <button 
+            type="button"
+            *ngFor="let star of getStarArray()"
+            class="star-btn"
+            [class.active]="star <= selectedRating"
+            [class.hover]="star <= selectedRating"
+            (click)="setRating(star)"
+            (mouseenter)="setRating(star)">
+            <i class="icon-star"></i>
+          </button>
+        </div> -->
+        <!-- <div class="error-message" *ngIf="selectedRating === 0 && reviewForm.touched">
+          Veuillez sélectionner une note
+        </div> -->
+      </div>
+
+      <!-- content -->
+      <div class="form-group">
+        <label for="content">commentaire</label>
+        <textarea 
+          id="content"
+          formControlName="content"
+          placeholder="Partagez votre expérience..."
+          rows="4"
+        ></textarea>
+        <!-- <div class="error-message" *ngIf="reviewForm.get('content')?.invalid && reviewForm.get('content')?.touched">
+          <span *ngIf="reviewForm.get('content')?.errors?.['required']">Le contentaire est requis</span>
+          <span *ngIf="reviewForm.get('content')?.errors?.['minlength']">Le contentaire doit contenir au moins 10 caractères</span>
+        </div> -->
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="onClose()">
+          Annuler
+        </button>
+        <button 
+          type="submit" 
+          class="btn-submit">
+          <span>Publier l'avis</span>
+          <span *ngIf="isSubmitting">
+            <i class="icon-loader"></i>
+            Publication...
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

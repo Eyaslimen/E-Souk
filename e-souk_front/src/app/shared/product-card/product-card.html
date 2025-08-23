@@ -1,87 +1,83 @@
-<div class="product-card" [class.out-of-stock]="isOutOfStock()" (click)="viewDetails()">
+<div class="product-card">
   
     <!-- Badge de promotion -->
-    <div *ngIf="product.isOnSale" class="sale-badge">
+    <!-- <div *ngIf="product.isOnSale" class="sale-badge">
       -{{ product.discountPercentage }}%
-    </div>
+    </div> -->
   
     <!-- Badge rupture de stock -->
-    <div *ngIf="isOutOfStock()" class="stock-badge">
+    <!-- <div *ngIf="isOutOfStock()" class="stock-badge">
       Rupture de stock
-    </div>
+    </div> -->
   
     <!-- Image du produit -->
     <div class="product-image-container">
       <img 
-        [src]="product.image" 
+        [src]="'http://localhost:8080/uploads/' + product.picture"
         [alt]="product.name"
         class="product-image"
       >
       
       <!-- Bouton favoris -->
-      <button 
+      <!-- <button 
         class="favorite-btn" 
         [class.active]="product.isFavorite"
         (click)="toggleFavorite($event)"
         [attr.aria-label]="product.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'"
       >
       <i *ngIf="product.isFavorite" class="fa-solid fa-heart" style="color: red;"></i>
-      <i *ngIf="!product.isFavorite" class="fa-solid fa-heart"></i>
+      <i *ngIf="!product.isFavorite" class="fa-solid fa-heart"></i> -->
         <!-- <i class="heart-icon" [class.filled]="product.isFavorite">
           {{ product.isFavorite ? '❤️' : '🤍' }}
         </i> -->
-      </button>
+      <!-- </button> -->
     </div>
   
     <!-- Informations du produit -->
     <div class="product-info">
-      
+      <div class="header">
       <!-- Nom du produit -->
-      <h3 class="product-name">{{ product.name }}</h3>
-      
+       <div class="product-name">
+      <p >{{ product.name }}</p>
+      </div>
       <!-- Prix -->
       <div class="price-container">
         <span class="current-price">
-          {{ formatPrice(getDiscountedPrice()) }}
-        </span>
-        <span *ngIf="product.isOnSale" class="original-price">
           {{ formatPrice(product.price) }}
         </span>
+        <!-- <span *ngIf="product.isOnSale" class="original-price">
+          {{ formatPrice(product.price) }}
+        </span> -->
       </div>
-  
+  </div>
       <!-- Note et avis (si disponibles) -->
-      <div *ngIf="product.rating" class="rating-container">
+      <!-- <div *ngIf="product.rating" class="rating-container">
         <div class="stars">
           <span class="star-rating"><i  class="fa-solid fa-star" style="color: rgb(255, 230, 0);"></i> {{ product.rating }}</span>
           <span class="reviews-count">({{ product.totalReviews || 0 }})</span>
         </div>
-      </div>
+      </div> -->
   
       <!-- Boutique -->
-      <div class="shop-info" (click)="viewShop($event)">
-        <img 
+      <div class="shop-info">
+        <!-- <img 
           *ngIf="product.shopLogo" 
           [src]="product.shopLogo" 
           [alt]="product.shopName + ' logo'"
           class="shop-logo"
-        >
-        <span class="shop-name">By {{ product.shopName }}</span>
+        > -->
+        <span class="shop-name">De {{ product.shopName }}</span>
       </div>
   
       <!-- Actions -->
       <div class="product-actions">
         <button 
           class="add-to-cart-btn" 
-          [disabled]="isOutOfStock() || product.isInCart"
-          (click)="addProductToCart($event)"
         >
-          <span *ngIf="!product.isInCart && !isOutOfStock()">Ajouter au panier</span>
-          <span *ngIf="product.isInCart">Dans le panier</span>
-          <span *ngIf="isOutOfStock()">Indisponible</span>
+        Ajouter au panier
         </button>
-        
-        <button class="details-btn" (click)="viewDetails(); $event.stopPropagation()">
-          Détails
+        <button class="details-btn" >
+          Voir Détails
         </button>
       </div>
     </div>

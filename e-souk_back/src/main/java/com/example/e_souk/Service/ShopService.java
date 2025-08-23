@@ -133,6 +133,10 @@ public class ShopService {
         shop.setIsActive(true); // Nouvelle boutique = active par défaut
         shop.setCreatedAt(LocalDateTime.now());
         shop.setCategoryName(category.getName());
+        shop.setBio(requestDTO.getBio());
+        shop.setPhone(requestDTO.getPhone());
+        shop.setFacebookLink(requestDTO.getFacebookLink());
+        shop.setInstagramLink(requestDTO.getInstagramLink());
         shop.setUpdatedAt(LocalDateTime.now());
         shop.setLogoPicture(savedFileName);
         shop.setOwner(owner);

@@ -66,9 +66,10 @@ public class ShopController {
     public ResponseEntity<ShopResponseDTO> createShop(
             @ModelAttribute CreateShopRequestDTO requestDTO) {
             User profile = authService.getCurrentUser();
+            log.info("teeeest category name"); 
+        log.info(requestDTO.getCategoryName());
         log.info("API - Création de boutique '{}' par l'utilisateur : {}", 
                 requestDTO.getBrandName(), profile.getUsername());
-        
         try {
             UUID ownerId = profile.getId();
             ShopResponseDTO createdShop = shopService.createShop(requestDTO, ownerId);
@@ -175,7 +176,9 @@ public class ShopController {
         try {
             UUID ownerId = profile.getId();
             ShopResponseDTO shop = shopService.getShopByOwnerId(ownerId);
+            
             return ResponseEntity.ok(shop);
+            
         } catch (ShopException e) {
             log.warn("API - Boutique non trouvée pour l'utilisateur : {}",  profile.getUsername());
             throw e;
@@ -192,7 +195,6 @@ public class ShopController {
      * @param principal utilisateur connecté
      * @return boutique mise à jour
      */
-    
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<ShopResponseDTO> updateShop(

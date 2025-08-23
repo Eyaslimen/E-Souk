@@ -1,0 +1,95 @@
+<div class="products-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Découvrez nos Produits Exceptionnels</h1>
+      <p class="hero-subtitle">
+        Trouvez les meilleurs produits technologiques au meilleur prix.<br>
+        Qualité garantie et livraison rapide !
+      </p>
+      <button class="hero-cta-button">
+        <i class="fas fa-shopping-bag"></i>
+        Commencer le Shopping
+      </button>
+    </div>
+  </section>
+
+  <!-- Recommended Products Section -->
+  <section class="recommended-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Produits Recommandés pour Vous</h2>
+        <p class="section-subtitle">Sélection personnalisée basée sur vos centres d'intérêt et vos achats précédents</p>
+      </div>
+      
+      <div class="products-grid recommended-grid">
+        <app-product-card 
+          *ngFor="let product of recommendedProducts"
+          [product]="product"
+          >
+        </app-product-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search & Filter Section -->
+  <section class="search-filter-section sticky-section">
+    <div class="container">
+      <div class="search-filter-bar">
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input 
+            type="text" 
+            class="search-input"
+            placeholder="Rechercher des produits..."
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()">
+        </div>
+        
+        <div class="filter-container">
+          <button class="filter-button">
+            <i class="fas fa-filter"></i>
+          </button>
+          
+          <div class="filter-dropdown">
+            <button 
+              *ngFor="let filter of filters"
+              class="filter-option"
+              [class.active]="selectedFilter === filter"
+             >
+              {{ filter }}
+            </button>
+          </div>
+          
+          <div class="sort-dropdown">
+            <select class="sort-select">
+              <option value="featured">Mis en avant</option>
+              <option value="price-low">Prix croissant</option>
+              <option value="price-high">Prix décroissant</option>
+              <option value="rating">Mieux notés</option>
+            </select>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- All Products Section -->
+  <section class="all-products-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Tous nos Produits</h2>
+        <p class="products-count">{{ filteredProducts.length }} produits disponibles</p>
+      </div>
+      
+      <div class="products-grid" > 
+        <app-product-card 
+          *ngFor="let product of filteredProducts"
+          [product]="product"
+></app-product-card>         
+      </div>
+    </div>
+  </section>
+</div>

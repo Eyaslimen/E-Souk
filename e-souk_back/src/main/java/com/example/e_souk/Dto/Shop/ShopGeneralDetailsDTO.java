@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ShopGeneralDetailsDTO {
     private String brandName;
+     private String bio;
     private String description;
     private String logoPicture;
     private Float deliveryFee;
@@ -21,4 +22,8 @@ public class ShopGeneralDetailsDTO {
     private Long productCount;
     private Long followerCount;
     private String categoryName;
+    private String phone;
+        private String instagramLink;
+    private String facebookLink;
+
 }

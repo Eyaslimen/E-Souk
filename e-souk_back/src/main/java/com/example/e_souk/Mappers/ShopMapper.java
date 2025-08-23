@@ -10,7 +10,6 @@ import com.example.e_souk.Dto.Shop.ShopOwnerDTO;
 import com.example.e_souk.Dto.Shop.ShopResponseDTO;
 import com.example.e_souk.Dto.Shop.ShopSummaryDTO;
 import com.example.e_souk.Model.Shop;
-import com.example.e_souk.Service.ProductService;
 
 public class ShopMapper {
     public static ShopResponseDTO toResponseDTO(Shop shop, long productCount, long orderCount, long followerCount) {
@@ -22,6 +21,7 @@ public class ShopMapper {
         return new ShopResponseDTO(
                 shop.getId(),
                 shop.getBrandName(),
+                shop.getBio(),
                 shop.getDescription(),
                 shop.getLogoPicture(),
                 shop.getDeliveryFee(),
@@ -30,6 +30,9 @@ public class ShopMapper {
                 shop.getIsActive(),
                 shop.getCreatedAt(),
                 shop.getUpdatedAt(),
+                shop.getInstagramLink(),
+                shop.getFacebookLink(),
+                shop.getPhone(),
                 ownerDTO,
                 productCount,
                 orderCount,
@@ -80,6 +83,7 @@ public class ShopMapper {
     public static ShopGeneralDetailsDTO toShopDetailsDTO(Shop shop, long productCount, long followerCount) {
         return new ShopGeneralDetailsDTO(
                 shop.getBrandName(),
+                shop.getBio(),
                 shop.getDescription(),
                 shop.getLogoPicture(),
                 shop.getDeliveryFee(),
@@ -89,7 +93,10 @@ public class ShopMapper {
                 shop.getOwner().getPicture(),
                 productCount,
                 followerCount,
-                shop.getCategoryName()
+                shop.getCategoryName(),
+                shop.getPhone(),
+                shop.getInstagramLink(),
+                shop.getFacebookLink()
         );
     }
 

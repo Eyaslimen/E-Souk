@@ -42,46 +42,53 @@ public class SecurityConfig {
      * @return SecurityFilterChain configuré
      * @throws Exception en cas d'erreur de configuration
      */
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+   @Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    
+    http
+        // Désactive CSRF car on utilise JWT (stateless)
+        .csrf(AbstractHttpConfigurer::disable)
         
-        http
-            // Désactive CSRF car on utilise JWT (stateless)
-            .csrf(AbstractHttpConfigurer::disable)
-            
-            // Configuration CORS
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            
-            // Configuration des sessions (stateless pour JWT)
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            
-            // Configuration des autorisations
-            .authorizeHttpRequests(auth -> auth
-                // Endpoints publics (pas d'authentification requise)
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .requestMatchers("/v3/api-docs/**", "/v3/api-docs").permitAll()
-                .requestMatchers("/actuator/**").permitAll()
-                
-                // Endpoints protégés par rôle
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/vendor/**").hasAnyRole("VENDOR", "ADMIN")
-                .requestMatchers("/api/client/**").hasAnyRole("CLIENT", "VENDOR", "ADMIN")
-                
-                // Tous les autres endpoints nécessitent une authentification
-                .anyRequest().authenticated()
-            )
-            
-            // Configuration du provider d'authentification
-            .authenticationProvider(authenticationProvider())
-            
-            // Ajout du filtre JWT avant le filtre d'authentification par nom d'utilisateur/mot de passe
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        // Configuration CORS
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         
-        return http.build();
-    }
+        // Configuration des sessions (stateless pour JWT)
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        )
+        
+        // Configuration des autorisations
+        .authorizeHttpRequests(auth -> auth
+            // Endpoints publics (pas d'authentification requise)
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
+            .requestMatchers("/v3/api-docs/**", "/v3/api-docs").permitAll()
+            .requestMatchers("/actuator/**").permitAll()
+            
+            // IMPORTANT
+       .requestMatchers("/uploads/**").permitAll()
+.requestMatchers("/static/**").permitAll()
+.requestMatchers("/*.jpg", "/*.jpeg", "/*.png", "/*.gif", "/*.svg").permitAll()
+.requestMatchers("/favicon.ico").permitAll()
+.requestMatchers("/error").permitAll()
+
+            // Endpoints protégés par rôle
+            .requestMatchers("/api/admin/**").hasRole("ADMIN")
+            .requestMatchers("/api/vendor/**").hasAnyRole("VENDOR", "ADMIN")
+            .requestMatchers("/api/client/**").hasAnyRole("CLIENT", "VENDOR", "ADMIN")
+            
+            // Tous les autres endpoints nécessitent une authentification
+            .anyRequest().authenticated()
+        )
+        
+        // Configuration du provider d'authentification
+        .authenticationProvider(authenticationProvider())
+        
+        // Ajout du filtre JWT avant le filtre d'authentification par nom d'utilisateur/mot de passe
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    
+    return http.build();
+}
     
     /**
      * Configuration CORS pour permettre les requêtes cross-origin
