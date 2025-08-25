@@ -101,7 +101,7 @@ export class OnboardingService {
     if (productData.description) {
       formData.append('description', productData.description);
     }
-
+    formData.append('price', productData.price.toString()); // ✅ Ajout du prix
     // CORRECTION: Transformer les attributs au format attendu par le backend
     const backendAttributes = productData.attributes.map(attr => ({
       name: attr.name,
@@ -115,7 +115,6 @@ export class OnboardingService {
         attributeName,
         value
       })),
-      price: variant.price,
       stock: variant.stock
     }));
     formData.append('variantsJson', JSON.stringify(backendVariants));
@@ -150,8 +149,7 @@ export class OnboardingService {
             category: productData.category,
             variantCount: productData.variants.length,
             totalStock: productData.variants.reduce((sum, v) => sum + v.stock, 0),
-            minPrice: Math.min(...productData.variants.map(v => v.price)),
-            maxPrice: Math.max(...productData.variants.map(v => v.price))
+            price: productData.price
           };
 
           const currentProducts = this.getCurrentState().products || [];

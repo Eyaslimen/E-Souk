@@ -1,63 +1,88 @@
-<div class="shop-card" (click)="visitShop()">
-    <!-- Header avec logo et informations principales -->
-    <div class="shop-header">
-      <div class="shop-info">
-        <div class="logo-container">
-          <img 
-           
-            [src]="shop.logo" 
-            [alt]="shop.brandName + ' logo'"
-            class="shop-logo"
-          >
-          <ng-template #logoFallback>
-            <div class="logo-fallback">
-              {{ getInitials(shop.brandName) }}
-            </div>
-          </ng-template>
-        </div>
-        
-        <div class="brand-info">
-          <div class="brand-name-container">
-            <h3 class="brand-name">{{ shop.brandName }}</h3>
-            <!-- <span *ngIf="shop.isVerified" class="verified-badge">✓</span> -->
+<div class="shop-card" (click)="onViewDetails()">
+  <!-- Header Section -->
+  <div class="card-header">
+    <div class="shop-info">
+      <div class="logo-container">
+        <img 
+          *ngIf="shop.logoPicture; else logoPlaceholder" 
+          [src]="shop.logoPicture" 
+          [alt]="shop.brandName + ' logo'"
+          class="shop-logo"
+        />
+        <ng-template #logoPlaceholder>
+          <div class="logo-placeholder">
+            {{ getInitials(shop.brandName) }}
           </div>
-          <p class="owner-name">par {{ shop.owner }}</p>
-        </div>
+        </ng-template>
       </div>
-      <div class="brand-add">
-        <i  *ngIf="shop.isVerified" class="fa-solid fa-heart-circle-plus" style="color: #fa0000;"></i>
-        <i  *ngIf="!shop.isVerified" class="fa-solid fa-heart-circle-plus"></i>
-      </div>
-    </div>
-  
-    <!-- Contenu principal -->
-    <div class="shop-content">
-      <div class="category-badge">{{ shop.category }}</div>
       
-      <p class="shop-description">{{ shop.description }}</p>
-      <div class="location">
-        <i class="fa-solid fa-location-dot"></i>
-        <span>{{ shop.location }}</span>
-      </div>
-      <div class="shop-stats">
-        <div class="followers">
-          <i class="fa-solid fa-user"></i>
-          <span>{{ formatFollowers(shop.followers) }} abonnés</span>
-        </div>
-        <div class="rating-reviews">
-          <div class="rating">
-            <i class="fa-solid fa-star" style="color: rgb(255, 221, 0);"></i>
-            <span>{{ shop.rating }}</span>
-            <span class="reviews-count">({{ shop.totalReviews }})</span>
-          </div>
-        </div>
+      <div class="shop-details">
+        <h3 class="brand-name">{{ shop.brandName }}</h3>
+        <p class="owner-name">par {{ shop.ownerUsername }}</p>
       </div>
     </div>
-  
-    <!-- Footer avec bouton -->
-    <div class="shop-footer">
-      <button class="visit-button" (click)="visitShop(); $event.stopPropagation()">
-        <i class="fa-solid fa-eye"></i> Visiter la boutique
-      </button>
+    
+    <div class="follow-btn" (click)="toggleFollow($event)">
+      <svg 
+        class="heart-icon" 
+        [class.filled]="isFollowed"
+        width="24" 
+        height="24" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        stroke-width="2"
+      >
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
     </div>
   </div>
+
+  <!-- Content Section -->
+  <div class="card-content">
+    <div class="category-badge">
+      {{ shop.categoryName }}
+    </div>
+
+    <p class="shop-description">{{ shop.description }}</p>
+
+    <div class="location">
+      <svg class="location-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+      <span>{{ shop.address }}</span>
+    </div>
+    
+    <div class="stats-row">
+      <div class="stat-item">
+        <svg class="users-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span>{{ formatFollowers(shop.followerCount) }} abonnés</span>
+      </div>
+      
+      <div class="stat-item">
+        <svg class="star-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+        </svg>
+        <span>{{4.5 }}</span>
+        <span class="reviews-count">({{ shop.productCount || 0 }})</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <div class="card-footer">
+    <button class="visit-btn" (click)="onViewDetails($event)">
+      <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      Visiter la boutique
+    </button>
+  </div>
+</div>

@@ -12,6 +12,7 @@ public class ProductCreationRequestDTO {
     private String description;
     private String categoryName;
     private MultipartFile imageUrl;
+    private float price;
     
     // Champs pour recevoir les données JSON comme strings
     private String attributesJson;
@@ -32,7 +33,6 @@ public class ProductCreationRequestDTO {
     @Data
     public static class VariantDTO {
         private List<AttributeValueDTO> attributeValues;
-        private double price;
         private int stock;
     }
 

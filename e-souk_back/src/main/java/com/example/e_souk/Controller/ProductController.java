@@ -6,12 +6,16 @@ import java.util.UUID;
 import com.example.e_souk.Model.Product;
 import com.example.e_souk.Dto.Product.ProductCreationRequestDTO;
 import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductFilterDTO;
 import com.example.e_souk.Dto.Product.ProductResponseDTO;
 import com.example.e_souk.Mappers.ProductMapper;
 import com.example.e_souk.Service.ProductService;
 import lombok.RequiredArgsConstructor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,5 +65,30 @@ public class ProductController {
     public ResponseEntity<Product> getProductById(@PathVariable UUID id) {
         Product product = productService.getProductById(id);
         return ResponseEntity.ok(product);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ProductDetailsDTO>> getProducts(
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) Float priceMin,
+            @RequestParam(required = false) Float priceMax,
+            @RequestParam(required = false) String searchKeyword,
+            @RequestParam(defaultValue = "newest") String sortBy,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "20") Integer pageSize
+    ) {
+        
+        ProductFilterDTO filters = new ProductFilterDTO();
+        filters.setCategoryName(categoryName);
+        filters.setPriceMin(priceMin);
+        filters.setPriceMax(priceMax);
+        filters.setSearchKeyword(searchKeyword);
+        filters.setSortBy(sortBy);
+        filters.setPage(page);
+        filters.setPageSize(pageSize);
+        
+        Page<ProductDetailsDTO> products = productService.findProducts(filters);
+        
+        return ResponseEntity.ok(products);
     }
 }

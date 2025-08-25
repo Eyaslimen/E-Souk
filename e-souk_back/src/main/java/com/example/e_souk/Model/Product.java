@@ -1,6 +1,7 @@
 package com.example.e_souk.Model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -85,6 +86,15 @@ public class Product {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+        /**
+     * Prix de la variante
+     * Montant en euros avec 2 décimales
+     */
+    @Column(name = "price", nullable = false)
+    @NotNull(message = "Le prix est obligatoire")
+    @Min(value = 0, message = "Le prix ne peut pas être négatif")
+    private Float price;
+    
     
     // ==================== RELATIONS JPA ====================
     
@@ -168,37 +178,7 @@ public class Product {
         return getTotalStock() > 0;
     }
     
-    /**
-     * Récupère le prix minimum parmi toutes les variantes actives
-     * @return Prix minimum ou null si aucune variante
-     */
-    public Float getMinPrice() {
-        if (variants == null || variants.isEmpty()) {
-            return null;
-        }
-        
-        return variants.stream()
-                .filter(Variant::getIsActive)
-                .map(Variant::getPrice)
-                .min(Float::compareTo)
-                .orElse(null);
-    }
-    
-    /**
-     * Récupère le prix maximum parmi toutes les variantes actives
-     * @return Prix maximum ou null si aucune variante
-     */
-    public Float getMaxPrice() {
-        if (variants == null || variants.isEmpty()) {
-            return null;
-        }
-        
-        return variants.stream()
-                .filter(Variant::getIsActive)
-                .map(Variant::getPrice)
-                .max(Float::compareTo)
-                .orElse(null);
-    }
+
     
     /**
      * Récupère le nombre de variantes actives

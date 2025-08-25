@@ -127,22 +127,7 @@ public class ProductFavorite {
         return pictures.length() > 0 ? pictures.split(",")[0] : "";
     }
     
-    /**
-     * Récupère le prix minimum du produit
-     * @return Prix minimum parmi toutes les variantes
-     */
-    public Float getProductMinPrice() {
-        return product != null ? product.getMinPrice() : 0.0f;
-    }
-    
-    /**
-     * Récupère le prix maximum du produit
-     * @return Prix maximum parmi toutes les variantes
-     */
-    public Float getProductMaxPrice() {
-        return product != null ? product.getMaxPrice() : 0.0f;
-    }
-    
+
     /**
      * Récupère la note moyenne du produit
      * @return Note moyenne du produit

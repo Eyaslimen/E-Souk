@@ -149,7 +149,7 @@ public class OrderItem {
         if (variant == null) {
             return 0.0f;
         }
-        return variant.getPrice();
+        return variant.getProduct().getPrice();
     }
     
     /**

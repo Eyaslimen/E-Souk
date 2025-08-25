@@ -1,141 +1,232 @@
-import { Component, type OnInit } from "@angular/core"
+import { Component, type OnInit } from "@angular/core";
 import { ProductDetails } from "../../../interfaces/ProductDetails";
 import { ProductCard } from '../../../shared/product-card/product-card';
+import { ProductCarousel } from "../product-carousel/product-carousel";
 import { CommonModule } from "@angular/common";
-import { FormsModule, NgModel } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
+import { Observable, BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged } from "rxjs";
+import { ProductsService, ProductFilters, PagedResponse } from "../../../services/products-service";
+import { map, switchMap, startWith } from 'rxjs/operators';
 
+interface SortOption {
+  value: string;
+  label: string;
+}
 
 @Component({
   standalone: true,
   selector: 'app-products',
-  imports: [ProductCard,CommonModule,FormsModule],
+  imports: [ProductCard, CommonModule, FormsModule,ProductCarousel],
   templateUrl: './products.html',
   styleUrl: './products.css'
 })
 export class Products implements OnInit {
-  searchTerm = ""
-  selectedFilter = "Toutes"
-  viewMode: "grid" | "list" = "grid"
+  // Propriétés pour la pagination et les données
+  pagedProducts$!: Observable<PagedResponse<ProductDetails>>;
+  currentPage = 0;
+  pageSize = 20;
+  totalElements = 0;
+  totalPages = 0;
 
-  filters = ["Toutes", "Mis en avant", "Électronique", "Audio", "Wearables", "Informatique"]
-  // id: string; // UUID as string
-  //   name: string;
-  //   description: string;
-  //   price: number;
-  //   picture: string;
-  //   categoryName: string;
-  //   shopName: string;
-  recommendedProducts: ProductDetails[] = [
-    {
-      id: "1",
-      name: "Smartphone Pro Max",
-      categoryName: "Électronique",
-      price: 899,
-      picture: "/modern-smartphone.png",
-      description: "Un smartphone haut de gamme avec un écran AMOLED et un processeur puissant.",
-      shopName: "Tech Store",
-    },
-    {
-      id: "2",
-      name: "Casque Audio Premium",
-      categoryName: "Audio",
-      price: 299,
-      picture: "/diverse-people-listening-headphones.png",
-      description: "Un casque audio premium avec une qualité sonore exceptionnelle.",
-      shopName: "Audio Hub",
-    },
-    {
-      id: "3",
-      name: "Montre Connectée Sport",
-      categoryName: "Wearables",
-      price: 399,
-      picture: "/modern-smartwatch.png",
-      description: "Une montre connectée sportive avec suivi de la condition physique.",
-      shopName: "Wearable Store", },
-  ]
+  // Propriétés pour les filtres
+  searchQuery = '';
+  selectedCategories: string[] = [];
+  minPrice = '';
+  maxPrice = '';
+  sortBy = 'newest';
+  
+  // Propriétés pour l'UI
+  showCategoryDropdown = false;
+  showSortDropdown = false;
+  loading = false;
 
-  allProducts: ProductDetails[] = [
-    ...this.recommendedProducts,
-    {
-      id: "1",
-      name: "Smartphone Pro Max",
-      categoryName: "Électronique",
-      price: 899,
-      picture: "/modern-smartphone.png",
-      description: "Un smartphone haut de gamme avec un écran AMOLED et un processeur puissant.",
-      shopName: "Tech Store",
-    },
-    {
-      id: "2",
-      name: "Casque Audio Premium",
-      categoryName: "Audio",
-      price: 299,
-      picture: "/diverse-people-listening-headphones.png",
-      description: "Un casque audio premium avec une qualité sonore exceptionnelle.",
-      shopName: "Audio Hub",
-    },
-    {
-      id: "3",
-      name: "Montre Connectée Sport",
-      categoryName: "Wearables",
-      price: 399,
-      picture: "/modern-smartwatch.png",
-      description: "Une montre connectée sportive avec suivi de la condition physique.",
-      shopName: "Wearable Store", },
-  ]
+  // Subjects pour la réactivité
+  private filtersSubject = new BehaviorSubject<ProductFilters>({
+    page: 0,
+    pageSize: 20,
+    sortBy: 'newest'
+  });
 
-  filteredProducts: ProductDetails[] = []
+  // Catégories exactes de votre backend
+  categories: string[] = [
+    'vêtements',
+    'accessoires', 
+    'maison', 
+    'sport', 
+    'technologie'
+  ];
 
-  constructor() {}
+  sortOptions: SortOption[] = [
+    { value: 'newest', label: 'Plus récent' },
+    { value: 'oldest', label: 'Plus ancien' }
+  ];
+
+
+
+  constructor(private productService: ProductsService) {}
 
   ngOnInit(): void {
-    // this.filterProducts()
+    // Configuration de l'observable principal pour les produits avec pagination
+    this.pagedProducts$ = this.filtersSubject.pipe(
+      debounceTime(300), // Délai pour éviter trop de requêtes
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+      switchMap(filters => {
+        this.loading = true;
+        return this.productService.getProducts(filters);
+      }),
+      map(response => {
+        this.loading = false;
+        this.totalElements = response.totalElements;
+        this.totalPages = response.totalPages;
+        this.currentPage = response.number;
+        return response;
+      })
+    );
+
+    // Chargement initial
+    this.applyFilters();
   }
 
-  onSearchChange(): void {
-    // this.filterProducts()
+  // Méthodes pour les dropdowns
+  toggleCategoryDropdown(): void {
+    this.showCategoryDropdown = !this.showCategoryDropdown;
+    this.showSortDropdown = false;
   }
 
-  onFilterChange(filter: string): void {
-    this.selectedFilter = filter
-    // this.filterProducts()
+  toggleSortDropdown(): void {
+    this.showSortDropdown = !this.showSortDropdown;
+    this.showCategoryDropdown = false;
   }
 
-  toggleViewMode(): void {
-    this.viewMode = this.viewMode === "grid" ? "list" : "grid"
+  // Méthodes pour la gestion des catégories (sélection unique)
+  selectSingleCategory(category: string): void {
+    this.selectedCategories = [category];
+    this.showCategoryDropdown = false;
+    this.applyFilters();
   }
 
-  // filterProducts(): void {
-  //   let products = [...this.allProducts]
+  clearCategorySelection(): void {
+    this.selectedCategories = [];
+    this.showCategoryDropdown = false;
+    this.applyFilters();
+  }
 
-  //   // Filter by search term
-  //   if (this.searchTerm.trim()) {
-  //     products = products.filter(
-  //       (product) =>
-  //         product.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-  //         product.category.toLowerCase().includes(this.searchTerm.toLowerCase()),
-  //     )
-  //   }
+  // Ancienne méthode gardée pour compatibilité mais adaptée
+  toggleCategory(category: string): void {
+    this.selectSingleCategory(category);
+  }
 
-  //   // Filter by category
-  //   if (this.selectedFilter !== "Toutes") {
-  //     if (this.selectedFilter === "Mis en avant") {
-  //       products = products.filter((product) => product.isFeatured)
-  //     } else {
-  //       products = products.filter((product) => product.category === this.selectedFilter)
-  //     }
-  //   }
+  removeCategory(category: string): void {
+    this.clearCategorySelection();
+  }
 
-  //   this.filteredProducts = products
-  // }
+  // Méthodes pour le tri
+  setSortBy(value: string): void {
+    this.sortBy = value;
+    this.showSortDropdown = false;
+    this.applyFilters();
+  }
 
-  // onAddToCart(product: Product): void {
-  //   console.log("Ajouté au panier:", product)
-  //   // Implement add to cart logic
-  // }
+  getSortLabel(value: string): string {
+    const option = this.sortOptions.find(opt => opt.value === value);
+    return option ? option.label : 'Plus récent';
+  }
 
-  // onToggleFavorite(product: Product): void {
-  //   console.log("Favori togglé:", product)
-  //   // Implement favorite toggle logic
-  // }
+  // Méthode pour effacer tous les filtres
+  clearAllFilters(): void {
+    this.searchQuery = '';
+    this.selectedCategories = [];
+    this.minPrice = '';
+    this.maxPrice = '';
+    this.sortBy = 'newest';
+    this.currentPage = 0;
+    this.applyFilters();
+  }
+
+  // Vérification s'il y a des filtres actifs
+  hasActiveFilters(): boolean {
+    return !!(this.searchQuery || 
+             this.selectedCategories.length > 0 || 
+             this.minPrice || 
+             this.maxPrice || 
+             this.sortBy !== 'newest');
+  }
+
+  // Application des filtres
+  applyFilters(): void {
+    const filters: ProductFilters = {
+      page: this.currentPage,
+      pageSize: this.pageSize,
+      sortBy: this.sortBy
+    };
+
+    // Ajout des filtres conditionnels
+    if (this.searchQuery.trim()) {
+      filters.searchKeyword = this.searchQuery.trim();
+    }
+
+    if (this.selectedCategories.length > 0) {
+      // Si vous voulez supporter plusieurs catégories, vous devrez modifier votre backend
+      // Pour l'instant, on prend la première catégorie sélectionnée
+      filters.categoryName = this.selectedCategories[0];
+    }
+
+    if (this.minPrice && !isNaN(parseFloat(this.minPrice))) {
+      filters.priceMin = parseFloat(this.minPrice);
+    }
+
+    if (this.maxPrice && !isNaN(parseFloat(this.maxPrice))) {
+      filters.priceMax = parseFloat(this.maxPrice);
+    }
+
+    // Reset de la page lors de l'application de nouveaux filtres
+    this.currentPage = 0;
+    filters.page = 0;
+
+    this.filtersSubject.next(filters);
+  }
+
+  // Méthodes pour la pagination
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages) {
+      this.currentPage = page;
+      const currentFilters = this.filtersSubject.value;
+      this.filtersSubject.next({
+        ...currentFilters,
+        page: page
+      });
+    }
+  }
+
+  nextPage(): void {
+    this.goToPage(this.currentPage + 1);
+  }
+
+  previousPage(): void {
+    this.goToPage(this.currentPage - 1);
+  }
+
+  // Méthodes utilitaires pour la pagination
+  get pageNumbers(): number[] {
+    const pages = [];
+    const start = Math.max(0, this.currentPage - 2);
+    const end = Math.min(this.totalPages - 1, this.currentPage + 2);
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  // Méthode pour obtenir les informations de pagination
+  getPaginationInfo(): string {
+    const startItem = this.currentPage * this.pageSize + 1;
+    const endItem = Math.min((this.currentPage + 1) * this.pageSize, this.totalElements);
+    return `${startItem}-${endItem} sur ${this.totalElements}`;
+  }
+// Ajoutez cette méthode dans votre composant pour optimiser les performances
+trackByProductId(index: number, product: any): string {
+  return `${product.id}-${index}`;
+}
+
 }

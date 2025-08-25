@@ -7,21 +7,28 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.e_souk.Dto.Category.CategoryRequestDTO;
 import com.example.e_souk.Dto.Category.CategoryResponseDTO;
+import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductFilterDTO;
 import com.example.e_souk.Dto.Shop.CreateShopRequestDTO;
 import com.example.e_souk.Dto.Shop.ShopDetailsDTO;
+import com.example.e_souk.Dto.Shop.ShopFilterDto;
 import com.example.e_souk.Dto.Shop.ShopResponseDTO;
 import com.example.e_souk.Dto.Shop.ShopSummaryDTO;
 import com.example.e_souk.Dto.Shop.UpdateShopRequestDTO;
 import com.example.e_souk.Exception.ShopException;
+import com.example.e_souk.Mappers.ProductMapper;
 import com.example.e_souk.Mappers.ShopMapper;
 import com.example.e_souk.Model.Category;
+import com.example.e_souk.Model.Product;
 import com.example.e_souk.Model.Role;
 import com.example.e_souk.Model.Shop;
 import com.example.e_souk.Model.User;
@@ -251,7 +258,30 @@ public class ShopService {
         
     return shops.map(shop -> ShopMapper.toSummaryDTO(shop, shopRepository.countProductsInShop(shop.getId()), 0));
     }
+// recuperer les produits + FILTRAGE 
+  public Page<ShopSummaryDTO> findShops(ShopFilterDto filters) { 
+        // Création du tri
+        Sort sort = switch (filters.getSortBy().toLowerCase()) {
+            case "oldest" -> Sort.by(Sort.Direction.ASC, "createdAt");
+            // case "price_asc" -> Sort.by(Sort.Direction.ASC, "price");
+            // case "price_desc" -> Sort.by(Sort.Direction.DESC, "price");
+            // case "name_asc" -> Sort.by(Sort.Direction.ASC, "name");
+            // case "name_desc" -> Sort.by(Sort.Direction.DESC, "name");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt"); // newest par défaut
+        };
+        
+        Pageable pageable = PageRequest.of(filters.getPage(), filters.getPageSize(), sort);
+        
+        // Récupérer la page de Product
+    Page<Shop> shopPage = shopRepository.findshopsWithFilters(
+        filters.getCategoryName(),
+        filters.getAddress(),
+        filters.getSearchKeyword(),
+        pageable
+    );
 
-   
+    // Convertir en Page<ShopSummaryDTO>
+    return shopPage.map(shop -> ShopMapper.toSummaryDTO(shop, shopRepository.countProductsInShop(shop.getId()), 0));
+    }
 }
 

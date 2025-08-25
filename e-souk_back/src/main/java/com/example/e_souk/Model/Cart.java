@@ -81,15 +81,15 @@ public class Cart {
      * Inclut tous les articles avec leurs quantités et prix
      * @return Montant total du panier
      */
-    public Float getTotalAmount() {
-        if (cartItems == null || cartItems.isEmpty()) {
-            return 0.0f;
-        }
+    // public Float getTotalAmount() {
+    //     if (cartItems == null || cartItems.isEmpty()) {
+    //         return 0.0f;
+    //     }
         
-        return (float) cartItems.stream()
-                .mapToDouble(item -> item.getSubTotal())
-                .sum();
-    }
+    //     return (float) cartItems.stream()
+    //             .mapToDouble(item -> item.getSubTotal())
+    //             .sum();
+    // }
     
     /**
      * Compte le nombre total d'articles dans le panier

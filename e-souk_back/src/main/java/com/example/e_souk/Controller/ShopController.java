@@ -21,7 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductFilterDTO;
 import com.example.e_souk.Dto.Shop.CreateShopRequestDTO;
+import com.example.e_souk.Dto.Shop.ShopFilterDto;
 import com.example.e_souk.Dto.Shop.ShopResponseDTO;
 import com.example.e_souk.Dto.Shop.ShopSummaryDTO;
 import com.example.e_souk.Dto.Shop.UpdateShopRequestDTO;
@@ -265,10 +268,32 @@ public class ShopController {
             this.message = message;
             this.timestamp = timestamp;
         }
-
         // Getters pour la sérialisation JSON
         public String getCode() { return code; }
         public String getMessage() { return message; }
         public long getTimestamp() { return timestamp; }
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<ShopSummaryDTO>> getShops(
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String searchKeyword,
+            @RequestParam(defaultValue = "newest") String sortBy,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "20") Integer pageSize
+    ) {
+
+        ShopFilterDto filters = new ShopFilterDto();
+        filters.setCategoryName(categoryName);
+        filters.setAddress(address);
+        filters.setSearchKeyword(searchKeyword);
+        filters.setSortBy(sortBy);
+        filters.setPage(page);
+        filters.setPageSize(pageSize);
+
+        Page<ShopSummaryDTO> shops = shopService.findShops(filters);
+
+        return ResponseEntity.ok(shops);
     }
 }

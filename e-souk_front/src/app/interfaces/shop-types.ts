@@ -28,6 +28,7 @@ export interface CreateProductRequestDTO {
   name: string;
   category: string; // Sera transformé en categoryName côté service
   description?: string;
+  price: number; // ✅ AJOUT: Prix du produit
   attributes: ProductAttribute[];
   variants: ProductVariant[];
   images?: File[]; // ✅ AJOUT: Support des images
@@ -41,7 +42,6 @@ export interface ProductAttribute {
 // ✅ CORRECTION: Structure des variantes pour le frontend
 export interface ProductVariant {
   attributes: { [key: string]: string }; // Ex: { "taille": "S", "couleur": "Rouge" }
-  price: number;
   stock: number;
 }
 
@@ -51,8 +51,7 @@ export interface ProductSummary {
   category: string;
   variantCount: number;
   totalStock: number;
-  minPrice: number;
-  maxPrice: number;
+  price: number;
 }
 export interface BackendProductVariant {
   attributeValues: Array<{

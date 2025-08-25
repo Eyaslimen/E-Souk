@@ -29,7 +29,7 @@ export class ProductCreationComponent {
   addedVariants: ProductVariant[] = [];
   addedProducts: ProductSummary[] = [];
   addedNewProduct: boolean = true;
-  showActionsButtons : boolean=true;
+  showActionsButtons: boolean = true;
   // ✅ AJOUT: Gestion des images
   selectedImages: { file: File; preview: string }[] = [];
   
@@ -39,10 +39,12 @@ export class ProductCreationComponent {
   productCreationError = ''; // ✅ AJOUT: Gestion des erreurs
 
   constructor(private fb: FormBuilder) {
+    // ✅ CORRECTION: Ajout du champ price avec validation
     this.productForm = this.fb.group({
       name: ['', Validators.required],
       category: ['', Validators.required],
-      description: ['']
+      description: [''],
+      price: ['', [Validators.required, Validators.min(0.01)]] // ✅ Prix requis et > 0
     });
 
     this.attributesFormArray = this.fb.array([this.createAttributeFormGroup()]);
@@ -136,11 +138,15 @@ export class ProductCreationComponent {
     return this.attributesFormArray.valid && this.attributesFormArray.length > 0;
   }
 
+  // ✅ CORRECTION: Vérifier aussi le champ price
   goToAttributesPhase(): void {
-    if (this.productForm.get('name')?.valid && this.productForm.get('category')?.valid) {
+    if (this.productForm.get('name')?.valid && 
+        this.productForm.get('category')?.valid && 
+        this.productForm.get('price')?.valid) {
       this.currentPhase = 2;
     }
   }
+
   addNewProduct(): void {
     this.addedNewProduct = true;
     this.showActionsButtons = false;
@@ -175,8 +181,7 @@ export class ProductCreationComponent {
       formControls[controlName] = ['', Validators.required];
     });
 
-    // Ajouter les contrôles pour prix et stock
-    formControls['price'] = ['', [Validators.required, Validators.min(0.01)]];
+    // ✅ CORRECTION: Seulement le stock, plus de prix ici
     formControls['stock'] = ['', [Validators.required, Validators.min(0)]];
 
     this.variantForm = this.fb.group(formControls);
@@ -208,11 +213,11 @@ export class ProductCreationComponent {
         return;
       }
 
-      // Créer la nouvelle variante
+      // ✅ CORRECTION: Créer la nouvelle variante SANS prix
       const newVariant: ProductVariant = {
         attributes,
-        price: parseFloat(this.variantForm.get('price')?.value),
         stock: parseInt(this.variantForm.get('stock')?.value)
+        // ✅ Plus de prix dans les variantes
       };
 
       this.addedVariants.push(newVariant);
@@ -238,12 +243,13 @@ export class ProductCreationComponent {
     this.addedVariants.splice(index, 1);
     this.duplicateVariantError = false;
   }
+
   AnnulerAddedNewProduct(): void {
     this.addedNewProduct = false;
     this.showActionsButtons = true;
   }
 
-  // ✅ CORRECTION: Utilisation du service OnboardingService au lieu de la simulation
+  // ✅ CORRECTION: Méthode addProduct complètement corrigée
   async addProduct(): Promise<void> {
     if (this.addedVariants.length === 0 || !this.productForm.valid) {
       console.error('❌ Formulaire invalide ou pas de variantes');
@@ -253,16 +259,38 @@ export class ProductCreationComponent {
     this.productCreationError = '';
 
     try {
-      // Préparer les données du produit
+      // ✅ CORRECTION: Récupérer et valider toutes les données
+      const productName = this.productForm.get('name')?.value;
+      const productCategory = this.productForm.get('category')?.value;
+      const productDescription = this.productForm.get('description')?.value || '';
+      const productPrice = this.productForm.get('price')?.value;
+
+      // Validation des données essentielles
+      if (!productName || !productCategory || !productPrice) {
+        throw new Error('Le nom, la catégorie et le prix du produit sont requis');
+      }
+
+      if (!this.shopId) {
+        throw new Error('ID de boutique manquant');
+      }
+
+      // ✅ CORRECTION: Parser et valider le prix
+      const parsedPrice = parseFloat(productPrice);
+      if (isNaN(parsedPrice) || parsedPrice <= 0) {
+        throw new Error('Le prix doit être un nombre valide supérieur à 0');
+      }
+
+      // ✅ CORRECTION: Préparer les données du produit avec validation
       const productData: CreateProductRequestDTO = {
         shopId: this.shopId,
-        name: this.productForm.get('name')?.value,
-        category: this.productForm.get('category')?.value,
-        description: this.productForm.get('description')?.value,
+        name: productName,
+        category: productCategory,
+        description: productDescription,
         attributes: this.currentAttributes,
-        variants: this.addedVariants,
-        images: this.selectedImages.map(img => img.file) // ✅ Ajout des images
-      };
+        variants: this.addedVariants, // Variantes sans prix
+        price: parsedPrice, // ✅ Prix unique au niveau produit
+        images: this.selectedImages.map(img => img.file)
+      }; 
 
       console.log('🚀 Données du produit à envoyer:', productData);
 
@@ -271,15 +299,14 @@ export class ProductCreationComponent {
         next: (response) => {
           console.log('✅ Produit ajouté avec succès:', response);
 
-          // Créer un ProductSummary à partir de la réponse
+          // ✅ CORRECTION: Créer ProductSummary avec le prix du produit
           const productSummary: ProductSummary = {
             id: response.id || Date.now().toString(),
             name: productData.name,
             category: productData.category,
             variantCount: this.addedVariants.length,
             totalStock: this.addedVariants.reduce((sum, v) => sum + v.stock, 0),
-            minPrice: Math.min(...this.addedVariants.map(v => v.price)),
-            maxPrice: Math.max(...this.addedVariants.map(v => v.price))
+            price: parsedPrice // ✅ Prix unique du produit
           };
 
           this.addedProducts.push(productSummary);
@@ -300,9 +327,9 @@ export class ProductCreationComponent {
         }
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erreur lors de la préparation du produit:', error);
-      this.productCreationError = 'Une erreur est survenue lors de la préparation du produit.';
+      this.productCreationError = error.message || 'Une erreur est survenue lors de la préparation du produit.';
       this.isAddingProduct = false;
     }
   }

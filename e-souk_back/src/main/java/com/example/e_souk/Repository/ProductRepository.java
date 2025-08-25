@@ -132,7 +132,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * @param productId ID du produit
      * @return Optional<Float> prix minimum
      */
-    @Query("SELECT MIN(v.price) FROM Variant v WHERE v.product.id = :productId")
+    @Query("SELECT MIN(p.price) FROM Product p WHERE p.id = :productId")
     Optional<Float> getMinPriceByProductId(@Param("productId") UUID productId);
     
     /**
@@ -141,7 +141,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * @param productId ID du produit
      * @return Optional<Float> prix maximum
      */
-    @Query("SELECT MAX(v.price) FROM Variant v WHERE v.product.id = :productId")
+    @Query("SELECT MAX(p.price) FROM Product p WHERE p.id = :productId")
     Optional<Float> getMaxPriceByProductId(@Param("productId") UUID productId);
     
     /**
@@ -190,4 +190,29 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      */
     @Query("SELECT COUNT(p) FROM Product p WHERE p.name LIKE :productNamePrefix%")
     long countProductsWithNamePrefix(@Param("productNamePrefix") String productNamePrefix);
+
+
+
+
+
+
+
+    // pour les produits + filtrage et recherche
+// Requête améliorée avec recherche dans plusieurs champs
+@Query("SELECT p FROM Product p JOIN FETCH p.category c JOIN FETCH p.shop s " +
+       "WHERE (:categoryName IS NULL OR LOWER(CAST(c.name AS string)) = LOWER(CAST(:categoryName AS string))) " +
+       "AND (:priceMin IS NULL OR p.price >= :priceMin) " +
+       "AND (:priceMax IS NULL OR p.price <= :priceMax) " +
+       "AND (:searchKeyword IS NULL OR " +
+           "LOWER(CAST(p.name AS string)) LIKE LOWER(CONCAT('%', CAST(:searchKeyword AS string), '%')) OR " +
+           "LOWER(CAST(p.description AS string)) LIKE LOWER(CONCAT('%', CAST(:searchKeyword AS string), '%')) OR " +
+           "LOWER(CAST(s.bio AS string)) LIKE LOWER(CONCAT('%', CAST(:searchKeyword AS string), '%')) OR " +
+           "LOWER(CAST(s.description AS string)) LIKE LOWER(CONCAT('%', CAST(:searchKeyword AS string), '%')))")
+       Page<Product> findProductsWithFilters(
+       @Param("categoryName") String categoryName,
+       @Param("priceMin") Float priceMin,
+       @Param("priceMax") Float priceMax,
+       @Param("searchKeyword") String searchKeyword,
+       Pageable pageable
+       );
 }

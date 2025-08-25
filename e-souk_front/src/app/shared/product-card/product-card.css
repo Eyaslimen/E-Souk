@@ -162,12 +162,20 @@
     padding: 6px 0;
     cursor: pointer;
     transition: color 0.2s ease;
+    color: rgb(168, 113, 168);
+    font-size: 12px;
+    font-style: italic;
   }
   
   .shop-info:hover {
     color: #3b82f6;
   }
-  
+   .shop-name {
+    border-bottom: 1px solid rgb(126, 104, 126);
+  }
+  .shop-name:hover {
+    border-bottom: 1px solid #3b82f6;
+  }
   .shop-logo {
     width: 20px;
     height: 20px;
@@ -175,12 +183,7 @@
     object-fit: cover;
   }
   
-  .shop-name {
-    font-size: 12px;
-    color: rgb(126, 104, 126);
-    font-style: italic;
-    border-bottom: 1px solid rgb(126, 104, 126);
-  }
+ 
   
   /* Actions */
   .product-actions {

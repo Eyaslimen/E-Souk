@@ -53,10 +53,10 @@ public class Variant {
      * Prix de la variante
      * Montant en euros avec 2 décimales
      */
-    @Column(name = "price", nullable = false)
-    @NotNull(message = "Le prix est obligatoire")
-    @Min(value = 0, message = "Le prix ne peut pas être négatif")
-    private Float price;
+    // @Column(name = "price", nullable = false)
+    // @NotNull(message = "Le prix est obligatoire")
+    // @Min(value = 0, message = "Le prix ne peut pas être négatif")
+    // private Float price;
     
     /**
      * Stock disponible pour cette variante
@@ -157,9 +157,9 @@ public class Variant {
      * @param quantity Quantité
      * @return Sous-total (prix * quantité)
      */
-    public Float getSubTotal(Integer quantity) {
-        return price * quantity;
-    }
+    // public Float getSubTotal(Integer quantity) {
+    //     return price * quantity;
+    // }
     
     /**
      * Récupère la description des attributs de la variante

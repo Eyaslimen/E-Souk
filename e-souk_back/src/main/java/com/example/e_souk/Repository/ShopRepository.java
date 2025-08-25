@@ -1,6 +1,7 @@
 
 package com.example.e_souk.Repository;
 
+import com.example.e_souk.Model.Product;
 import com.example.e_souk.Model.Shop;
 import com.example.e_souk.Model.User;
 
@@ -124,5 +125,29 @@ public interface ShopRepository extends JpaRepository<Shop, UUID> {
      */
     @Query("SELECT COUNT(s) > 0 FROM Shop s WHERE s.owner.id = :ownerId AND s.isActive = true")
     boolean existsActiveShopByOwnerId(@Param("ownerId") UUID ownerId);
+
+
+
+
+
+
+
+
+    
+    // pour les shops + filtrage et recherche
+    @Query("SELECT s FROM Shop s " +
+       "WHERE (:categoryName IS NULL OR LOWER(CAST(s.categoryName AS string)) = LOWER(CAST(:categoryName AS string))) " +
+       "AND (:address IS NULL OR LOWER(CAST(s.address AS string)) = LOWER(CAST(:address AS string))) " +
+       "AND (:searchKeyword IS NULL OR (" +
+            "LOWER(CAST(s.brandName AS string)) LIKE LOWER(CONCAT('%', CAST(:searchKeyword AS string), '%')) OR " +
+            "LOWER(CAST(s.bio AS string)) LIKE LOWER(CONCAT('%', CAST(:searchKeyword AS string), '%')) OR " +
+            "LOWER(CAST(s.description AS string)) LIKE LOWER(CONCAT('%', CAST(:searchKeyword AS string), '%'))" +
+       "))")
+       Page<Shop> findshopsWithFilters(
+       @Param("categoryName") String categoryName,
+       @Param("address") String address,
+       @Param("searchKeyword") String searchKeyword,
+       Pageable pageable
+       );
 
 }

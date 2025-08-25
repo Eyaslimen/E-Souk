@@ -82,8 +82,8 @@ public interface VariantRepository extends JpaRepository<Variant, UUID> {
      * @param productId ID du produit
      * @return Optional<Variant> variante au prix minimum
      */
-    @Query("SELECT v FROM Variant v WHERE v.product.id = :productId ORDER BY v.price ASC")
-    Optional<Variant> findCheapestVariantByProductId(@Param("productId") UUID productId);
+//     @Query("SELECT v FROM Variant v WHERE v.product.id = :productId ORDER BY v.price ASC")
+//     Optional<Variant> findCheapestVariantByProductId(@Param("productId") UUID productId);
     
     /**
      * Trouve la variante la plus chère d'un produit
@@ -91,8 +91,8 @@ public interface VariantRepository extends JpaRepository<Variant, UUID> {
      * @param productId ID du produit
      * @return Optional<Variant> variante au prix maximum
      */
-    @Query("SELECT v FROM Variant v WHERE v.product.id = :productId ORDER BY v.price DESC")
-    Optional<Variant> findMostExpensiveVariantByProductId(@Param("productId") UUID productId);
+//     @Query("SELECT v FROM Variant v WHERE v.product.id = :productId ORDER BY v.price DESC")
+//     Optional<Variant> findMostExpensiveVariantByProductId(@Param("productId") UUID productId);
     
     /**
      * Vérifie si un SKU existe déjà

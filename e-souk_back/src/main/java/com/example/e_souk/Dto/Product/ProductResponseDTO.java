@@ -14,6 +14,7 @@ public class ProductResponseDTO {
     private CategorySummaryDTO category;
     private ShopSummaryDTO shop;
     private List<VariantSummaryDTO> variants;
+    private float price;
 
     @Data
     public static class CategorySummaryDTO {

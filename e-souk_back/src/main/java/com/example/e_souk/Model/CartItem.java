@@ -90,12 +90,12 @@ public class CartItem {
      * Calcule le sous-total de cet article
      * @return Sous-total (prix de la variante * quantité)
      */
-    public Float getSubTotal() {
-        if (variant == null || quantity == null) {
-            return 0.0f;
-        }
-        return variant.getPrice() * quantity;
-    }
+    // public Float getSubTotal() {
+    //     if (variant == null || quantity == null) {
+    //         return 0.0f;
+    //     }
+    //     return variant.getPrice() * quantity;
+    // }
     
     /**
      * Vérifie si la variante a suffisamment de stock pour la quantité demandée
@@ -156,12 +156,12 @@ public class CartItem {
      * Récupère le prix unitaire de la variante
      * @return Prix unitaire
      */
-    public Float getUnitPrice() {
-        if (variant == null) {
-            return 0.0f;
-        }
-        return variant.getPrice();
-    }
+    // public Float getUnitPrice() {
+    //     if (variant == null) {
+    //         return 0.0f;
+    //     }
+    //     return variant.getPrice();
+    // }
     
     /**
      * Augmente la quantité de l'article

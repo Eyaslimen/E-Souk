@@ -1,94 +1,218 @@
 <div class="products-page">
-  <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="hero-content">
-      <h1 class="hero-title">Découvrez nos Produits Exceptionnels</h1>
-      <p class="hero-subtitle">
-        Trouvez les meilleurs produits technologiques au meilleur prix.<br>
-        Qualité garantie et livraison rapide !
-      </p>
-      <button class="hero-cta-button">
-        <i class="fas fa-shopping-bag"></i>
-        Commencer le Shopping
-      </button>
+  <!-- Header Section -->
+  <section class="header">
+    <div class="leftSide">
+      <p><a href="/">Accueil</a> > <a href="/products" class="products_link">Produits</a></p>
+    </div>
+    <div class="rightSide">
+      <p class="hero-subtitle"></p>
     </div>
   </section>
 
   <!-- Recommended Products Section -->
   <section class="recommended-section">
-    <div class="container">
       <div class="section-header">
         <h2 class="section-title">Produits Recommandés pour Vous</h2>
-        <p class="section-subtitle">Sélection personnalisée basée sur vos centres d'intérêt et vos achats précédents</p>
+        <p class="section-subtitle">Sélection personnalisée basée sur vos centres d'intérêt</p>
       </div>
-      
-      <div class="products-grid recommended-grid">
-        <app-product-card 
-          *ngFor="let product of recommendedProducts"
-          [product]="product"
-          >
-        </app-product-card>
-      </div>
-    </div>
+<div class="recommended_carousel">
+<app-product-carousel ></app-product-carousel> </div>
   </section>
 
-  <!-- Search & Filter Section -->
-  <section class="search-filter-section sticky-section">
-    <div class="container">
-      <div class="search-filter-bar">
-        <div class="search-container">
-          <i class="fas fa-search search-icon"></i>
-          <input 
-            type="text" 
-            class="search-input"
-            placeholder="Rechercher des produits..."
-            [(ngModel)]="searchTerm"
-            (input)="onSearchChange()">
-        </div>
-        
-        <div class="filter-container">
-          <button class="filter-button">
-            <i class="fas fa-filter"></i>
-          </button>
-          
-          <div class="filter-dropdown">
-            <button 
-              *ngFor="let filter of filters"
-              class="filter-option"
-              [class.active]="selectedFilter === filter"
-             >
-              {{ filter }}
-            </button>
-          </div>
-          
-          <div class="sort-dropdown">
-            <select class="sort-select">
-              <option value="featured">Mis en avant</option>
-              <option value="price-low">Prix croissant</option>
-              <option value="price-high">Prix décroissant</option>
-              <option value="rating">Mieux notés</option>
-            </select>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- All Products Section -->
   <section class="all-products-section">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Tous nos Produits</h2>
-        <p class="products-count">{{ filteredProducts.length }} produits disponibles</p>
+        <h2 class="section-title">Découvrir Tous nos Produits</h2>
+        <p class="section-subtitle">Explorez la diversité de nos produits, pour tous les goûts et tous les besoins.</p>
       </div>
       
-      <div class="products-grid" > 
-        <app-product-card 
-          *ngFor="let product of filteredProducts"
-          [product]="product"
-></app-product-card>         
+
+  <!-- Search & Filter Section -->
+  <section class="search-filter-section sticky-section">
+    <div class="filter-bar">
+      <div class="filter-container">
+        <!-- Main Filter Row -->
+        <div class="filter-row">
+          <!-- Search Bar -->
+          <div class="search-container">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input
+              type="text"
+              placeholder="Rechercher des produits..."
+              [(ngModel)]="searchQuery"
+              (keyup.enter)="applyFilters()"
+              class="search-input"
+            />
+          </div>
+
+          <!-- Category Filter -->
+          <div class="dropdown-container">
+            <button class="dropdown-trigger" (click)="toggleCategoryDropdown()">
+              {{ selectedCategories.length > 0 ? selectedCategories[0] : 'Toutes les catégories' }}
+              <span *ngIf="selectedCategories.length > 0" class="category-badge">
+                1
+              </span>
+              <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6,9 12,15 18,9"></polyline>
+              </svg>
+            </button>
+            <div *ngIf="showCategoryDropdown" class="dropdown-content">
+              <div class="dropdown-item" (click)="clearCategorySelection()">
+                <span>Toutes les catégories</span>
+                <div *ngIf="selectedCategories.length === 0" class="selected-indicator"></div>
+              </div>
+              <div *ngFor="let category of categories" class="dropdown-item" (click)="selectSingleCategory(category)">
+                <span style="text-transform: capitalize;">{{ category }}</span>
+                <div *ngIf="selectedCategories.includes(category)" class="selected-indicator"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Price Range -->
+          <div class="price-container">
+            <span class="price-label">Prix:</span>
+            <input
+              type="number"
+              placeholder="Min"
+              [(ngModel)]="minPrice"
+              class="price-input"
+            />
+            <span class="price-separator">—</span>
+            <input
+              type="number"
+              placeholder="Max"
+              [(ngModel)]="maxPrice"
+              class="price-input"
+            />
+          </div>
+
+          <!-- Sort By -->
+          <div class="dropdown-container">
+            <button class="dropdown-trigger" (click)="toggleSortDropdown()">
+              Trier: {{ getSortLabel(sortBy) }}
+              <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6,9 12,15 18,9"></polyline>
+              </svg>
+            </button>
+            <div *ngIf="showSortDropdown" class="dropdown-content">
+              <div *ngFor="let option of sortOptions" class="dropdown-item" (click)="setSortBy(option.value)">
+                {{ option.label }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Apply Button -->
+          <button class="apply-button" (click)="applyFilters()" [disabled]="loading">
+            <svg class="filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+            </svg>
+            {{ loading ? 'Chargement...' : 'Appliquer' }}
+          </button>
+
+          <!-- Clear Filters -->
+          <button *ngIf="hasActiveFilters()" class="clear-button" (click)="clearAllFilters()">
+            <i class="fa fa-xmark" style="margin-right: 5px;"></i>Effacer
+          </button>
+        </div>
+
+        <!-- Selected Category (affichage simplifié car une seule catégorie supportée) -->
+        <div *ngIf="selectedCategories.length > 0" class="selected-categories">
+          <span class="category-tag">
+            Catégorie: {{ selectedCategories[0] }}
+            <button (click)="clearCategorySelection()" class="remove-category">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+          <div class="products-info">
+          <p class="products-count" *ngIf="pagedProducts$ | async as response">
+            {{ response.totalElements }} produits disponibles
+          </p>
+          <!-- <p class="pagination-info" *ngIf="pagedProducts$ | async as response">
+            {{ getPaginationInfo() }}
+          </p> -->
+        </div>
+      <!-- Loading indicator -->
+      <div *ngIf="loading" class="loading-container">
+        <p>Chargement des produits...</p>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="products-grid" *ngIf="!loading"> 
+        <ng-container *ngIf="pagedProducts$ | async as response">
+          <app-product-card 
+            *ngFor="let product of response.content"
+            [product]="product">
+          </app-product-card>
+          
+          <!-- No products found message -->
+          <div *ngIf="response.content.length === 0" class="no-products">
+            <p>Aucun produit trouvé avec ces critères de recherche.</p>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div class="pagination-container" *ngIf="(pagedProducts$ | async)?.totalPages as totalPages">
+        <div class="pagination" *ngIf="totalPages > 1">
+          <!-- Previous button -->
+          <button 
+            class="pagination-btn"
+            [disabled]="currentPage === 0"
+            (click)="previousPage()">
+            ❮ Précédent
+          </button>
+
+          <!-- First page -->
+          <button 
+            *ngIf="currentPage > 2"
+            class="pagination-btn"
+            (click)="goToPage(0)">
+            1
+          </button>
+          
+          <!-- Dots if there's a gap -->
+          <span *ngIf="currentPage > 3" class="pagination-dots">...</span>
+
+          <!-- Page numbers -->
+          <button 
+            *ngFor="let pageNum of pageNumbers"
+            class="pagination-btn"
+            [class.active]="pageNum === currentPage"
+            (click)="goToPage(pageNum)">
+            {{ pageNum + 1 }}
+          </button>
+
+          <!-- Dots if there's a gap -->
+          <span *ngIf="currentPage < totalPages - 4" class="pagination-dots">...</span>
+
+          <!-- Last page -->
+          <button 
+            *ngIf="currentPage < totalPages - 3"
+            class="pagination-btn"
+            (click)="goToPage(totalPages - 1)">
+            {{ totalPages }}
+          </button>
+
+          <!-- Next button -->
+          <button 
+            class="pagination-btn"
+            [disabled]="currentPage === totalPages - 1"
+            (click)="nextPage()">
+            Suivant ❯
+          </button>
+        </div>
       </div>
     </div>
   </section>
