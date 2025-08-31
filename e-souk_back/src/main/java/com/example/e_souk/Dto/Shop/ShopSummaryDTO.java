@@ -16,7 +16,9 @@ public class ShopSummaryDTO {
     private String description;
     private String logoPicture;
     private String ownerUsername;
-    private String ownerPicture;
+    private String categoryName;
+    private String address;
     private Long productCount;
     private Long followerCount;
 }
+   

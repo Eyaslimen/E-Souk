@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductDTO;
 import com.example.e_souk.Dto.Review.CreateReviewDTO;
 import com.example.e_souk.Dto.Review.ReviewResponseDTO;
 import com.example.e_souk.Dto.Shop.ShopGeneralDetailsDTO;
@@ -105,7 +105,7 @@ public class ShopPageService {
         return reviewDTOs;
     }
     //Récupère les produits d'un shop 
-		public List<ProductDetailsDTO> getProductsByShop(String shopName) {
+		public List<ProductDTO> getProductsByShop(String shopName) {
 		// toProductDetails
 		return productRepository.findProductsByshop(shopName).stream()
 			.map(ProductMapper::toProductDetails)

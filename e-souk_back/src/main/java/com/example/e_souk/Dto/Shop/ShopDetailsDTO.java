@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductDTO;
 
 @Data
 @NoArgsConstructor
@@ -25,7 +25,7 @@ public class ShopDetailsDTO {
     private LocalDateTime updatedAt;
     private String ownerName;
     private String ownerPicture;
-    private List<ProductDetailsDTO> products;
+    private List<ProductDTO> products;
     private Long orderCount;
     private Long followerCount;
 }

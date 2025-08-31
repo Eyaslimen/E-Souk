@@ -71,7 +71,6 @@
     position: absolute;
     top: 12px;
     right: 12px;
-    background: rgba(234, 233, 233, 0.9);
     border: none;
     border-radius: 50%;
     width: 36px;
@@ -221,12 +220,13 @@
   }
   
   .details-btn {
-    background: transparent;
-    color: #3b82f6;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+    color: white;
     border: 1px solid #3b82f6;
     width: 120px;
     padding: 8px 11px;
-    border-radius: 8px;
+    border-radius: 8px; 
+     margin-left: 25%;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -234,7 +234,7 @@
   }
   
   .details-btn:hover {
-    background: #3b82f6;
+    
     color: white;
     transform: translateY(-1px);
   }

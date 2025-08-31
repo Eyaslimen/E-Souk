@@ -4,13 +4,13 @@ package com.example.e_souk.Mappers;
 
 import java.util.List;
 
-import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductDTO;
 import com.example.e_souk.Dto.Product.ProductResponseDTO;
 import com.example.e_souk.Model.Product;
 
 public class ProductMapper {
-    public static ProductDetailsDTO toProductDetails(Product product) {
-        ProductDetailsDTO details = new ProductDetailsDTO();
+    public static ProductDTO toProductDetails(Product product) {
+        ProductDTO details = new ProductDTO();
         details.setId(product.getId());
         details.setName(product.getName());
         details.setDescription(product.getDescription());

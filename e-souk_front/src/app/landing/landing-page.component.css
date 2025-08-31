@@ -15,6 +15,20 @@
     animation: float 4s infinite ease-in-out;
 }
 
+.btn-voir {
+  padding: 10px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+  color: white;
+  font-size: 1.2vw;
+  text-decoration: none;
+
+}
+.btn-voir:hover{
+  background: linear-gradient(180deg, var(--primary-purple) 0%, var(--primary-blue)  100%);
+  transform: scale(1.02);
+  transition: 0.5s;
+} 
 @keyframes float {
     0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
     10% { opacity: 1; }
@@ -82,7 +96,7 @@
   /* Section Styles */
   .section-padding {
     padding: 4rem 0;
-  }
+  } 
   
   .section-header {
     display: flex;
@@ -107,10 +121,12 @@
   
   /* Shop Cards */
   .shops-grid {
+    margin-top: 1rem;
     display: grid;
     grid-template-columns: auto auto auto;
-    margin-left: 5%;
-    width: 90%;
+    margin-left: 10%;
+    width: 80%;
+
   }
   
   .shop-card {
@@ -392,7 +408,9 @@
     background-color: #dbeafe;
     color: var(--primary-blue);
   }
-  
+  .grey-shadow {
+     box-shadow: 0 10px 15px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+  }
   .author-avatar.bg-green-100 {
     background-color: #dcfce7;
     color: var(--primary-green);
@@ -539,7 +557,7 @@
     .shops-grid,
     .products-grid {
       grid-template-columns: 1fr;
-    }
+    } 
     
     .steps-grid {
       grid-template-columns: 1fr;

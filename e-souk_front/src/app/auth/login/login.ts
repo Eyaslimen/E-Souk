@@ -42,7 +42,9 @@ export class Login {
       this.authService.login(loginData).subscribe({
         next: (response) => {
           console.log('Connexion réussie', response);
-          this.router.navigate(['/dashboard']);
+          setTimeout(() => {
+            this.router.navigate(['/accueil']);
+          }, 3000);
           this.isLoading = false;
         },
         error: (error) => {

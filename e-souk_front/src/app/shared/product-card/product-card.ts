@@ -1,28 +1,45 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgIf } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { ProductDetails } from '../../interfaces/ProductDetails';
+import { ProductsFavoriteService } from '../../services/products-favorite.service';
+import { ToastrNotifications } from '../../services/toastr-notifications';
 
 @Component({
   selector: 'app-product-card',
-  imports: [NgIf],
+  imports: [CommonModule],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css'
 })
 export class ProductCard {
     @Input() product!: ProductDetails;
-  
-    constructor(private router: Router) {}
-  
-    // toggleFavorite(event: Event): void {
-    //   event.stopPropagation();
-    //   this.favoriteToggle.emit(this.product.id);
-    // }
+   isFavorite : boolean = false;
+    constructor(private router: Router, private productsFavoriteService: ProductsFavoriteService
+      ,     private notification: ToastrNotifications
+
+    ) {}
+
+viewDetails(event: Event): void {
+  event.stopPropagation();
+  this.router.navigate(['/products', this.product.id]);
+}
   
     // addProductToCart(event: Event): void {
     //   event.stopPropagation();
     //   this.addToCart.emit(this.product.id);
     // }
+      // Ajouter aux favoris
+  ajouterAuxFavoris() {
+        this.isFavorite = true;
+    const productId = this.product.id;
+    this.productsFavoriteService.addProductToFavorite(productId).subscribe(
+      result => {
+        console.log('Produit ajouté:', result);
+        this.notification.success('Produit ajouté au Favoris');
+      },
+      error => console.error('Erreur:', error)
+    );
+  }
   
     // viewDetails(): void {
     //   this.router.navigate(['/produit', this.product.id]);

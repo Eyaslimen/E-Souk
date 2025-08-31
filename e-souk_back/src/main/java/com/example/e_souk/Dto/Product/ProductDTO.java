@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class ProductDetailsDTO {
+public class ProductDTO {
     private UUID id;
     private String name;
     private String description;

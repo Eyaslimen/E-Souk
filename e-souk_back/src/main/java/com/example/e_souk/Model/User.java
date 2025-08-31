@@ -129,7 +129,20 @@ public class User {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
+    /**
+     * Produits favoris de l'utilisateur
+     * Relation OneToMany vers ProductFavorite
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductFavorite> productFavorites = new ArrayList<>();
+
+    /**
+     * Boutiques suivies par l'utilisateur
+     * Relation OneToMany vers ShopFollower
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ShopFollower> shopFollowers = new ArrayList<>();
+
     // ==================== RELATIONS JPA ====================
     
     /**
@@ -147,8 +160,8 @@ public class User {
      * Cascade ALL : si on supprime un utilisateur, son panier est aussi supprimé
      * Fetch LAZY : on ne charge le panier que si nécessaire
      */
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Cart cart;
+    // @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // private Cart cart;
     
     /**
      * Commandes passées par cet utilisateur
@@ -189,25 +202,24 @@ public class User {
                 .toList();
     }
     
+
     /**
-     * Récupère les produits favoris de l'utilisateur
-     * @return Liste des produits favoris
-     */
-    public List<Product> getFavoriteProducts() {
-        // Cette méthode sera implémentée quand on aura la relation avec ProductFavorite
-        // Pour l'instant, on retourne une liste vide
-        // TODO: Implémenter avec ProductFavorite
-        return new ArrayList<>();
-    }
-    
-    /**
-     * Récupère les boutiques suivies par l'utilisateur
-     * @return Liste des boutiques suivies
-     */
-    public List<Shop> getFollowedShops() {
-        // Cette méthode sera implémentée quand on aura la relation avec ShopFollower
-        // Pour l'instant, on retourne une liste vide
-        // TODO: Implémenter avec ShopFollower
-        return new ArrayList<>();
-    }
+ * Récupère les produits favoris de l'utilisateur
+ * @return Liste des produits favoris
+ */
+public List<Product> getFavoriteProducts() {
+    return productFavorites.stream()
+            .map(ProductFavorite::getProduct)
+            .toList();
+}
+
+/**
+ * Récupère les boutiques suivies par l'utilisateur
+ * @return Liste des boutiques suivies
+ */
+public List<Shop> getFollowedShops() {
+    return shopFollowers.stream()
+            .map(ShopFollower::getShop)
+            .toList();
+}
 } 

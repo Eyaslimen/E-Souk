@@ -4,7 +4,8 @@ package com.example.e_souk.Service;
 import com.example.e_souk.Dto.Category.CategoryRequestDTO;
 import com.example.e_souk.Dto.Category.CategoryResponseDTO;
 import com.example.e_souk.Dto.Product.ProductCreationRequestDTO;
-import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductDTO;
+import com.example.e_souk.Dto.Product.ProductDetailDTO;
 import com.example.e_souk.Dto.Product.ProductFilterDTO;
 import com.example.e_souk.Dto.Product.ProductResponseDTO;
 import com.example.e_souk.Mappers.ProductMapper;
@@ -34,7 +35,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -140,20 +144,67 @@ private final FileStorageService fileStorageService;
 	}
 
 	// Récupère tous les produits
-	public List<ProductDetailsDTO> getAllProducts() {
+	public List<ProductDTO> getAllProducts() {
 		// toProductDetails
 		return productRepository.findAll().stream()
 			.map(ProductMapper::toProductDetails)
 			.collect(Collectors.toList());
 	}
 
-	public Product getProductById(UUID id) {
-    return productRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Product not found"));
-}
+// 	public Product getProductById(UUID id) {
+//     return productRepository.findById(id)
+//         .orElseThrow(() -> new RuntimeException("Product not found"));
+// }
+// Dans votre ProductService.java
+
+/**
+ * Récupère les détails d'un produit avec toutes les options d'attributs disponibles
+ * @param productId ID du produit
+ * @return ProductDetailDTO avec toutes les informations nécessaires
+ */
+public ProductDetailDTO getProductDetail(UUID productId) {
+    // 1. Récupérer le produit avec ses variantes et attributs
+    Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+    
+    // 2. Créer la map des attributs disponibles
+    Map<String, List<String>> availableAttributes = new HashMap<>();
+    
+    // 3. Parcourir toutes les variantes actives du produit
+    for (Variant variant : product.getVariants()) {
+        if (variant.getIsActive()) {
+            // Pour chaque variante active, parcourir ses attributs
+            for (AttributeValue attributeValue : variant.getAttributeValues()) {
+                String attributeName = attributeValue.getAttributeName();
+                String attributeValueString = attributeValue.getValue();
+                
+                // Si l'attribut n'existe pas encore dans la map, l'ajouter
+                if (!availableAttributes.containsKey(attributeName)) {
+                    availableAttributes.put(attributeName, new ArrayList<>());
+                }
+                
+                // Ajouter la valeur si elle n'existe pas déjà
+                List<String> values = availableAttributes.get(attributeName);
+                if (!values.contains(attributeValueString)) {
+                    values.add(attributeValueString);
+                }
+            }
+        }
+    }
+    // 4. Construire et retourner le DTO
+    return ProductDetailDTO.builder()
+            .productId(product.getId())
+            .name(product.getName())
+            .description(product.getDescription())
+            .price(product.getPrice())
+            .picture(product.getPicture())
+            .shopName(product.getShop().getBrandName())
+            .availableAttributes(availableAttributes)
+            .build();
+} 
 
 // recuperer les produits + FILTRAGE 
-  public Page<ProductDetailsDTO> findProducts(ProductFilterDTO filters) { 
+  public Page<ProductDTO> findProducts(ProductFilterDTO filters) { 
         // Création du tri
         Sort sort = switch (filters.getSortBy().toLowerCase()) {
             case "oldest" -> Sort.by(Sort.Direction.ASC, "createdAt");
@@ -175,7 +226,7 @@ private final FileStorageService fileStorageService;
         pageable
     );
     
-    // Convertir en Page<ProductDetailsDTO>
+    // Convertir en Page<ProductDTO>
     return productPage.map(ProductMapper::toProductDetails);
     }
 }

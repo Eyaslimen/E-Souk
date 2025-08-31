@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.e_souk.Dto.Category.CategoryRequestDTO;
 import com.example.e_souk.Dto.Category.CategoryResponseDTO;
-import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductDTO;
 import com.example.e_souk.Dto.Product.ProductFilterDTO;
 import com.example.e_souk.Dto.Shop.CreateShopRequestDTO;
 import com.example.e_souk.Dto.Shop.ShopDetailsDTO;

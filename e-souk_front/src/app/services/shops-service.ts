@@ -74,4 +74,23 @@ export class ShopsService {
     }
     return throwError(() => new Error('Erreur serveur'));
   }
+
+
+
+    // followShop(userId: string, shopId: string): Observable<ShopFollower> {
+    //   return this.http.post<ShopFollower>(`${this.apiUrl}/shop-followers/${userId}/shops/${shopId}`, {});
+    // }
+  
+    // unfollowShop(userId: string, shopId: string): Observable<void> {
+    //   return this.http.delete<void>(`${this.apiUrl}/shop-followers/${userId}/shops/${shopId}`);
+    // }
+  
+    // isFollowingShop(userId: string, shopId: string): Observable<boolean> {
+    //   return this.http.get<boolean>(`${this.apiUrl}/shop-followers/${userId}/shops/${shopId}/check`);
+    // }
+  
+    // getShopFollowerCount(shopId: string): Observable<number> {
+    //   return this.http.get<number>(`${this.apiUrl}/shop-followers/shop/${shopId}/count`);
+    // }
+  
 }

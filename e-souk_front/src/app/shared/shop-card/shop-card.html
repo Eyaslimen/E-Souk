@@ -5,7 +5,7 @@
       <div class="logo-container">
         <img 
           *ngIf="shop.logoPicture; else logoPlaceholder" 
-          [src]="shop.logoPicture" 
+          [src]="'http://localhost:8080/uploads/' + shop.logoPicture"
           [alt]="shop.brandName + ' logo'"
           class="shop-logo"
         />
@@ -22,11 +22,11 @@
       </div>
     </div>
     
-    <div class="follow-btn" (click)="toggleFollow($event)">
+    <div class="follow-btn" (click)="ajouterAuxFavoris()">
       <svg 
         class="heart-icon" 
         [class.filled]="isFollowed"
-        width="24" 
+        width="24"  
         height="24" 
         viewBox="0 0 24 24" 
         fill="none" 

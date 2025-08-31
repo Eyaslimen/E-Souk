@@ -32,7 +32,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   
   currentState!: OnboardingState;
   OnboardingStep = OnboardingStep;
-  
+
   showConfirmationModal = false;
   pendingShopData: ShopConfirmationData | null = null;
   isCreatingShop = false;

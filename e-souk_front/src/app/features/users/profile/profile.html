@@ -9,18 +9,18 @@
 
   <!-- User Profile Card -->
   <div class="profile-header">
-  <div class="profile-card">
-    <div class="profile-info">
+  <div class="profile-card" >
+    <div class="profile-info" *ngIf="userInfo">
       <div class="avatar-container">
         <div class="avatar">
-          <span class="avatar-text">M</span>
+      <span class="avatar-text">{{ userInfo?.username?.substring(0, 1) || 'U' }}</span>
         </div>
         <button class="camera-btn">
           <i class="fas fa-camera"></i>
         </button>
       </div>
       <div class="user-details">
-        <h2 class="user-name">{{ userInfo.name }}</h2>
+        <h2 class="user-name">{{ userInfo.username }}</h2>
         <p class="user-email">{{ userInfo.email }}</p>
         <div class="badges">
           <span class="badge badge-owner">
@@ -29,9 +29,9 @@
           </span>
         </div>
       </div>
-    </div>
+    </div> 
   </div>
-  <div class="shop-card">
+  <!-- <div class="shop-card">
     <h2 class="myshop_title">Eya's Shop</h2>
     <div class="stats-grid">
           <div class="stat-item">
@@ -60,7 +60,7 @@
           </div>
         </div>
         <button class="btn gerer">Gérer</button>
-      </div>
+      </div> -->
   </div>
 
   <!-- Shop Summary Card -->
@@ -122,7 +122,7 @@
 
     <!-- Personal Information Tab -->
     <div class="tab-content" *ngIf="activeTab === 'personnel'">
-      <div class="cards-grid">
+      <div class="cards-grid" *ngIf="userInfo">
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">
@@ -138,19 +138,19 @@
             <div class="form-group">
               <label for="name">
                 <i class="fas fa-user"></i>
-                Nom complet
+                {{userInfo.username}}
               </label>
               <input 
                 id="name" 
                 type="text" 
-                [(ngModel)]="userInfo.name" 
+                [(ngModel)]="userInfo.username" 
                 [disabled]="!isEditing"
                 class="form-input">
             </div>
             <div class="form-group">
               <label for="email">
                 <i class="fas fa-envelope"></i>
-                Email
+                {{userInfo.email}}
               </label>
               <input 
                 id="email" 
@@ -162,7 +162,7 @@
             <div class="form-group">
               <label for="phone">
                 <i class="fas fa-phone"></i>
-                Téléphone
+                {{userInfo.phone}}
               </label>
               <input 
                 id="phone" 
@@ -174,7 +174,7 @@
             <div class="form-group">
               <label for="address">
                 <i class="fas fa-map-marker-alt"></i>
-                Adresse
+                {{userInfo.address}}
               </label>
               <input 
                 id="address" 
@@ -259,11 +259,12 @@
                 <div class="shop-avatar-small">
                   <i class="fas fa-store-alt"></i>
                 </div>
+
                 <div class="shop-card-info">
-                  <h4 class="shop-card-name">{{ shop.name }}</h4>
+                  <h4 class="shop-card-name">{{ shop.brandName }}</h4>
                   <p class="shop-card-location">
                     <i class="fas fa-map-marker-alt"></i>
-                    {{ shop.category }}
+                    {{ shop.categoryName }}
                   </p>
                 </div>
                 <button class="btn-unfollow" (click)="unfollowShop(i)">
@@ -280,85 +281,125 @@
     <div class="tab-content" *ngIf="activeTab === 'commandes'">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">
-            <i class="fas fa-clipboard-list"></i>
-            Mes commandes ({{ orders.length }})
+          <h3 class="card-title" *ngIf="userOrders">
+            <i class="fas fa-store"></i>
+            Commandes passées ({{ userOrders.totalOrders}} commandes - {{userOrders.shopCount}} boutique)
           </h3>
         </div>
-        <div class="card-content">
-          <div class="orders-list">
-            <div class="order-item" *ngFor="let order of orders">
-              <div class="order-info">
-                <h4 class="order-id">
-                  <i class="fas fa-receipt"></i>
-                  {{ order.id }}
-                </h4>
-                <p class="order-details">
-                  <i class="fas fa-store"></i>
-                  {{ order.shop }} • 
-                  <i class="fas fa-calendar"></i>
-                  {{ order.date }}
-                </p>
-              </div>
-              <div class="order-actions">
-                <span class="status-badge" [class]="order.statusClass">
-                  <i class="fas" [class.fa-check-circle]="order.status === 'Livré'" [class.fa-clock]="order.status === 'En cours'"></i>
-                  {{ order.status }}
-                </span>
-                <span class="order-amount">{{ order.amount }}</span>
-                <button class="btn btn-outline small" (click)="viewOrderDetails(order)">
-                  <i class="fas fa-eye"></i>
-                  Détails
-                </button>
-              </div>
+        <div class="orders">
+          <div class="ligne">
+            <div class="name_section">
+
             </div>
+            <div class="products_section">
+
+            </div>
+            <div class="date_section">
+
+            </div>
+            div.etat
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Cart Tab -->
+
+
+
+
+    </div>
+    </div>
     <div class="tab-content" *ngIf="activeTab === 'panier'">
       <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">
-            <i class="fas fa-shopping-cart"></i>
-            Mon panier ({{ cartItems.length }} articles)
-          </h3>
+<!-- <div class="cart-container"> -->
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Chargement...</p>
+      </div>
+
+      <!-- Empty Cart -->
+      <div *ngIf="!loading && (!cart || cart.shopCarts.length === 0)" class="empty">
+        <div class="empty-icon">🛒</div>
+        <h2>Panier vide</h2>
+        <p>Ajoutez des produits pour commencer</p>
+      </div>
+
+      <!-- Cart Content -->
+      <div *ngIf="!loading && cart && cart.shopCarts.length > 0">
+        <!-- Header -->
+        <!-- <div class="header">
+          <div class="header-info">
+            <h1>🛒 Mon Panier</h1>
+            <div class="summary">
+          <div class="summary-info">
+            <p>💡 <strong>Info:</strong> Une commande séparée sera créée pour chaque boutique</p>
+          </div>
         </div>
-        <div class="card-content">
-          <div class="cart-items">
-            <div class="cart-item" *ngFor="let item of cartItems; let i = index">
-              <img [src]="item.image" [alt]="item.name" class="item-image">
-              <div class="item-details">
-                <h4 class="item-name">{{ item.name }}</h4>
-                <p class="item-shop">
-                  <i class="fas fa-store"></i>
-                  {{ item.shop }}
-                </p>
-              </div>
-              <div class="item-actions">
-                <p class="item-price">{{ item.price }}</p>
-                <button class="remove-btn" (click)="removeFromCart(i)">
-                  <i class="fas fa-trash"></i>
-                </button>
+            <p>{{ cart.totalItems }} articles • {{ cart.shopCount }} boutiques</p>
+          </div>
+          <div class="header-total">
+            <span class="total">{{ cart.totalPrice.toFixed(2) }} DT</span>
+          </div>
+        </div> -->
+        <div class="card-header">
+      <h3 class="card-title">
+            <i class="fas fa-shopping-cart"></i>
+           Mon Panier
+          </h3> 
+        </div>
+          <div class="summary">
+          <div class="summary-info">
+            <p>💡 <strong>Info:</strong> Une commande séparée sera créée pour chaque boutique</p>
+          </div>
+        </div>
+            
+        <!-- Shops -->
+        <div class="shops">
+          <div *ngFor="let shop of cart.shopCarts" class="shop">
+            <!-- Shop Header -->
+            <div class="shop-header">
+              <h2>🏪 {{ shop.shopName }}</h2>
+              <span class="shop-total">{{ shop.shopTotal.toFixed(2) }} DT</span>
+            </div>
+
+            <!-- Products -->
+            <div class="products">
+              <div *ngFor="let item of shop.items" class="product">
+                <div class="product-image">
+                  <div class="image-placeholder">📦</div>
+                </div>
+                
+                <div class="product-info">
+                  <h3>{{ item.name }}</h3>
+                  
+                  <!-- Attributes -->
+                  <div *ngIf="hasAttributes(item)" class="attributes">
+                    <span *ngFor="let attr of getAttributes(item)" class="attribute">
+                      {{ attr.key }}: {{ attr.value }}
+                    </span>
+                  </div>
+                  
+                  <div class="product-details">
+                    <span class="price">{{ item.price.toFixed(2) }} DT</span>
+                    <span class="quantity">Qté: {{ item.quantity }}</span>
+                    <span class="total">{{ (item.price * item.quantity).toFixed(2) }} DT</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="cart-separator"></div>
-          <div class="cart-footer">
-            <span class="cart-total">
-              <i class="fas fa-calculator"></i>
-              Total: {{ getCartTotal() }}
-            </span>
-            <button class="btn btn-accent" (click)="finalizeOrder()">
-              <i class="fas fa-credit-card"></i>
-              Finaliser la commande
-            </button>
+
+            <!-- Order Button -->
+            <div class="shop-footer">
+              <button (click)="orderShop(shop)" class="order-btn">
+                 Commander ({{ shop.shopTotal.toFixed(2) }} DT)
+              </button>
+            </div>
           </div>
         </div>
+
       </div>
+    <!-- </div> -->
     </div>
+  </div>
 
     <!-- Favorites Tab -->
     <div class="tab-content" *ngIf="activeTab === 'favoris'">
@@ -366,14 +407,14 @@
         <div class="card-header">
           <h3 class="card-title">
             <i class="fas fa-heart"></i>
-            Mes favoris ({{ favoriteItems.length }} produits)
+            Mes favoris ({{ productsFavoris.length }} produits)
           </h3>
         </div>
         <div class="card-content">
           <div class="favorites-grid">
-            <div class="favorite-item" *ngFor="let item of favoriteItems">
+            <div class="favorite-item" *ngFor="let item of productsFavoris">
               <div class="favorite-image-container">
-                <img [src]="item.image" [alt]="item.name" class="favorite-image">
+                <img [src]="'http://localhost:8080/uploads/' + item.picture" [alt]="item.name" class="favorite-image">
                 <div class="favorite-overlay">
                   <i class="fas fa-heart"></i>
                 </div>
@@ -382,7 +423,7 @@
                 <h4 class="favorite-name">{{ item.name }}</h4>
                 <p class="favorite-shop">
                   <i class="fas fa-store"></i>
-                  {{ item.shop }}
+                  {{ item.shopName }}
                 </p>
                 <div class="favorite-footer">
                   <span class="favorite-price">{{ item.price }}</span>

@@ -7,6 +7,7 @@ import { FormsModule } from "@angular/forms";
 import { Observable, BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged } from "rxjs";
 import { ProductsService, ProductFilters, PagedResponse } from "../../../services/products-service";
 import { map, switchMap, startWith } from 'rxjs/operators';
+import { ProductsFavoriteService } from "../../../services/products-favorite.service";
 
 interface SortOption {
   value: string;
@@ -63,7 +64,7 @@ export class Products implements OnInit {
 
 
 
-  constructor(private productService: ProductsService) {}
+  constructor(private productService: ProductsService, private productsFavoriteService: ProductsFavoriteService) {}
 
   ngOnInit(): void {
     // Configuration de l'observable principal pour les produits avec pagination

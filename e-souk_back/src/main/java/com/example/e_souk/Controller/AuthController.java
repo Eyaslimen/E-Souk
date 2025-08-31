@@ -9,8 +9,6 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.e_souk.Dto.Auth.AuthResponseDTO;
 import com.example.e_souk.Dto.Auth.LoginRequestDTO;
 import com.example.e_souk.Dto.Auth.RegisterRequestDTO;
-import com.example.e_souk.Dto.User.UserProfileDTO;
 import com.example.e_souk.Service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,26 +76,7 @@ public class AuthController {
         AuthResponseDTO response = authService.login(loginRequest);
         return ResponseEntity.ok(response);
     }
-    
-    /**
-     * Récupération du profil de l'utilisateur authentifié
-     * @return Profil utilisateur
-     */
-    @GetMapping("/profile")
-        // Lorsque tu utilises @PreAuthorize, Spring Security intercepte l’appel à la méthode avant son exécution, et :
-        // Accède à l’utilisateur courant via le SecurityContextHolder
-        // Vérifie la condition (isAuthenticated(), hasRole(...), etc.)
-        // S’il n’a pas les droits => Exception AccessDeniedException.
-    @PreAuthorize("isAuthenticated()")
-    @Operation(
-        summary = "Récupération du profil utilisateur",
-        description = "Récupère les informations du profil de l'utilisateur authentifié"
-    )
-    public ResponseEntity<UserProfileDTO> getProfile() {
-        log.debug("Requête de récupération de profil");
-        UserProfileDTO profile = authService.getCurrentUserProfile();
-        return ResponseEntity.ok(profile);
-    }
+   
     
     /**
      * Validation d'un token JWT

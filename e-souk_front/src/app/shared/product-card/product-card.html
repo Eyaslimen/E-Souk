@@ -17,20 +17,15 @@
         [alt]="product.name"
         class="product-image"
       >
-      
-      <!-- Bouton favoris -->
-      <!-- <button 
+       Bouton favoris 
+      <button 
         class="favorite-btn" 
-        [class.active]="product.isFavorite"
-        (click)="toggleFavorite($event)"
-        [attr.aria-label]="product.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+        (click)="ajouterAuxFavoris()"
       >
-      <i *ngIf="product.isFavorite" class="fa-solid fa-heart" style="color: red;"></i>
-      <i *ngIf="!product.isFavorite" class="fa-solid fa-heart"></i> -->
-        <!-- <i class="heart-icon" [class.filled]="product.isFavorite">
-          {{ product.isFavorite ? '❤️' : '🤍' }}
-        </i> -->
-      <!-- </button> -->
+        <i class="fa-solid fa-heart" *ngIf="!isFavorite"></i>
+        <i class="fa-solid fa-heart" style="color: red;" *ngIf="isFavorite"></i>
+
+      </button>
     </div>
   
     <!-- Informations du produit -->
@@ -71,14 +66,16 @@
   
       <!-- Actions -->
       <div class="product-actions">
-        <button 
+        <!-- <button 
           class="add-to-cart-btn" 
         >
         Ajouter au panier
-        </button>
-        <button class="details-btn" >
+        </button> -->
+        <button class="details-btn"
+          (click)="viewDetails($event)"
+              type="button" >
           Voir Détails
         </button>
-      </div>
+      </div> 
     </div>
   </div>

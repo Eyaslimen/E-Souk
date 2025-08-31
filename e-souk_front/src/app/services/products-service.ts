@@ -42,6 +42,12 @@ export class ProductsService {
         catchError(this.handleError)
       );
   }
+  getProductDetails(productId:any): Observable<ProductDetailsDto> {
+    return this.http.get<ProductDetailsDto>(`${this.API_URL}/${productId}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 
   // Nouvelle méthode pour récupérer les produits avec filtrage et pagination
   getProducts(filters: ProductFilters = {}): Observable<PagedResponse<ProductDetails>> {

@@ -83,7 +83,9 @@
   
   /* Background Colors */
   .bg-background { background-color: var(--white); }
-  .bg-gray-50 { background-color: var(--gray-50); }
+  .bg-gray-50 { background-color: var(--gray-50); 
+  box-shadow: 0 10px 15px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+  }
   .bg-white { background-color: var(--white); }
   
   /* Text Colors */

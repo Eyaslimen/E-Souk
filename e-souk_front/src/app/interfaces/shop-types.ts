@@ -89,7 +89,7 @@ export interface ProductResponseDTO {
 }
 
 // ✅ AJOUT: Interface pour la structure complète d'un produit
-export interface ProductDetailsDTO {
+export interface ProductDTO {
   id: string;
   name: string;
   description?: string;

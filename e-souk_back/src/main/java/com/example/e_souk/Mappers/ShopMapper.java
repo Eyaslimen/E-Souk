@@ -3,7 +3,7 @@ package com.example.e_souk.Mappers;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductDTO;
 import com.example.e_souk.Dto.Shop.ShopDetailsDTO;
 import com.example.e_souk.Dto.Shop.ShopGeneralDetailsDTO;
 import com.example.e_souk.Dto.Shop.ShopOwnerDTO;
@@ -46,7 +46,7 @@ public class ShopMapper {
                 shop.getOwner().getUsername(),
                 shop.getOwner().getPicture()
         );
-        List<ProductDetailsDTO> productDetails = shop.getProducts().stream()
+        List<ProductDTO> productDetails = shop.getProducts().stream()
                 .map(ProductMapper::toProductDetails)
                 .collect(Collectors.toList());
         return new ShopDetailsDTO(
@@ -74,7 +74,8 @@ public class ShopMapper {
                 shop.getDescription(),
                 shop.getLogoPicture(),
                 shop.getOwner().getUsername(),
-                shop.getOwner().getPicture(),
+                shop.getCategoryName(),
+                shop.getAddress(),
                 productCount,
                 followerCount
         );

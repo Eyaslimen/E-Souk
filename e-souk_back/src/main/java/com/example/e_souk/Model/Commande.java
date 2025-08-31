@@ -56,16 +56,7 @@ public class Commande {
     @NotBlank(message = "L'adresse de livraison est obligatoire")
     @Size(max = 255, message = "L'adresse de livraison ne peut pas dépasser 255 caractères")
     private String deliveryAddress;
-    
-    /**
-     * Code postal de livraison
-     * Code postal de l'adresse de livraison
-     */
-    @Column(name = "delivery_postal_code", nullable = false, length = 10)
-    @NotBlank(message = "Le code postal de livraison est obligatoire")
-    @Size(max = 10, message = "Le code postal ne peut pas dépasser 10 caractères")
-    private String deliveryPostalCode;
-    
+
     /**
      * Montant total de la commande
      * Inclut les articles + frais de livraison

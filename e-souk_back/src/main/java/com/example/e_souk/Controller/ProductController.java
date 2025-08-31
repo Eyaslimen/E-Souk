@@ -5,7 +5,8 @@ import java.util.UUID;
 
 import com.example.e_souk.Model.Product;
 import com.example.e_souk.Dto.Product.ProductCreationRequestDTO;
-import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductDTO;
+import com.example.e_souk.Dto.Product.ProductDetailDTO;
 import com.example.e_souk.Dto.Product.ProductFilterDTO;
 import com.example.e_souk.Dto.Product.ProductResponseDTO;
 import com.example.e_souk.Mappers.ProductMapper;
@@ -57,18 +58,19 @@ public class ProductController {
         }
     }
     @GetMapping("/all")
-    public ResponseEntity<List<ProductDetailsDTO>> getAllProducts() {
-        List<ProductDetailsDTO> products = productService.getAllProducts();
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+        List<ProductDTO> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
+    
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable UUID id) {
-        Product product = productService.getProductById(id);
+    public ResponseEntity<ProductDetailDTO> getProductById(@PathVariable UUID id) {
+        ProductDetailDTO product = productService.getProductDetail(id);
         return ResponseEntity.ok(product);
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductDetailsDTO>> getProducts(
+    public ResponseEntity<Page<ProductDTO>> getProducts(
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) Float priceMin,
             @RequestParam(required = false) Float priceMax,
@@ -87,7 +89,7 @@ public class ProductController {
         filters.setPage(page);
         filters.setPageSize(pageSize);
         
-        Page<ProductDetailsDTO> products = productService.findProducts(filters);
+        Page<ProductDTO> products = productService.findProducts(filters);
         
         return ResponseEntity.ok(products);
     }

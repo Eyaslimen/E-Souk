@@ -25,6 +25,10 @@ export class ShopConfirmationModalComponent {
 
   onConfirm(): void {
     this.confirm.emit();
+
+    setTimeout(() => {
+      this.close.emit();
+    }, 1000);
   }
 
   onModify(): void {

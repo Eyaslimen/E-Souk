@@ -1,0 +1,21 @@
+<section class="carousel-section">
+  
+  <div class="carousel-wrapper" 
+       (mouseenter)="onMouseEnter()" 
+       (mouseleave)="onMouseLeave()">
+    
+    <!-- Pause indicator -->
+    <div class="pause-indicator" [class.visible]="isHovered">
+      <div class="pause-icon">⏸️</div>
+      <span>Pause</span>
+    </div>
+    
+    <div class="carousel-container" #carouselContainer>
+      <app-shop-card 
+        *ngFor="let shop of duplicatedShops; trackBy: trackByShopId"
+        [shop]="shop"
+        class="carousel-item">
+      </app-shop-card>
+    </div>
+  </div>
+</section>

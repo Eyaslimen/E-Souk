@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.e_souk.Dto.Product.ProductDetailsDTO;
-import com.example.e_souk.Dto.Product.ProductFilterDTO;
 import com.example.e_souk.Dto.Shop.CreateShopRequestDTO;
 import com.example.e_souk.Dto.Shop.ShopFilterDto;
 import com.example.e_souk.Dto.Shop.ShopResponseDTO;
@@ -58,7 +56,6 @@ public class ShopController {
 
     private final ShopService shopService;
     private final AuthService authService;
-    private final ProductService productService;
     /**
      * @param requestDTO données de la boutique
      * @return ResponseEntity avec la boutique créée

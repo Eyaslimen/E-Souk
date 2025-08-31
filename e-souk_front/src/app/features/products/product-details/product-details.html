@@ -1,0 +1,114 @@
+<div class="product-details-container">
+  <div class="product-card">
+    <div class="product-grid">
+      <!-- Image du produit -->
+      <div class="product-image-section" *ngIf="productDetails">
+        <img 
+          [src]="'http://localhost:8080/uploads/' + productDetails.picture"
+          [alt]="productDetails.name"
+          class="product-image"
+        >
+        <div class="shop-badge">
+         <i class="fa fa-store"></i>
+          <span>{{ productDetails.shopName }}</span>
+        </div>
+      </div>
+
+      <!-- Détails du produit -->
+      <div class="product-details-section">
+        <div class="product-info" *ngIf="productDetails">
+          <!-- En-tête -->
+          <div class="product-header">
+            <h1 class="product-title">{{ productDetails.name }}</h1>
+            <p class="product-description">{{ productDetails.description }}</p>
+          </div>
+
+          <!-- Prix -->
+          <div class="price-section">
+            <div class="product-price">{{ productDetails.price}} €</div>
+          </div>
+
+          <!-- Attributs -->
+          <div class="attributes-section">
+            <div class="attribute-group" *ngFor="let attributeName of getAttributeKeys()">
+              <label class="attribute-label">{{ attributeName }}</label>
+              <div class="attribute-options">
+                <button
+                  *ngFor="let value of getAttributeValues(attributeName)"
+                  (click)="onAttributeSelect(attributeName, value)"
+                  [class.selected]="isAttributeSelected(attributeName, value)"
+                  class="attribute-button"
+                >
+                  {{ value }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quantité -->
+          <div class="quantity-section">
+            <label class="quantity-label">Quantité</label>
+            <div class="quantity-controls">
+              <button 
+                (click)="decreaseQuantity()" 
+                [disabled]="quantity <= 1"
+                class="quantity-btn"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M5 12h14"></path>
+                </svg>
+              </button>
+              <div class="quantity-display">{{ quantity }}</div>
+              <button 
+                (click)="increaseQuantity()" 
+                class="quantity-btn"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M12 5v14"></path>
+                  <path d="M5 12h14"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Résumé de la sélection -->
+          <div class="selection-summary" *ngIf="getSelectedAttributesEntries().length > 0">
+            <h3 class="summary-title">Votre sélection :</h3>
+            <div class="summary-items">
+              <div class="summary-item" *ngFor="let item of getSelectedAttributesEntries()">
+                <span class="summary-attr">{{ item.key }}:</span> {{ item.value }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Total -->
+          <div class="total-section">
+            <div class="total-row">
+              <span class="total-label">Total :</span>
+              <span class="total-price">{{ getTotalPrice()}} €</span>
+            </div>
+          </div>
+
+          <!-- Bouton de commande -->
+          <button
+            (click)="ajouterCart()"
+            [disabled]="!canOrder()"
+            [class.disabled]="!canOrder()"
+            class="order-button"
+          >
+            <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="8" cy="21" r="1"></circle>
+              <circle cx="19" cy="21" r="1"></circle>
+              <path d="m2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+            </svg>
+            {{ canOrder() ? 'Passer la commande' : 'Sélectionnez tous les attributs' }}
+          </button>
+
+          <p class="order-help" *ngIf="!canOrder()">
+            Veuillez sélectionner toutes les options requises avant de commander
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

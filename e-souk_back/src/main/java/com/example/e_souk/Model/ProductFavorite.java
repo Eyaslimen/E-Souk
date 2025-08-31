@@ -82,6 +82,9 @@ public class ProductFavorite {
     public String getProductName() {
         return product != null ? product.getName() : "";
     }
+    public String getProductCategory() {
+        return product != null ? product.getCategory().getName() : "";
+    }
     
     /**
      * Récupère le nom de la boutique du produit

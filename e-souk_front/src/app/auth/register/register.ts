@@ -89,7 +89,6 @@ export class Register {
       this.isLoading = true;
       this.errorMessage = '';
       this.successMessage = '';
-      
       // Notification de chargement
       const loadingToast = this.notification.loading('Inscription en cours... Veuillez patienter');
       

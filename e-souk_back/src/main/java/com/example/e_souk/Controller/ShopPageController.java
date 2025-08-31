@@ -1,12 +1,14 @@
 package com.example.e_souk.Controller;
 
 import com.example.e_souk.Exception.ShopException;
-import com.example.e_souk.Dto.Product.ProductDetailsDTO;
+import com.example.e_souk.Dto.Product.ProductDTO;
 import com.example.e_souk.Dto.Review.CreateReviewDTO;
 import com.example.e_souk.Dto.Review.ReviewResponseDTO;
 import com.example.e_souk.Dto.Shop.ShopGeneralDetailsDTO;
+import com.example.e_souk.Dto.Shop.ShopSummaryDTO;
 import com.example.e_souk.Model.User;
 import com.example.e_souk.Service.AuthService;
+import com.example.e_souk.Service.ShopFollowerService;
 import com.example.e_souk.Service.ShopPageService;
 
 import jakarta.validation.Valid;
@@ -41,6 +43,7 @@ public class ShopPageController {
 
     private final ShopPageService shopPageService;
     private final AuthService authService;
+    private final ShopFollowerService shopFollowerService;
  /**
      * GET /api/shops/{name} - Récupérer une boutique par son Name
      * 
@@ -75,8 +78,8 @@ public class ShopPageController {
      * @return tous les produits d'une boutique
      */
     @GetMapping("/{shopName}/products")
-        public ResponseEntity<List<ProductDetailsDTO>> getShopProducts(@PathVariable String shopName) {
-        List<ProductDetailsDTO> products = shopPageService.getProductsByShop(shopName);
+        public ResponseEntity<List<ProductDTO>> getShopProducts(@PathVariable String shopName) {
+        List<ProductDTO> products = shopPageService.getProductsByShop(shopName);
         return ResponseEntity.ok(products);
     }
  
@@ -106,5 +109,29 @@ public class ShopPageController {
         List<ReviewResponseDTO> reviews = shopPageService.getReviewsByShopName(shopName);
         return ResponseEntity.ok(reviews);
     }
-
+    /**
+     * Récupère tous les followers d'une boutique
+     * @param shopId ID de la boutique
+     * @return Liste des followers
+     */
+    @GetMapping("/{shopId}/followers")
+    public ResponseEntity<List<ShopSummaryDTO>> getShopFollowers(@PathVariable UUID shopId) {
+        log.info("GET /api/shop-followers/shop/{} - Récupération des followers", shopId);
+        List<ShopSummaryDTO> followers = shopFollowerService.getShopFollowers(shopId);
+        return ResponseEntity.ok(followers);
+    }
+        
+    /**
+     * Compte le nombre de followers d'une boutique
+     * @param shopId ID de la boutique
+     * @return Nombre de followers
+     */
+    @GetMapping("/{shopId}/followers-count")
+    public ResponseEntity<Long> getShopFollowerCount(@PathVariable UUID shopId) {
+        log.info("GET /api/shop-followers/shop/{}/count - Comptage des followers", shopId);
+        
+        Long count = shopFollowerService.getShopFollowerCount(shopId);
+        return ResponseEntity.ok(count);
+    }
+    
 }
