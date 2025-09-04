@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -22,7 +23,7 @@ public class OrderItemDTO {
     private UUID productId;
     private String productName;
     private String productImage;
-    private String variantName;
+    private List<String> variantNames;
     private Float price;
     private Integer quantity;
     private Float subTotal;

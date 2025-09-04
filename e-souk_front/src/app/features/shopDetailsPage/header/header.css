@@ -58,7 +58,9 @@
 
 .owner-name {
   font-size: 1.1rem;
-  opacity: 0.9;
+  opacity: 1;
+  font-style: italic;
+  font-weight: 500;
   margin: 0 0 0.75rem 0;
 }
 

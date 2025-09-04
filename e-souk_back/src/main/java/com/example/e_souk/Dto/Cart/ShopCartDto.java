@@ -26,6 +26,7 @@ public class ShopCartDto {
      * Nom de la boutique
      */
     private String shopName;
+    private String shopPicture; 
     
     /**
      * Liste des produits de cette boutique dans le panier

@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule, NgIf } from '@angular/common';
 import { AuthService } from '../../services/AuthService';
 import { LoginRequestDTO } from '../../interfaces/auth';
+import { ToastrNotifications } from '../../services/toastr-notifications';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,8 @@ export class Login {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private notification: ToastrNotifications
   ) {
     this.loginForm = this.fb.group({
       usernameOrEmail: ['', [Validators.required]],
@@ -42,9 +44,8 @@ export class Login {
       this.authService.login(loginData).subscribe({
         next: (response) => {
           console.log('Connexion réussie', response);
-          setTimeout(() => {
+          this.notification.success('Connexion réussie');
             this.router.navigate(['/accueil']);
-          }, 3000);
           this.isLoading = false;
         },
         error: (error) => {

@@ -33,7 +33,7 @@ export class ToastrNotifications {
     
     return this.toastr.success(
       message, 
-      title || ' Succès',
+      title || ' Succès !',
       {
         timeOut: finalConfig.duration,
         closeButton: finalConfig.showCloseButton,
@@ -50,7 +50,7 @@ export class ToastrNotifications {
     
     return this.toastr.error(
       message,
-      title || '❌ Erreur',
+      title || 'Erreur',
       {
         timeOut: finalConfig.duration,
         closeButton: finalConfig.showCloseButton,
@@ -67,7 +67,7 @@ export class ToastrNotifications {
     
     return this.toastr.warning(
       message,
-      title || '⚠️ Attention',
+      title || 'Attention',
       {
         timeOut: finalConfig.duration,
         closeButton: finalConfig.showCloseButton,
@@ -125,8 +125,7 @@ export class ToastrNotifications {
   // Succès de formulaire
   formSuccess(action: string = 'action') {
     return this.success(
-      `Votre ${action} a été effectué avec succès ! 🎉`,
-      '✅ Opération réussie'
+      `Votre ${action} a été effectué avec succès ! `,
     );
   }
 

@@ -1,75 +1,174 @@
+/* === STYLES COMMUNS POUR LOGIN ET REGISTER === */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .auth-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 1rem;
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 .auth-card {
-  background: white;
-  padding: 3rem 2rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  width: 100%;
-  max-width: 400px;
-  backdrop-filter: blur(10px);
+  flex: 1;
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-visual {
+  flex: 1;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  display: flex;
+  flex-direction: column;
+  padding: 120px;
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.brand-title {
+  color: #1d4ed8;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.brand-subtitle {
+  color: #6c757d;
+  font-size: 1rem;
+  font-weight: 400;
 }
 
 h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #333;
+  color: #2c3e50;
   font-size: 2rem;
   font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.auth-subtitle {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 25px;
+  flex: 1;
 }
 
 label {
   display: block;
-  margin-bottom: 0.5rem;
+  color: #2c3e50;
   font-weight: 500;
-  color: #555;
+  margin-bottom: 8px;
   font-size: 0.9rem;
 }
 
-input {
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+select {
   width: 100%;
-  padding: 0.875rem;
+  padding: 12px 16px;
   border: 2px solid #e1e5e9;
   border-radius: 8px;
-  font-size: 1rem;
-  box-sizing: border-box;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
-  background-color: #fafafa;
+  background: #f8f9fa;
 }
 
-input:focus {
+input:focus,
+select:focus {
   outline: none;
-  border-color: #667eea;
-  background-color: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #4285f4;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
 }
 
-input.error {
-  border-color: #e74c3c;
-  background-color: #fdf2f2;
+input.error,
+select.error {
+  border-color: #dc3545;
+  background: #fef5f5;
 }
 
 .error-text {
-  color: #e74c3c;
+  color: #dc3545;
   font-size: 0.8rem;
-  margin-top: 0.5rem;
+  margin-top: 5px;
+}
+
+select {
+  cursor: pointer;
+}
+
+.file-input-wrapper {
+  position: relative;
+}
+
+.file-input {
+  opacity: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 2px dashed #4285f4;
+  border-radius: 8px;
+  background: #f8f9ff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  color: #4285f4;
+}
+
+.file-label:hover {
+  background: #e3f2fd;
+  border-color: #1976d2;
+}
+
+.file-info {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #28a745;
 }
 
 .btn-primary {
   width: 100%;
-  padding: 0.875rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 14px;
+  background: linear-gradient(135deg, #4285f4 0%, #6366f1 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -77,57 +176,206 @@ input.error {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 1rem;
+  margin-top: 20px;
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(66, 133, 244, 0.3);
 }
 
 .btn-primary:disabled {
-  background: #95a5a6;
+  opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.error-message {
-  color: #e74c3c;
-  text-align: center;
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background-color: #fdf2f2;
-  border: 1px solid #f5c6cb;
-  border-radius: 8px;
-  font-size: 0.9rem;
 }
 
 .auth-links {
   text-align: center;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e1e5e9;
+  margin-top: 30px;
+}
+
+.auth-links p {
+  color: #6c757d;
+  font-size: 0.9rem;
 }
 
 .auth-links a {
-  color: #667eea;
+  color: #4285f4;
   text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
+  font-weight: 600;
 }
 
 .auth-links a:hover {
-  color: #764ba2;
   text-decoration: underline;
 }
 
-@media (max-width: 480px) {
-  .auth-card {
-    padding: 2rem 1.5rem;
+.error-message,
+.success-message {
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.success-message {
+  background: #d4edda;
+  color: #155724;
+}
+
+.marketplace-illustration {
+  width: 600px;
+  height: 400px;
+  margin-bottom: 30px;
+  margin-left: 50px;
+  position: relative;
+  display: flex;
+  /* align-items: center; */
+  /* justify-content: center; */
+}
+
+.marketplace-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.visual-title {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.visual-subtitle {
+  color: #6c757d;
+  font-size: 1rem;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* === STYLES SPÉCIFIQUES POUR REGISTER === */
+.register-container .auth-card {
+  padding: 40px 50px;
+  max-height: 700px;
+  overflow-y: auto;
+}
+
+.register-container .brand-header {
+  margin-bottom: 30px;
+}
+
+.register-container .brand-title {
+  font-size: 2.2rem;
+}
+
+.register-container .brand-subtitle {
+  font-size: 0.95rem;
+}
+
+.register-container h2 {
+  font-size: 1.8rem;
+}
+
+.register-container .auth-subtitle {
+  font-size: 0.9rem;
+  margin-bottom: 30px;
+}
+
+.register-container .form-group {
+  margin-bottom: 20px;
+}
+
+.register-container label {
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+
+.register-container input,
+.register-container select {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+}
+
+.register-container .error-text {
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+.register-container .btn-primary {
+  padding: 12px;
+  font-size: 0.95rem;
+  margin-top: 15px;
+}
+
+.register-container .auth-links {
+  margin-top: 25px;
+}
+
+.register-container .auth-links p {
+  font-size: 0.85rem;
+}
+
+.register-container .marketplace-illustration {
+  max-width: 350px;
+  height: 250px;
+  margin-bottom: 25px;
+}
+
+.register-container .visual-title {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+.register-container .visual-subtitle {
+  font-size: 0.9rem;
+}
+
+.register-container .error-message,
+.register-container .success-message {
+  font-size: 0.85rem;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+  .auth-container {
+    flex-direction: column;
+    margin: 10px;
   }
-  
-  h2 {
-    font-size: 1.5rem;
+
+  .auth-visual {
+    order: -1;
+    min-height: 200px;
+  }
+
+  .auth-card {
+    padding: 40px 30px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .marketplace-illustration {
+    height: 200px;
+  }
+
+  .brand-title {
+    font-size: 2rem;
+  }
+
+  .register-container .marketplace-illustration {
+    height: 180px;
+  }
+
+  .register-container .brand-title {
+    font-size: 1.8rem;
   }
 }

@@ -17,6 +17,7 @@ export class ShopCard {
   @Output() toggleFollowEvent = new EventEmitter<void>()
 
   constructor(private router: Router, private shopFollowersService: ShopFollowrsService) {}
+
 onViewDetails(event?: Event): void {
   if (event) {
     event.preventDefault();
@@ -26,15 +27,9 @@ onViewDetails(event?: Event): void {
   this.viewDetails.emit();
 }
 
-  ajouterAuxFavoris() {
-    const shopId = this.shop.id;
-    this.shopFollowersService.followShop(shopId).subscribe(
-      result => {
-        console.log('Boutique suivie:', result);
-        this.isFollowed = true;
-      },
-      error => console.error('Erreur:', error)
-    );
+  follow() {
+this.isFollowed=true;
+this.shop.followerCount+=1;
   }
   // toggleFollow(event: Event): void {
   //   event.stopPropagation()

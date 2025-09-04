@@ -5,11 +5,11 @@
       <button class="add-review-btn" (click)="onAddReview()">
         <i class="icon-plus"></i>
         Ajouter un avis
-      </button> 
+      </button>
     </div>
   </div>
 
-  <div class="reviews-layout">
+  <div class="reviews-layout" *ngIf="reviews$ | async as reviews">
     <!-- Reviews Summary -->
     <div class="reviews-summary">
       <div class="rating-overview">
@@ -18,8 +18,8 @@
           <div class="rating-display">
             <span class="rating-number">{{ averageRating }}</span>
             <div class="rating-stars">
-              <i 
-                *ngFor="let star of getStarArray(averageRating)" 
+              <i
+                *ngFor="let star of getStarArray(averageRating)"
                 class="icon-star"
                 [class.filled]="star === 1">
               </i>
@@ -35,8 +35,8 @@
               <span class="rating-label">{{ rating }}</span>
               <i class="icon-star"></i>
               <div class="bar-container">
-                <div 
-                  class="bar-fill" 
+                <div
+                  class="bar-fill"
                   [style.width.%]="getRatingPercentage(rating)">
                 </div>
               </div>
@@ -51,15 +51,15 @@
     <div class="reviews-list">
       <h2>Tous les avis</h2>
       
-      <div class="reviews-container" *ngIf="reviews$ | async as reviews">
-        <app-review-card 
+      <div class="reviews-container" *ngIf="reviews.length > 0">
+        <app-review-card
           [review]="review"
           *ngFor="let review of reviews">
         </app-review-card>
       </div>
 
       <!-- Empty State -->
-      <div class="empty-reviews" *ngIf="(reviews$ | async)?.length === 0">
+      <div class="empty-reviews" *ngIf="reviews.length === 0">
         <i class="icon-message-circle"></i>
         <h3>Aucun avis pour le moment</h3>
         <p>Soyez le premier à laisser un avis sur cette boutique !</p>

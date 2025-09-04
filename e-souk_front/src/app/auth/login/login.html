@@ -1,6 +1,12 @@
 <div class="auth-container">
   <div class="auth-card">
+    <div class="brand-header">
+      <h1 class="brand-title">E-Souk</h1>
+      <p class="brand-subtitle">Votre marketplace de confiance</p>
+    </div>
+
     <h2>Connexion</h2>
+    <p class="auth-subtitle">Connectez-vous à votre compte pour accéder à votre espace</p>
     
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
@@ -43,5 +49,14 @@
     <div class="auth-links">
       <p>Pas encore de compte ? <a routerLink="/register">S'inscrire</a></p>
     </div>
+  </div>
+
+  <div class="auth-visual">
+    <div class="marketplace-illustration">
+      <img src="esouk_auth.png" alt="E-Souk Marketplace" class="marketplace-image" />
+    </div>
+    
+    <h3 class="visual-title">Découvrez notre marketplace</h3>
+    <p class="visual-subtitle">Connectez-vous avec des milliers de vendeurs et trouvez les meilleurs produits</p>
   </div>
 </div>

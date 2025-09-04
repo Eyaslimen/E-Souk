@@ -1,6 +1,12 @@
-<div class="auth-container">
+<div class="auth-container register-container">
   <div class="auth-card">
+    <div class="brand-header">
+      <h1 class="brand-title">E-Souk</h1>
+      <p class="brand-subtitle">Rejoignez notre marketplace</p>
+    </div>
+
     <h2>Inscription</h2>
+    <p class="auth-subtitle">Créez votre compte pour commencer à vendre ou acheter</p>
     
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
       <div class="form-row">
@@ -119,7 +125,7 @@
             class="file-input"
           />
           <label for="profilePicture" class="file-label">
-            <i class="upload-icon">📁</i>
+            <span>📁</span>
             {{ selectedFileName || 'Choisir une image' }}
           </label>
         </div>
@@ -144,5 +150,14 @@
     <div class="auth-links">
       <p>Déjà un compte ? <a routerLink="/login">Se connecter</a></p>
     </div>
+  </div>
+
+  <div class="auth-visual">
+    <div class="marketplace-illustration">
+      <img src="marketplace_register.png" alt="E-Souk Marketplace" class="marketplace-image" />
+    </div>
+    
+    <h3 class="visual-title">Créez votre compte</h3>
+    <p class="visual-subtitle">Rejoignez E-Souk, la marketplace idéale pour faire vos achats en toute simplicité, vendre vos produits et développer votre business en ligne !</p>
   </div>
 </div>

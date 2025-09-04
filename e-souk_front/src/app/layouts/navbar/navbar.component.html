@@ -17,11 +17,40 @@
 
       <!-- Actions -->
       <div class="header-actions">
-
-        <!-- Auth Buttons -->
-        <div class="auth-buttons">
+        
+        <!-- Auth Buttons - Utilisateur non connecté -->
+        <div class="auth-buttons" *ngIf="!isLoggedIn()">
           <a href="/login" class="btn btn-outline-blue btn-sm">Se connecter</a>
           <a href="/register" class="btn btn-blue btn-sm">S'inscrire</a>
+        </div>
+
+        <!-- Actions pour CLIENT -->
+        <div class="user-actions" *ngIf="isClient()">
+          <!-- Cart Icon -->
+          <button class="icon-btn" (click)=navigateToCartTab()>
+        <i class="fas fa-shopping-cart"></i>
+          </button>
+          
+          <!-- User Icon -->
+          <button class="icon-btn" (click)=navigateToProfile()>
+            <i class="fas fa-user" ></i>
+          </button>
+        </div>
+
+        <!-- Actions pour VENDOR -->
+        <div class="vendor-actions" *ngIf="isVendor()">
+          <!-- Gérer ma boutique Button -->
+          <a href="/manage-shop" class="btn btn-blue btn-sm">Gérer ma boutique</a>
+          
+          <!-- Cart Icon -->
+          <button class="icon-btn" (click)=navigateToCartTab()>
+        <i class="fas fa-shopping-cart"></i>
+          </button>
+          
+          <!-- User Icon -->
+          <button class="icon-btn" (click)=navigateToProfile()>
+                <i class="fas fa-user" ></i>
+          </button>
         </div>
 
         <!-- Mobile Menu Button -->
@@ -43,9 +72,24 @@
         <a href="/products" class="mobile-nav-link" (click)="toggleMobileMenu()">Produits</a>
         <a href="/about" class="mobile-nav-link" (click)="toggleMobileMenu()">À propos</a>
       </nav>
-      <div class="mobile-auth">
+      
+      <!-- Mobile Auth - Non connecté -->
+      <div class="mobile-auth" *ngIf="!isLoggedIn()">
         <a href="/auth/login" class="btn btn-outline-blue btn-full btn-sm" (click)="toggleMobileMenu()">Se connecter</a>
         <a href="/auth/register" class="btn btn-blue btn-full btn-sm" (click)="toggleMobileMenu()">S'inscrire</a>
+      </div>
+
+      <!-- Mobile Actions - Client -->
+      <div class="mobile-user-actions" *ngIf="isClient()">
+        <a href="/cart" class="mobile-nav-link" (click)="toggleMobileMenu()">Mon panier</a>
+        <a href="/profile" class="mobile-nav-link" (click)="toggleMobileMenu()">Mon profil</a>
+      </div>
+
+      <!-- Mobile Actions - Vendor -->
+      <div class="mobile-vendor-actions" *ngIf="isVendor()">
+        <a href="/manage-shop" class="btn btn-blue btn-full btn-sm" (click)="toggleMobileMenu()">Gérer ma boutique</a>
+        <a href="/cart" class="mobile-nav-link" (click)="toggleMobileMenu()">Mon panier</a>
+        <a href="/profile" class="mobile-nav-link" (click)="toggleMobileMenu()">Mon profil</a>
       </div>
     </div>
   </div>

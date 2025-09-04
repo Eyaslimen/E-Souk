@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -103,7 +104,6 @@ public class CommandeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Panier non trouvé"));
         
         List<CartItem> cartItems = cartItemRepository.findByCart(cart);
-        
         // Filtrer les articles de la boutique spécifiée
         List<CartItem> shopItems = cartItems.stream()
                 .filter(item -> item.getVariant().getProduct().getShop().getId().equals(shopId))
@@ -242,6 +242,12 @@ public class CommandeService {
      * @return DTO de l'article
      */
     private OrderItemDTO convertOrderItemToDTO(OrderItem orderItem) {
+        Variant v = orderItem.getVariant();
+         List<AttributeValue> variantAttributes = v.getAttributeValues();
+         List<String> list = new ArrayList<>();
+         for(AttributeValue av : variantAttributes) {
+                list.add(av.getValue());
+         } 
         return OrderItemDTO.builder()
                 .id(orderItem.getId())
                 .commandeId(orderItem.getCommande().getId())
@@ -249,7 +255,7 @@ public class CommandeService {
                 .productId(orderItem.getVariant().getProduct().getId())
                 .productName(orderItem.getVariant().getProduct().getName())
                 .productImage(orderItem.getVariant().getProduct().getPicture())
-                .variantName(orderItem.getVariant().getSku())
+                .variantNames(list)
                 .price(orderItem.getUnitPrice())
                 .quantity(orderItem.getQuantity())
                 .subTotal(orderItem.getSubTotal())

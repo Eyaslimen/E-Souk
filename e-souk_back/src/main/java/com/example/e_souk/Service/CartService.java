@@ -196,7 +196,7 @@ public class CartService {
                 
                 // Prendre le premier item pour récupérer le nom de la boutique
                 String shopName = shopItems.get(0).getVariant().getProduct().getShop().getBrandName();
-                
+                String shopPicture = shopItems.get(0).getVariant().getProduct().getShop().getLogoPicture();
                 // Convertir les CartItem en CartItemDto
                 List<CartItemDto> itemDtos = shopItems.stream()
                         .map(this::toCartItemDto)
@@ -210,6 +210,7 @@ public class CartService {
                 return ShopCartDto.builder()
                         .shopId(shopId)
                         .shopName(shopName)
+                        .shopPicture(shopPicture)
                         .items(itemDtos)
                         .shopTotal(shopTotal)
                         .itemCount(shopItems.size())
@@ -245,7 +246,6 @@ public class CartService {
                 return variant;
             }
         }
-
         throw new IllegalArgumentException("Aucune variante ne correspond aux attributs sélectionnés");
     }
 

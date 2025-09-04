@@ -22,7 +22,7 @@ export interface Review {
     content: string;
     author: string;
     rating: number; // 1 to 5
-    createdAt: string; // ISO date string
+    createdAt: Date; // ISO date string
     reviewType?: string; // You may define an enum if needed
 }
 export interface ReviewRequest {

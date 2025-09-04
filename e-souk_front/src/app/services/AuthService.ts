@@ -28,7 +28,10 @@ export class AuthService {
         })
       );
   }
-
+logout(): void {
+  localStorage.removeItem(this.TOKEN_KEY);
+  this.isAuthenticatedSubject.next(false);
+}
  
   register(userData: any): Observable<AuthResponseDTO> {
     console.log('Registering user:', userData);
@@ -49,10 +52,7 @@ export class AuthService {
     return this.http.post<AuthResponseDTO>(`${this.API_URL}/register`, formData);
   }
 
-  logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    this.isAuthenticatedSubject.next(false);
-  }
+
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);

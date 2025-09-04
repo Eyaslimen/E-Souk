@@ -5,6 +5,7 @@
        picture?: String;
        phone?: String;
        address?: String;
+       role?:String;
        codePostal?: String;
        isActive?: Boolean;
        joinedAt?: Date;
@@ -77,6 +78,7 @@ export interface ShopCart {
   shopName: string;
   items: CartItem[];
   shopTotal: number;
+  shopPicture:string;
   itemCount: number;
 }
 
@@ -128,7 +130,7 @@ export interface OrderItemDTO {
     productId: String;
     productName: String;
     productImage: String;
-    variantName: String;
+    variantNames: String[];
     price: number;
     quantity: number;
     subTotal: number;

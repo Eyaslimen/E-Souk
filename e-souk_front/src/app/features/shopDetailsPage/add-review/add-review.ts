@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { ShopDetails } from '../../../services/shop-details';
 import { ReviewRequest } from '../../../interfaces/ProductDetails';
+import { ToastrNotifications } from '../../../services/toastr-notifications';
 
 @Component({
   selector: 'app-add-review',
@@ -20,6 +21,7 @@ export class AddReview{
   constructor(
     private fb: FormBuilder,
     private shopDetails: ShopDetails,
+    private notification : ToastrNotifications
   ) {
     this.reviewForm = this.fb.group({
       rating: [""],
@@ -50,8 +52,8 @@ setTimeout(() => {
       console.log('Review created successfully:', response);
       this.isSubmitting = false;
       this.onClose();
-      // Optionnel: recharger les reviews ou mettre à jour l'UI
-      // this.loadReviews();
+      this.notification.success("Avis ajouté avec succées");
+
     },
     error: (error) => {
       console.error('Error creating review:', error);
